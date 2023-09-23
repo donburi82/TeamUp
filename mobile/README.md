@@ -1,3 +1,0 @@
-# TeamUp
-
-Monorepo for TeamUp
