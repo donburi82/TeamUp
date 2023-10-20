@@ -1,9 +1,9 @@
-const express = require("express");
-// const { register, login, verify } = require("../../helpers/auth");
-const router = express.Router();
-const User = require("../../models/users");
 const _ = require("lodash");
 const nodemailer = require("nodemailer");
+const User = require("../../models/users");
+
+const express = require("express");
+const router = express.Router();
 
 router.route("/auth/verify").get(async (req, res) => {
   const verifyCode = _.random(100000, 999999);
@@ -43,6 +43,7 @@ router.route("/auth/verify").get(async (req, res) => {
     }
   });
 });
+
 router.route("/auth/register").post(async (req, res) => {
   try {
     const user = await User.create({
@@ -59,6 +60,7 @@ router.route("/auth/register").post(async (req, res) => {
     }
   }
 });
+
 router.route("/auth/login").post(async (req, res) => {
   const { email, password } = req.body;
   try {
