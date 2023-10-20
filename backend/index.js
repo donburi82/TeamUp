@@ -7,7 +7,7 @@ const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
 const { DBconnection } = require("./db/dbconnection");
-const authRoute = require("./routes/auth");
+const auth = require("./routes/auth");
 
 app.use(express.json());
 app.use(cors());
@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello world</h1>");
 });
 
-app.use("/auth", authRoute);
+app.use(auth);
 
 server.listen(3000, () => {
   console.log("listening on *:3000");
