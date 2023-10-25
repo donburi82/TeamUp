@@ -31,7 +31,7 @@ export default function LoginScreen() {
         <ButtonText fontSize='$xl'>Login</ButtonText>
        </Button>
        <HStack style={{alignItems:'center',justifyContent:'space-around'}}>
-        <Text color='black'>New to TeamUp?</Text>
+        <Text >New to TeamUp?</Text>
         <Button variant='link'>
           <ButtonText>Sign up here</ButtonText>
         </Button>
