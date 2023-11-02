@@ -80,6 +80,10 @@ To learn more about React Native, take a look at the following resources:
 
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------
+Monthly progress report :written in 20th Octobor
+Set up the android development environment. Virtual machine etc.
+build the react native project structure using npx react-native  init
 Potential problems:
 
 In Gemfile:
@@ -89,3 +93,20 @@ In Gemfile:
         json
 ✖ Installing Ruby Gems
 error Looks like your iOS environment is not properly set.
+Potential problems of the ios side of not able to install ruby gems
+Choose to use gluestack Ui to be the UI framework, and redux-toolkit to be the state management tools
+Write two pages using gluestack Ui
+Potential problems:
+Warning: The `value` prop is required for the `<Context.Provider>`. Did you misspell it or forget to pass it?
+    in GluestackUIContextProvider (created by GluestackUIStyledProvider)
+    in GluestackUIStyledProvider (created by GluestackUIProvider)
+    in GluestackUIProvider (created by App)
+    in App
+    in RCTView (created by View)
+    in View (created by AppContainer)
+    in RCTView (created by View)
+    in View (created by AppContainer)
+    in AppContainer
+    in mobile(RootComponent)
+Since I completely follow the documentation of Gluestackui, not sure about where this problem resides. Since the app is running well, I ignore it for now
+

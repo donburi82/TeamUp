@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {  GluestackUIProvider, Text } from "@gluestack-ui/themed"
+import { NavigationContainer } from '@react-navigation/native';
 import { config } from "./gluestack-ui.config.ts"
 
 import {
@@ -40,7 +41,8 @@ function App() {
   };
 
   return (
-    <GluestackUIProvider config={config}>
+    <GluestackUIProvider config={config} >
+      <NavigationContainer>
     <SafeAreaView style={backgroundStyle} >
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
@@ -48,27 +50,10 @@ function App() {
       />
      <LoginScreen />
     </SafeAreaView>
+    </NavigationContainer>
     </GluestackUIProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
