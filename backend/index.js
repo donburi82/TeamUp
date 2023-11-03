@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/auth", authRoute);
 app.use("/userBasicInfo", auth);
-app.use(groupPreference);
+app.use("/preference", groupPreference);
 
 server.listen(3000, () => {
   console.log("listening on *:3000");

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { groupPreferenceSchema, GroupPreference, courseProjectSchema, CourseProject, courseStudySchema, CourseStudy, extracurricularSchema, Extracurricular } = require("./preferences");
 
 const UserSchema = new mongoose.Schema({
   profilePic: Buffer,
@@ -21,6 +22,7 @@ const UserSchema = new mongoose.Schema({
     minlength: 8,
     required: [true, "Please provide password"],
   },
+  groupPreferences: [groupPreferenceSchema],
 });
 
 UserSchema.pre("save", async function (next) {
