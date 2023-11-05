@@ -27,8 +27,11 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
+import {persistor,store} from './src/utils/reduxStore/index.js'
+import {Provider} from 'react-redux'
 import LoginScreen from './src/screens/LoginScreen';
+import { PersistGate } from 'redux-persist/integration/react';
+import SetupScreen from './src/screens/SetupScreen.js';
 
 
 function App() {
@@ -44,11 +47,18 @@ function App() {
     <GluestackUIProvider config={config} >
       <NavigationContainer>
     <SafeAreaView style={backgroundStyle} >
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor} >
+
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-     <LoginScreen />
+     {/* <LoginScreen /> */}
+     <SetupScreen />
+    
+        </PersistGate>
+        </Provider>
     </SafeAreaView>
     </NavigationContainer>
     </GluestackUIProvider>

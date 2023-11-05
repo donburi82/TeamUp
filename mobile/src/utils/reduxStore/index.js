@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import {persistStore,persistReducer, persistReducer} from 'redux-persist'
+import {persistStore,persistReducer} from 'redux-persist'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import globalReducer from './reducer'
 
@@ -11,10 +11,10 @@ const persistConfig = {
 
 }
 
-const persistReducer = persistReducer(persistConfig,globalReducer)
+const persistedReducer = persistReducer(persistConfig,globalReducer)
 
 const store = configureStore({
-    reducer:persistReducer
+    reducer:persistedReducer
 })
 
 if (process.env.NODE_ENV !== 'production' && module.hot) {
