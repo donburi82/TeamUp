@@ -14,12 +14,14 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig,globalReducer)
 
 const store = configureStore({
-    reducer:persistedReducer
+    reducer:persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
 })
 
-if (process.env.NODE_ENV !== 'production' && module.hot) {
-    module.hot.accept('./reducer', () => store.replaceReducer(rootReducer));
-  }
+// if (process.env.NODE_ENV !== 'production' && module.hot) {
+//     module.hot.accept('./reducer', () => store.replaceReducer(rootReducer));
+//   }
   
   const persistor = persistStore(store);
   

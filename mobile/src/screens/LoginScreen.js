@@ -1,8 +1,8 @@
 import { View, Text } from 'react-native'
 import { Box, Button, ButtonText, FormControl, Heading, InputField, VStack ,Input, HStack} from '@gluestack-ui/themed'
 import React from 'react'
-
-export default function LoginScreen() {
+import { ROUTES } from '../navigator/constant'
+export default function LoginScreen({navigation}) {
   return (
     <Box use="background" style={{flex:1,alignItems:'center',justifyContent:'center'}}>
         
@@ -13,7 +13,7 @@ export default function LoginScreen() {
         <Box  mb={10}>
         <FormControl >
           <Input  style={{backgroundColor:"white",borderRadius:10}} hardShadow='5' h={50}>
-          <InputField placeholder='University Email' type="text" />
+          <InputField placeholder='University Email' type="text" style={{fontSize:20}}/>
           </Input>
         
         </FormControl>
@@ -21,7 +21,7 @@ export default function LoginScreen() {
        <Box >
        <FormControl>
         <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10}} hardShadow='5'h={50}>
-          <InputField placeholder='Password' type="password"/>
+          <InputField placeholder='Password' type="password" style={{fontSize:20}}/>
           </Input>
          
         </FormControl>
@@ -32,7 +32,7 @@ export default function LoginScreen() {
        </Button>
        <HStack style={{alignItems:'center',justifyContent:'space-around'}}>
         <Text >New to TeamUp?</Text>
-        <Button variant='link'>
+        <Button variant='link' onPress={()=>navigation.navigate(ROUTES.EMAILVERIFICATION)}>
           <ButtonText>Sign up here</ButtonText>
         </Button>
        </HStack>

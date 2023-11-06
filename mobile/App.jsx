@@ -29,9 +29,9 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import {persistor,store} from './src/utils/reduxStore/index.js'
 import {Provider} from 'react-redux'
-import LoginScreen from './src/screens/LoginScreen';
+
 import { PersistGate } from 'redux-persist/integration/react';
-import SetupScreen from './src/screens/SetupScreen.js';
+import AuthRouting from './src/navigator/AuthNav.js';
 
 
 function App() {
@@ -54,9 +54,9 @@ function App() {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-     {/* <LoginScreen /> */}
-     <SetupScreen />
-    
+ 
+  
+     <AuthRouting />
         </PersistGate>
         </Provider>
     </SafeAreaView>
