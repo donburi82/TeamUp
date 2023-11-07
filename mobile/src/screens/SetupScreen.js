@@ -9,7 +9,7 @@ export default function SetupScreen() {
     const dispatch=useDispatch()
     console.log(state)
   return (
-    <Box use="background" style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+    <Box  style={{flex:1,alignItems:'center',justifyContent:'center'}}>
         
     <Box style={{height:'90%',width:'85%',padding:10,alignItems:"center"}}>
       <Heading bold={true} size="3xl">Team Up </Heading>
@@ -18,7 +18,7 @@ export default function SetupScreen() {
       <Text>Verify your University Email</Text>
         <Box  mt={20} mb={10}>
         <FormControl >
-          <Input  style={{backgroundColor:"white",borderRadius:10}} hardShadow='5' h={50} >
+          <Input  style={{backgroundColor:"white",borderRadius:10}}    >
           <InputField placeholder='University Email' type="text" style={{fontSize:20}} />
           </Input>
         
@@ -26,24 +26,24 @@ export default function SetupScreen() {
         </Box>
        <Box >
        <FormControl>
-        <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10}} hardShadow='5'h={50} isReadOnly>
+        <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10}}   isReadOnly>
           <InputField placeholder='@connect.ust.hk' type="suffix" style={{fontSize:20}}/>
           </Input>
          
         </FormControl>
        </Box>
        <HStack mt={10} style={{alignItems:'top'}}>
-       <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10 ,flex:2}}   hardShadow='5'h={50} mr={10} >
+       <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10 ,flex:2}}    mr={10} >
           <InputField  type="suffix" style={{fontSize:20}}  keyboardType="numeric" />
           </Input>
-          <Button use='login'   style={{flex:1}}>
+          <Button   action='primary' style={{flex:1}}>
         <ButtonText fontSize='$xl'>Verify</ButtonText>
        </Button>
        </HStack>
        
        <Box  mt={10} mb={10}>
         <FormControl >
-          <Input  style={{backgroundColor:"white",borderRadius:10}} hardShadow='5' h={50} >
+          <Input  style={{backgroundColor:"white",borderRadius:10}}   >
           <InputField placeholder='password' type="text" style={{fontSize:20}} />
           </Input>
         
@@ -51,13 +51,13 @@ export default function SetupScreen() {
         </Box>
         <Box   mb={10}>
         <FormControl >
-          <Input  style={{backgroundColor:"white",borderRadius:10}} hardShadow='5' h={50} >
+          <Input  style={{backgroundColor:"white",borderRadius:10}}    >
           <InputField placeholder='password again' type="text" style={{fontSize:20}} />
           </Input>
         
         </FormControl>
         </Box>
-        <Button use='login' mt={20} mb={20}>
+        <Button   mt={20} mb={20}>
         <ButtonText fontSize='$xl'>Proceed</ButtonText>
        </Button>
       </VStack>

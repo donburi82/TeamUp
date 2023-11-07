@@ -6,34 +6,36 @@ import {
   
   export const config = createConfig({
     ...defaultConfig.theme,
-    components: {
-      Button: {
-        theme: {
-          variants: {
-            use: {
-              login: {
-                bg: '#9333ea',
-               borderRadius:8,
-               height:50,
-              
-              },
-            },
-          },
-        },
-      },
-      Box:{
-        theme:{
-            variants: {
-                use: {
-                  background: {
-                    bg: '#F3F3F3',
-                  },
-                },
-              },
-        }
-      },
+   
+    // components: {
+    //   Button: {
+    //     theme: {
+    //       variants: {
+    //         use: {
+    //           login: {
+    //             bg: '#9333ea',
+    //            borderRadius:8,
+    //            height:50,
+    //            underlayColor:"gray",
+    //            activeOpacity:0.5
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    //   Box:{
+    //     theme:{
+    //         variants: {
+    //             use: {
+    //               background: {
+    //                 bg: '#F3F3F3',
+    //               },
+    //             },
+    //           },
+    //     }
+    //   },
      
-    },
+    // },
   });
   
   // Get the type of Config

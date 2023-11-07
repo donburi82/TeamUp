@@ -8,7 +8,9 @@
 import React from 'react';
 import {  GluestackUIProvider, Text } from "@gluestack-ui/themed"
 import { NavigationContainer } from '@react-navigation/native';
-import { config } from "./gluestack-ui.config.ts"
+import { config } from "./config/gluestack-ui.config"
+
+
 
 import {
   SafeAreaView,

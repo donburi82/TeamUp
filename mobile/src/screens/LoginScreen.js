@@ -12,7 +12,7 @@ export default function LoginScreen({navigation}) {
       <VStack style={{width:"95%"} } mt={30} space={50}>
         <Box  mb={10}>
         <FormControl >
-          <Input  style={{backgroundColor:"white",borderRadius:10}} hardShadow='5' h={50}>
+          <Input  style={{backgroundColor:"white",borderRadius:10}}  >
           <InputField placeholder='University Email' type="text" style={{fontSize:20}}/>
           </Input>
         
@@ -20,14 +20,14 @@ export default function LoginScreen({navigation}) {
         </Box>
        <Box >
        <FormControl>
-        <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10}} hardShadow='5'h={50}>
+        <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10}}  >
           <InputField placeholder='Password' type="password" style={{fontSize:20}}/>
           </Input>
          
         </FormControl>
        </Box>
        
-       <Button use='login' mt={40} mb={20}>
+       <Button   mt={40} mb={20}>
         <ButtonText fontSize='$xl'>Login</ButtonText>
        </Button>
        <HStack style={{alignItems:'center',justifyContent:'space-around'}}>

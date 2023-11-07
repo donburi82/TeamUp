@@ -7,7 +7,7 @@ import SetupScreen from "../screens/SetupScreen";
 const AuthStack = createNativeStackNavigator()
 
 export default function AuthRouting(){
-    return <AuthStack.Navigator initialRouteName={ROUTES.EMAILVERIFICATION}>
+    return <AuthStack.Navigator initialRouteName={ROUTES.LOGIN}>
         <AuthStack.Screen name={ROUTES.LOGIN} component={LoginScreen} options={{headerShown:false}}/>
         <AuthStack.Screen name={ROUTES.EMAILVERIFICATION} component={SetupScreen} 
         options={{
