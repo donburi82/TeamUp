@@ -1,26 +1,39 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { groupPreferenceSchema, GroupPreference, CourseProject, CourseStudy, Extracurricular } = require("./preferences");
+const {
+  groupPreferenceSchema,
+  GroupPreference,
+  CourseProject,
+  CourseStudy,
+  Extracurricular,
+} = require("./preferences");
 
 const UserSchema = new mongoose.Schema({
-  profilePic: Buffer,
-  name: { type: String, trim: true },
+  profilePic: { data: Buffer, contentType: String },
+  name: { type: String, trim: true, default: "anonymous" },
   role: { type: String, enum: ["admin", "user"], default: "user" },
-  gender: { type: String, enum: ["M", "F", "D"] },
-  isFullTime: Boolean,
+  gender: { type: String, enum: ["M", "F", "D"], default: "D" },
+  isFullTime: { type: Boolean, default: true },
   email: {
     type: String,
     unique: true,
     required: [true, "Please provide email"],
+    match: [
+      /^[a-zA-Z0-9._-]+@(connect.ust.hk|connect.polyu.hk|@connect.hku.hk)$/,
+      "Please provide a valid school email",
+    ],
   },
   nationality: String,
   major: String,
-  year: { type: String, enum: ["1", "2", "3", "4", "5"] },
+  year: { type: String, enum: [1, 2, 3, 4, 5], default: 1 },
   password: {
     type: String,
-    minlength: 8,
     required: [true, "Please provide password"],
+    match: [
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
+      "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
+    ],
   },
   groupPreferences: [groupPreferenceSchema],
 });
