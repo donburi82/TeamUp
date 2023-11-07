@@ -1,7 +1,9 @@
-
-import { Box, Button, ButtonText, FormControl, Heading, InputField, VStack ,Input, HStack,Text} from '@gluestack-ui/themed'
+import { Platform, Text } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Box, Button, ButtonText, FormControl, Heading, InputField, VStack ,Input, HStack,KeyboardAvoidingView, ScrollView} from '@gluestack-ui/themed'
 import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
+
 import {login,logOut} from '../utils/reduxStore/reducer'
 
 export default function SetupScreen() {
@@ -9,9 +11,16 @@ export default function SetupScreen() {
     const dispatch=useDispatch()
     console.log(state)
   return (
+    
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      // keyboardVerticalOffset={20}
+    >
+      <ScrollView  style={{ flex: 1,position:"relative" }}>
     <Box  style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-        
-    <Box style={{height:'90%',width:'85%',padding:10,alignItems:"center"}}>
+       
+    <Box  h="90%" width="85%" style={{padding:10,alignItems:"center"}}>
       <Heading bold={true} size="3xl">Team Up </Heading>
       <Heading bold={true} size="3xl" >now!</Heading>
       <VStack style={{width:"95%"} } mt={20} space={50}>
@@ -62,7 +71,21 @@ export default function SetupScreen() {
        </Button>
       </VStack>
     </Box>
-    <Text>Please remember your credentials.</Text>
+    
+   
+ 
+  
     </Box>
+    <Box style={{height:Platform.OS=="ios"?0:50}}/>
+    </ScrollView>
+    <Box style={{position:'absolute',bottom:10,alignItems:"center",width:"100%"}}>
+     <Text >Please remember your credentials.</Text>
+     </Box>
+    
+    </KeyboardAvoidingView>
+     
+
+     
+    
   )
 }
