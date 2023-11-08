@@ -5,15 +5,26 @@ const User = require("../../models/users");
 const express = require("express");
 const router = express.Router();
 
-let verificationCodes = {};
+let verificationCodes = new Map();
 let verified = new Set([]);
 
 router.route("/verification").get(async (req, res) => {
   const re =
     /^[a-zA-Z0-9._-]+@(connect.ust.hk|connect.polyu.hk|@connect.hku.hk)$/;
   if (!req.body.email.match(re)) {
-    res.status(400).send({ status: "invalid school email" });
+    return res
+      .status(400)
+      .send({ status: "fail", msg: "invalid school email" });
   }
+
+  const user = await User.findOne({ email: req.body.email });
+  console.log(user);
+  if (user) {
+    return res
+      .status(400)
+      .send({ status: "fail", msg: "email already being registered" });
+  }
+
   const verificatoinCode = _.random(100000, 999999);
 
   const transporter = nodemailer.createTransport({
@@ -44,14 +55,11 @@ router.route("/verification").get(async (req, res) => {
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
-      res.status(500).send({ msg: "Internal Server Error" });
+      res.status(500).send({ status: "error", msg: "Internal Server Error" });
     } else {
-      console.log("Email sent: " + info.response);
-      verificationCodes[req.body.email] = verificatoinCode;
-      console.log(verificationCodes);
+      verificationCodes.set(req.body.email, verificatoinCode);
       setTimeout(() => {
-        delete verificationCodes[req.body.email];
-        console.log(verificationCodes);
+        verificationCodes.delete(req.body.email);
       }, 1000 * 60 * 5);
       res.status(200).send({ status: "success" });
     }
@@ -59,21 +67,20 @@ router.route("/verification").get(async (req, res) => {
 });
 
 router.route("/verify").get(async (req, res) => {
-  if (verificationCodes[req.body.email] == req.body.verificationCode) {
-    delete verificationCodes[req.body.email];
+  if (verificationCodes.get(req.body.email) == req.body.verificationCode) {
+    verificationCodes.delete(req.body.email);
     verified.add(req.body.email);
     res.status(200).send({ status: "success" });
   } else {
     res
       .status(401)
-      .send({ status: "error", msg: "verificationCode wrong or expired" });
+      .send({ status: "fail", msg: "verificationCode wrong or expired" });
   }
 });
 
 router.route("/register").post(async (req, res) => {
   if (!verified.has(req.body.email)) {
-    res.status(400).send({ status: "error", msg: "email not verified" });
-    return;
+    return res.status(400).send({ status: "fail", msg: "email not verified" });
   }
   try {
     const user = await User.create({
@@ -82,16 +89,19 @@ router.route("/register").post(async (req, res) => {
     });
     const token = user.createJWT();
     verified.delete(req.body.email);
-    res.json({ msg: "user created", token }).status(201);
+    res.json({ status: "success", msg: "user created", token }).status(201);
   } catch (error) {
     if (error.code === 11000) {
       res.status(409).json({
-        error: `EmailDuplicate`,
+        status: "error",
+        msg: `EmailDuplicate`,
       });
     } else if (error.name == "ValidationError") {
-      res.json({ error: error.name, msg: error.message });
+      res
+        .json({ status: "error", error: error.name, msg: error.message })
+        .status(403);
     } else {
-      res.json({ error });
+      res.json({ status: "error", msg: error }).status(400);
     }
   }
 });
@@ -101,20 +111,23 @@ router.route("/login").post(async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ msg: "incorrect credentials" });
+      return res
+        .status(401)
+        .json({ status: "fail", msg: "incorrect credentials" });
     }
 
     const isPasswordCorrect = await user.comparePassword(password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ msg: "incorrect credentials" });
+      return res
+        .status(401)
+        .json({ status: "fail", msg: "incorrect credentials" });
     }
 
     const token = user.createJWT();
 
-    return res.json({ msg: "login successful", token }).status(200);
+    return res.json({ status: "success", token }).status(200);
   } catch (error) {
-    console.log(error);
-    return res.json({ error: "error" }).status(401);
+    return res.json({ status: "error", msg: error }).status(400);
   }
 });
 
