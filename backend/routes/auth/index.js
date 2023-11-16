@@ -8,7 +8,7 @@ const router = express.Router();
 let verificationCodes = new Map();
 let verified = new Set([]);
 
-router.route("/verification").get(async (req, res) => {
+router.route("/verification").post(async (req, res) => {
   const re =
     /^[a-zA-Z0-9._-]+@(connect.ust.hk|connect.polyu.hk|@connect.hku.hk)$/;
   if (!req.body.email.match(re)) {
