@@ -2,13 +2,15 @@ import { View, Text } from 'react-native'
 import { Box, Button, ButtonText, FormControl, Heading, InputField, VStack ,Input, HStack} from '@gluestack-ui/themed'
 import React from 'react'
 import { ROUTES } from '../navigator/constant'
+import Icons from '../components/Icons'
 export default function LoginScreen({navigation}) {
   return (
     <Box use="background" style={{flex:1,alignItems:'center',justifyContent:'center'}}>
         
-    <Box style={{height:'75%',width:'85%',padding:10,alignItems:"center"}}>
-      <Heading bold={true} size="3xl">Team Up </Heading>
-      <Heading bold={true} size="3xl" >now!</Heading>
+    <Box style={{height:'80%',width:'85%',padding:10,alignItems:"center"}}>
+      <Icons />
+      <Heading bold={true} size="3xl">Team Up now!</Heading>
+    
       <VStack style={{width:"95%"} } mt={30} space={50}>
         <Box  mb={10}>
         <FormControl >

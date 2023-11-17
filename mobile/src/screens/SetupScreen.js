@@ -1,23 +1,58 @@
 import { Platform, Text } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Image } from 'react-native'
 import { Box, Button, ButtonText, FormControl, Heading, InputField, VStack ,Input, HStack,KeyboardAvoidingView, ScrollView} from '@gluestack-ui/themed'
 import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
 import { useSendVerificationEmailMutation } from '../utils/query/customHook'
 import {login,logOut} from '../utils/reduxStore/reducer'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
+import Icons from '../components/Icons'
 
-export default function SetupScreen() {
+export default function SetupScreen({navigation}) {
     // const state = useSelector((state)=>state)
     const dispatch=useDispatch()
-    const [email, setEmail] = useState('xmu');
+    const [email, setEmail] = useState('');
     // console.log(state)
     const sendEmail = useSendVerificationEmailMutation()
+
+  const [veriCode, setVeriCode] = useState('');
+
+  const [token, setToken] = useState(null);
+
+  const [veriCounter, setVeriCounter] = useState(0);
+  useEffect(()=>{
+let timer=null
+if(veriCounter>0){
+  timer = setTimeout(() => {
+    setVeriCounter((prev) => prev - 1);
+  }, 1000);
+
+  return () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  };
+}
+  },[veriCounter])
     const sendEmailOnPress=()=>{
       sendEmail.mutateAsync(email+"@connect.ust.hk").then((status)=>{
-        console.log("status returned is ",status)
+        console.log("sendEmail success",status)
+        setVeriCounter(60);
+        Alert.alert(
+          'Alert',
+          `Email has been sent to ${email}@connect.ust.hk`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.goBack();
+              },
+            },
+          ],
+        );
       },(err)=>{
-        console.log("there is err",err)
+        console.log("there is err in sending email",err)
       })
     }
   return (
@@ -28,17 +63,20 @@ export default function SetupScreen() {
       // keyboardVerticalOffset={20}
     >
       <ScrollView  style={{ flex: 1,position:"relative" }}>
+     
     <Box  style={{flex:1,alignItems:'center',justifyContent:'center'}}>
        
     <Box  h="90%" width="85%" style={{padding:10,alignItems:"center"}}>
-      <Heading bold={true} size="3xl">Team Up </Heading>
-      <Heading bold={true} size="3xl" >now!</Heading>
+      
+    <Icons /> 
+      <Heading bold={true} size="2xl">Team Up now!</Heading>
+     
       <VStack style={{width:"95%"} } mt={20} space={50}>
       <Text>Verify your University Email</Text>
         <Box  mt={20} mb={10}>
         <FormControl >
           <Input  style={{backgroundColor:"white",borderRadius:10}}    >
-          <InputField placeholder='University Email' type="text" style={{fontSize:20}} />
+          <InputField placeholder='University Email' type="text" style={{fontSize:20}}  onChangeText={setEmail}/>
           </Input>
         
         </FormControl>
@@ -55,8 +93,11 @@ export default function SetupScreen() {
        <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10 ,flex:2}}    mr={10} >
           <InputField  type="suffix" style={{fontSize:20}}  keyboardType="numeric" />
           </Input>
-          <Button   action='primary' style={{flex:1}} onPress={sendEmailOnPress}>
-        <ButtonText fontSize='$xl'>Verify</ButtonText>
+          <Button   action='primary' style={{flex:1}} onPress={sendEmailOnPress}
+          disabled={!email ||  veriCounter > 0}
+          opacity={!email || veriCounter > 0 ? 0.4 : 1}
+          >
+        <ButtonText fontSize='$xl'>{`${veriCounter > 0 ? `(${veriCounter}s)` : 'Verify'}`}</ButtonText>
        </Button>
        </HStack>
        
