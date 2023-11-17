@@ -24,17 +24,25 @@ import {
 
 import {
   Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
+ 
 } from 'react-native/Libraries/NewAppScreen';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import {persistor,store} from './src/utils/reduxStore/index.js'
 import {Provider} from 'react-redux'
 
 import { PersistGate } from 'redux-persist/integration/react';
 import AuthRouting from './src/navigator/AuthNav.js';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      onError: (error) => alert(error.message),
+    },
+    mutations: {
+      onError: (error) => alert(error.message),
+    },
+  },
+});
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -46,6 +54,7 @@ function App() {
   };
 
   return (
+    <QueryClientProvider client={queryClient}>
     <GluestackUIProvider config={config} >
       <NavigationContainer>
     <SafeAreaView style={backgroundStyle} >
@@ -64,6 +73,7 @@ function App() {
     </SafeAreaView>
     </NavigationContainer>
     </GluestackUIProvider>
+    </QueryClientProvider>
   );
 }
 

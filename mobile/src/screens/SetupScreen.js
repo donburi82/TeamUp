@@ -3,13 +3,23 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Box, Button, ButtonText, FormControl, Heading, InputField, VStack ,Input, HStack,KeyboardAvoidingView, ScrollView} from '@gluestack-ui/themed'
 import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
-
+import { useSendVerificationEmailMutation } from '../utils/query/customHook'
 import {login,logOut} from '../utils/reduxStore/reducer'
+import { useState } from 'react'
 
 export default function SetupScreen() {
-    const state = useSelector((state)=>state)
+    // const state = useSelector((state)=>state)
     const dispatch=useDispatch()
-    console.log(state)
+    const [email, setEmail] = useState('xmu');
+    // console.log(state)
+    const sendEmail = useSendVerificationEmailMutation()
+    const sendEmailOnPress=()=>{
+      sendEmail.mutateAsync(email+"@connect.ust.hk").then((status)=>{
+        console.log("status returned is ",status)
+      },(err)=>{
+        console.log("there is err",err)
+      })
+    }
   return (
     
     <KeyboardAvoidingView
@@ -45,7 +55,7 @@ export default function SetupScreen() {
        <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10 ,flex:2}}    mr={10} >
           <InputField  type="suffix" style={{fontSize:20}}  keyboardType="numeric" />
           </Input>
-          <Button   action='primary' style={{flex:1}}>
+          <Button   action='primary' style={{flex:1}} onPress={sendEmailOnPress}>
         <ButtonText fontSize='$xl'>Verify</ButtonText>
        </Button>
        </HStack>
