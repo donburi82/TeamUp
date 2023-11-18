@@ -66,7 +66,7 @@ router.route("/verification").post(async (req, res) => {
   });
 });
 
-router.route("/verify").get(async (req, res) => {
+router.route("/verify").post(async (req, res) => {
   if (verificationCodes.get(req.body.email) == req.body.verificationCode) {
     verificationCodes.delete(req.body.email);
     verified.add(req.body.email);
