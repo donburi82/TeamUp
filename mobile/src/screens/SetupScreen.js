@@ -17,6 +17,8 @@ export default function SetupScreen({navigation}) {
     const sendEmail = useSendVerificationEmailMutation()
 
   const [veriCode, setVeriCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordAgain, setPasswordAgain] = useState('');
 
   const [token, setToken] = useState(null);
   const [isDebouncing, setIsDebouncing] = useState(false);
@@ -100,7 +102,7 @@ if(veriCounter>0){
        </Box>
        <HStack mt={10} style={{alignItems:'top'}}>
        <Input variant='rounded' style={{backgroundColor:"white",borderRadius:10 ,flex:2}}    mr={10} >
-          <InputField  type="suffix" style={{fontSize:20}}  keyboardType="numeric" />
+          <InputField  type="suffix" style={{fontSize:20}}  keyboardType="numeric"  onChangeText={setVeriCode} />
           </Input>
           <Button   action='primary' style={{flex:1}} onPress={sendEmailOnPress}
           disabled={!email ||  veriCounter > 0}
@@ -113,7 +115,7 @@ if(veriCounter>0){
        <Box  mt={10} mb={10}>
         <FormControl >
           <Input  style={{backgroundColor:"white",borderRadius:10}}   >
-          <InputField placeholder='password' type="text" style={{fontSize:20}} />
+          <InputField placeholder='password' type="text" style={{fontSize:20}} onChangeText={setPassword}/>
           </Input>
         
         </FormControl>
@@ -121,7 +123,7 @@ if(veriCounter>0){
         <Box   mb={10}>
         <FormControl >
           <Input  style={{backgroundColor:"white",borderRadius:10}}    >
-          <InputField placeholder='password again' type="text" style={{fontSize:20}} />
+          <InputField placeholder='password again' type="text" style={{fontSize:20}} onChangeText={setPasswordAgain}/>
           </Input>
         
         </FormControl>
