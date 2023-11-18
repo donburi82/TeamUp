@@ -1,6 +1,6 @@
 import { Platform, Text } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { Image } from 'react-native'
+import { Image,Alert } from 'react-native'
 import { Box, Button, ButtonText, FormControl, Heading, InputField, VStack ,Input, HStack,KeyboardAvoidingView, ScrollView} from '@gluestack-ui/themed'
 import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
@@ -19,9 +19,10 @@ export default function SetupScreen({navigation}) {
   const [veriCode, setVeriCode] = useState('');
 
   const [token, setToken] = useState(null);
-
+  const [isDebouncing, setIsDebouncing] = useState(false);
   const [veriCounter, setVeriCounter] = useState(0);
   useEffect(()=>{
+   
 let timer=null
 if(veriCounter>0){
   timer = setTimeout(() => {
@@ -36,25 +37,33 @@ if(veriCounter>0){
 }
   },[veriCounter])
     const sendEmailOnPress=()=>{
-      sendEmail.mutateAsync(email+"@connect.ust.hk").then((status)=>{
-        console.log("sendEmail success",status)
-        setVeriCounter(60);
-        Alert.alert(
-          'Alert',
-          `Email has been sent to ${email}@connect.ust.hk`,
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.goBack();
+      if (!isDebouncing) {
+        setIsDebouncing(true);
+        sendEmail.mutateAsync(email+"@connect.ust.hk").then((status)=>{
+          console.log("sendEmail success",status)
+          setVeriCounter(60);
+          Alert.alert(
+            'Email has been sent',
+            `Email has been sent to ${email}@connect.ust.hk, please take a look at junk also`,
+            [
+              {
+                text: 'OK',
+                
               },
-            },
-          ],
-        );
-      },(err)=>{
-        console.log("there is err in sending email",err)
-      })
+            ],
+          );
+          
+        },(err)=>{
+          console.log("there is err in sending email",err)
+        })
+  
+        // 设置定时器来重置防抖状态
+        setTimeout(() => {
+          setIsDebouncing(false);
+        }, 3000); 
+      
     }
+  }
   return (
     
     <KeyboardAvoidingView
