@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/users");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // req.body{ userId: string}
 router.route("/getInfo").get(async (req, res) => {
@@ -75,6 +81,41 @@ router.route("/updatePassword").patch(async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json({ msg: "fail", error }).status(400);
+  }
+});
+
+router.patch("/profilePic", upload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ status: "fail", msg: "No file uploaded." });
+  }
+  const userId = req.user.userId;
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { profilePic: { data: req.file.buffer, contentType: req.file.minetype } }
+    );
+
+    return res.json({ status: "success" });
+  } catch (error) {
+    return res.json({ status: "error", msg: error });
+  }
+});
+
+router.get("/profilePic/:id", async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ status: "fail", msg: "user not found" });
+    }
+    res.status(200).send({
+      status: "success",
+      data: user.profilePic.data,
+      contentType: user.profilePic.contentType,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", msg: error });
   }
 });
 
