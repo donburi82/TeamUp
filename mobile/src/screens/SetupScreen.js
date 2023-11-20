@@ -22,6 +22,7 @@ import {
   useRegisterEmailMutation,
 } from '../utils/query/customHook';
 import {login, logOut} from '../utils/reduxStore/reducer';
+import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
 import {useState, useEffect} from 'react';
 import Icons from '../components/Icons';
 
@@ -38,7 +39,7 @@ export default function SetupScreen({navigation}) {
   const [passwordAgain, setPasswordAgain] = useState('');
 
   const [token, setToken] = useState(null);
-  const [isDebouncing, setIsDebouncing] = useState(false);
+  // const [isDebouncing, setIsDebouncing] = useState(false);
   const [veriCounter, setVeriCounter] = useState(0);
   useEffect(() => {
     let timer = null;
@@ -54,50 +55,38 @@ export default function SetupScreen({navigation}) {
       };
     }
   }, [veriCounter]);
-  const sendEmailOnPress = () => {
-    if (!isDebouncing) {
-      setIsDebouncing(true);
-      sendEmail.mutateAsync(email + '@connect.ust.hk').then(
-        status => {
-          console.log('sendEmail success', status);
-          setVeriCounter(60);
-          Alert.alert(
-            'Email has been sent',
-            `Email has been sent to ${email}@connect.ust.hk, please take a look at junk also`,
-            [
-              {
-                text: 'OK',
-              },
-            ],
-          );
-        },
-        err => {
-          console.log('there is err in sending email', err);
-        },
+  const sendEmailOnPress = async () => {
+    try {
+      const {status} = await sendEmail.mutateAsync(email + '@connect.ust.hk');
+      console.log('sendEmail success', status);
+      setVeriCounter(60);
+      Alert.alert(
+        'Email has been sent',
+        `Email has been sent to ${email}@connect.ust.hk, please take a look at junk also`,
+        [
+          {
+            text: 'OK',
+          },
+        ],
       );
-
-      // 设置定时器来重置防抖状态
-      setTimeout(() => {
-        setIsDebouncing(false);
-      }, 3000);
+    } catch (err) {
+      console.log('there is err in sending email', err);
     }
   };
-  handleProceed = () => {
+  handleProceed = async () => {
     if (password !== passwordAgain) {
       alert('password and confirm password do not match');
     } else {
       const verifyCodePromise = verifycode.mutateAsync(veriCode);
       const registerPromise = verifyPassword.mutateAsync(email, password);
-      Promise.all([verifyCodePromise, registerPromise])
-        .then(
-          ([value1, value2]) => {
-            alert('horrey, register suceed!');
-          },
-          err => {
-            console.log('one of the promse failed, please retry', err);
-          },
-        )
-        .finally(() => {});
+      try {
+        const [value1, value2] = await Promise.all([
+          verifyCodePromise,
+          registerPromise,
+        ]);
+      } catch (err) {
+        console.log('one of the promse failed, please retry', err);
+      }
     }
   };
   return (
@@ -154,7 +143,7 @@ export default function SetupScreen({navigation}) {
                     onChangeText={setVeriCode}
                   />
                 </Input>
-                <Button
+                {/* <Button
                   action="primary"
                   style={{flex: 1}}
                   onPress={sendEmailOnPress}
@@ -163,7 +152,15 @@ export default function SetupScreen({navigation}) {
                   <ButtonText fontSize="$xl">{`${
                     veriCounter > 0 ? `(${veriCounter}s)` : 'Verify'
                   }`}</ButtonText>
-                </Button>
+                </Button> */}
+                <DebouncedWaitingButton
+                  action="primary"
+                  style={{flex: 1}}
+                  onPress={sendEmailOnPress}
+                  disabled={!email || veriCounter > 0}
+                  opacity={!email || veriCounter > 0 ? 0.4 : 1}
+                  text={`${veriCounter > 0 ? `(${veriCounter}s)` : 'Verify'}`}
+                />
               </HStack>
 
               <Box mt={10} mb={10}>
@@ -190,9 +187,15 @@ export default function SetupScreen({navigation}) {
                   </Input>
                 </FormControl>
               </Box>
-              <Button mt={20} mb={20} onPress={handleProceed}>
+              {/* <Button mt={20} mb={20} onPress={handleProceed}>
                 <ButtonText fontSize="$xl">Proceed</ButtonText>
-              </Button>
+              </Button> */}
+              <DebouncedWaitingButton
+                mt={20}
+                mb={20}
+                onPress={handleProceed}
+                text="proceed"
+              />
             </VStack>
           </Box>
         </Box>
