@@ -34,7 +34,7 @@ router.route("/getInfo").get(async (req, res) => {
       })
       .status(200);
   } catch (error) {
-    res.json({ status: "error", msg: error }).status(400);
+    res.json({ status: "error", msg: error.message }).status(400);
   }
 });
 
@@ -91,14 +91,20 @@ router.patch("/profilePic", upload.single("image"), async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    const user = await User.findOneAndUpdate(
+    const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
-      { profilePic: { data: req.file.buffer, contentType: req.file.minetype } }
+      {
+        $set: {
+          "profilePic.data": req.file.buffer,
+          "profilePic.contentType": req.file.mimetype,
+        },
+      },
+      { new: true } // To return the updated document
     );
 
     return res.json({ status: "success" });
   } catch (error) {
-    return res.json({ status: "error", msg: error });
+    return res.json({ status: "error", msg: error.message });
   }
 });
 
@@ -115,7 +121,7 @@ router.get("/profilePic/:id", async (req, res) => {
       contentType: user.profilePic.contentType,
     });
   } catch (error) {
-    return res.status(500).json({ status: "error", msg: error });
+    return res.status(500).json({ status: "error", msg: error.message });
   }
 });
 
