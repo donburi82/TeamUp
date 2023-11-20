@@ -13,16 +13,12 @@ const UserSchema = new mongoose.Schema({
   profilePic: { data: Buffer, contentType: String },
   name: { type: String, trim: true, default: "anonymous" },
   role: { type: String, enum: ["admin", "user"], default: "user" },
-  gender: { type: String, enum: ["M", "F", "D"], default: "D" },
+  gender: { type: String, enum: ["M", "F"] },
   isFullTime: { type: Boolean, default: true },
   email: {
     type: String,
     unique: true,
     required: [true, "Please provide email"],
-    match: [
-      /^[a-zA-Z0-9._-]+@(connect.ust.hk|connect.polyu.hk|@connect.hku.hk)$/,
-      "Please provide a valid school email",
-    ],
   },
   nationality: String,
   major: String,

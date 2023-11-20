@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const nodemailer = require("nodemailer");
 const User = require("../../models/users");
+const AdminInfo = require("../../models/adminInfo");
 
 const express = require("express");
 const router = express.Router();
@@ -9,8 +10,17 @@ let verificationCodes = new Map();
 let verified = new Set([]);
 
 router.route("/verification").post(async (req, res) => {
-  const re =
-    /^[a-zA-Z0-9._-]+@(connect.ust.hk|connect.polyu.hk|@connect.hku.hk)$/;
+  const adminInfo = await AdminInfo.findOne();
+  domains = adminInfo.WhiteListEmailDomain;
+  // Escape special characters in domain names
+  const escapedDomains = domains.map((domain) =>
+    domain.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  );
+
+  // Create the regular expression pattern
+  const re = new RegExp(`^[a-zA-Z0-9._-]+@(${domains.join("|")})$`);
+  // const re =
+  //   /^[a-zA-Z0-9._-]+@(connect.ust.hk|connect.polyu.hk|@connect.hku.hk)$/;
   if (!req.body.email.match(re)) {
     return res
       .status(400)
@@ -18,7 +28,6 @@ router.route("/verification").post(async (req, res) => {
   }
 
   const user = await User.findOne({ email: req.body.email });
-  console.log(user);
   if (user) {
     return res
       .status(400)
@@ -86,6 +95,7 @@ router.route("/register").post(async (req, res) => {
     const user = await User.create({
       email: req.body.email,
       password: req.body.password,
+      role: req.body.role,
     });
     const token = user.createJWT();
     verified.delete(req.body.email);
@@ -101,7 +111,7 @@ router.route("/register").post(async (req, res) => {
         .json({ status: "error", error: error.name, msg: error.message })
         .status(403);
     } else {
-      res.json({ status: "error", msg: error }).status(400);
+      res.json({ status: "error", msg: error.message }).status(400);
     }
   }
 });
@@ -127,7 +137,7 @@ router.route("/login").post(async (req, res) => {
 
     return res.json({ status: "success", token }).status(200);
   } catch (error) {
-    return res.json({ status: "error", msg: error }).status(400);
+    return res.json({ status: "error", msg: error.nessage }).status(400);
   }
 });
 
