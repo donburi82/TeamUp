@@ -99,7 +99,7 @@ router.route("/register").post(async (req, res) => {
     });
     const token = user.createJWT();
     verified.delete(req.body.email);
-    res.json({ status: "success", msg: "user created", token }).status(201);
+    res.status(201).json({ status: "success", msg: "user created", token });
   } catch (error) {
     if (error.code === 11000) {
       res.status(409).json({
@@ -108,10 +108,10 @@ router.route("/register").post(async (req, res) => {
       });
     } else if (error.name == "ValidationError") {
       res
-        .json({ status: "error", error: error.name, msg: error.message })
-        .status(403);
+        .status(403)
+        .json({ status: "error", error: error.name, msg: error.message });
     } else {
-      res.json({ status: "error", msg: error.message }).status(400);
+      res.status(400).json({ status: "error", msg: error.message });
     }
   }
 });
@@ -135,9 +135,9 @@ router.route("/login").post(async (req, res) => {
 
     const token = user.createJWT();
 
-    return res.json({ status: "success", token }).status(200);
+    return res.status(200).json({ status: "success", token });
   } catch (error) {
-    return res.json({ status: "error", msg: error.nessage }).status(400);
+    return res.status(400).json({ status: "error", msg: error.nessage });
   }
 });
 
