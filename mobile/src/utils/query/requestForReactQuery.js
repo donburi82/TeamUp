@@ -20,7 +20,6 @@ async function request(url, datum, options) {
   const {token} = global.userinfo;
   // console.log(global,token)
   try {
-    console.log('start to send request');
     const res = await axiosServices({
       url,
       data: JSON.stringify(datum),
@@ -30,11 +29,11 @@ async function request(url, datum, options) {
       },
       ...options,
     });
-    // console.log("status code is",res.status)
-    // if (res.status !== 200) {
-    //   console.log("状态码不对啊哥",res.status)
-    //   throw new Error(`${res.data.msg} (${res.status})`);
-    // }
+    console.log('status code is', res.status);
+    if (!res.status.toString().startsWith('2')) {
+      console.log('状态码不对啊哥', res.status);
+      throw new Error(`${res.data.msg} (${res.status})`);
+    }
     return res.data;
   } catch (error) {
     if (error.response && error.response.data) {

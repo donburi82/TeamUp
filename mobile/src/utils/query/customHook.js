@@ -11,9 +11,13 @@ export const useSendVerificationEmailMutation = () => {
 };
 export const useVerifyCodeMutation = () => {
   const url = requestURL.verifyCode;
-  const reqFunc = async verificationCode => {
-    console.log('I am sending request', verificationCode);
-    const res = await request(url, {email: verificationCode});
+  const reqFunc = async ({verificationCode, email}) => {
+    console.log(
+      'I am sending request of auth/verify ',
+      email,
+      verificationCode,
+    );
+    const res = await request(url, {email, verificationCode});
     return res;
   };
   return useMutation(reqFunc, {});
@@ -21,8 +25,8 @@ export const useVerifyCodeMutation = () => {
 
 export const useRegisterEmailMutation = () => {
   const url = requestURL.register;
-  const reqFunc = async (email, password) => {
-    console.log('I am sending request', email, password);
+  const reqFunc = async ({email, password}) => {
+    console.log('I am sending request register', email, password);
     const res = await request(url, {email, password});
     return res;
   };

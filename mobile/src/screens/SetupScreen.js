@@ -77,13 +77,24 @@ export default function SetupScreen({navigation}) {
     if (password !== passwordAgain) {
       alert('password and confirm password do not match');
     } else {
-      const verifyCodePromise = verifycode.mutateAsync(veriCode);
-      const registerPromise = verifyPassword.mutateAsync(email, password);
+      const verifyCodePromise = verifycode.mutateAsync(
+        {verificationCode: veriCode, email: email + '@connect.ust.hk'}, // 好像只能这样传参！
+      );
+
+      const registerPromise = verifyPassword.mutateAsync({
+        email: email + '@connect.ust.hk',
+        password,
+      });
       try {
-        const [value1, value2] = await Promise.all([
-          verifyCodePromise,
-          registerPromise,
-        ]);
+        const _ = await verifyCodePromise;
+        console.log('first promise returned value', _);
+        const value2 = await registerPromise;
+        console.log('value2 is ', value2);
+        const {token} = value2;
+        console.log('token is', token);
+        dispatch(login({token}));
+
+        // alert('congratulations, you have sucessfully registered');
       } catch (err) {
         console.log('one of the promse failed, please retry', err);
       }
@@ -193,6 +204,10 @@ export default function SetupScreen({navigation}) {
               <DebouncedWaitingButton
                 mt={20}
                 mb={20}
+                disabled={!email || !veriCode || !password || !passwordAgain}
+                opacity={
+                  !email || !veriCode || !password || !passwordAgain ? 0.4 : 1
+                }
                 onPress={handleProceed}
                 text="proceed"
               />

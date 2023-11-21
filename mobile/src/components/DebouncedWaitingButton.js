@@ -4,7 +4,7 @@ import {Button, ButtonText, ButtonSpinner} from '@gluestack-ui/themed';
 export default function DebouncedWaitingButton(props) {
   let options = {...props};
   let {onPress: handle, text} = options;
-  delete options.handle;
+  delete options.onPress;
   let [loading, setLoading] = useState(false);
   const clickHandle = async () => {
     setLoading(true);
