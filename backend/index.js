@@ -19,7 +19,7 @@ const adminAuth = require("./middleware/admin/index.js");
 app.use(express.json());
 app.use(cors());
 app.use("/auth", authRoute);
-app.use("/userBasicInfo", auth, adminAuth, userBasicInfoRoute);
+app.use("/userBasicInfo", auth, userBasicInfoRoute);
 app.use("/preference", groupPreference);
 app.use("/admin", auth, adminAuth, adminRoute);
 
