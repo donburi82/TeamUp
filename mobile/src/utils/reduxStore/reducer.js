@@ -4,21 +4,21 @@ import {combineReducers} from '@reduxjs/toolkit';
 const globalSlice = createSlice({
   name: 'global',
   initialState: {
-    userinfo: {
+    userInfo: {
       isAuthed: false,
     },
   },
 
   reducers: {
     login: (state, action) => {
-      state.userinfo = {
-        ...state.userinfo,
+      state.userInfo = {
+        ...state.userInfo,
         ...action.payload,
         isAuthed: true,
       };
     },
     logOut: state => {
-      state.userinfo = {
+      state.userInfo = {
         isAuthed: false,
       };
     },

@@ -30,7 +30,7 @@ export default function SetupScreen({navigation}) {
   // const state = useSelector((state)=>state)
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
-  // console.log(state)
+
   const sendEmail = useSendVerificationEmailMutation();
   const verifycode = useVerifyCodeMutation();
   const verifyPassword = useRegisterEmailMutation();
@@ -58,7 +58,7 @@ export default function SetupScreen({navigation}) {
   const sendEmailOnPress = async () => {
     try {
       const {status} = await sendEmail.mutateAsync(email + '@connect.ust.hk');
-      console.log('sendEmail success', status);
+
       setVeriCounter(60);
       Alert.alert(
         'Email has been sent',
@@ -94,11 +94,11 @@ export default function SetupScreen({navigation}) {
           email: email + '@connect.ust.hk',
           password,
         });
-        console.log('first promise returned value', _);
+
         const value2 = await registerPromise;
-        console.log('value2 is ', value2);
+
         const {token} = value2;
-        console.log('token is', token);
+
         dispatch(login({token}));
 
         // alert('congratulations, you have sucessfully registered');

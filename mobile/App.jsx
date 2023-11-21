@@ -6,40 +6,27 @@
  */
 
 import React from 'react';
-import {  GluestackUIProvider, Text } from "@gluestack-ui/themed"
-import { NavigationContainer } from '@react-navigation/native';
-import { config } from "./config/gluestack-ui.config"
+import {GluestackUIProvider, Text} from '@gluestack-ui/themed';
+import {NavigationContainer} from '@react-navigation/native';
+import {config} from './config/gluestack-ui.config';
 
+import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
 
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {QueryClient, QueryClientProvider} from 'react-query';
 
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
- 
-} from 'react-native/Libraries/NewAppScreen';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import {persistor,store} from './src/utils/reduxStore/index.js'
-import {Provider} from 'react-redux'
-
-import { PersistGate } from 'redux-persist/integration/react';
 import AuthRouting from './src/navigator/AuthNav.js';
+import HomeRouting from './src/navigator/HomeNav';
+import {useMemo} from 'react';
+import {useSelector} from 'react-redux';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      onError: (error) => alert(error.message),
+      onError: error => alert(error.message),
     },
     mutations: {
-      onError: (error) => alert(error.message),
+      onError: error => alert(error.message),
     },
   },
 });
@@ -49,33 +36,36 @@ function App() {
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-    flex:1,
-   
+    flex: 1,
   };
+  const userInfo = useSelector(state => state.userInfo);
+
+  const Child = useMemo(() => {
+    // return <HomeRouting />;
+    console.log(userInfo);
+    if (userInfo.isAuthed) {
+      console.log('渲染home捏');
+      return <HomeRouting />;
+    }
+    return <AuthRouting />;
+  }, [userInfo]);
 
   return (
     <QueryClientProvider client={queryClient}>
-    <GluestackUIProvider config={config} >
-      <NavigationContainer>
-    <SafeAreaView style={backgroundStyle} >
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor} >
+      <GluestackUIProvider config={config}>
+        <NavigationContainer>
+          <SafeAreaView style={backgroundStyle}>
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+              backgroundColor={backgroundStyle.backgroundColor}
+            />
 
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
- 
-  
-     <AuthRouting />
-        </PersistGate>
-        </Provider>
-    </SafeAreaView>
-    </NavigationContainer>
-    </GluestackUIProvider>
+            {Child}
+          </SafeAreaView>
+        </NavigationContainer>
+      </GluestackUIProvider>
     </QueryClientProvider>
   );
 }
-
 
 export default App;

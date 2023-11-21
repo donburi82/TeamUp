@@ -17,9 +17,9 @@ const requestURL = {
 
 async function request(url, datum, options) {
   const global = store.getState();
-  // console.log(store.getState())
-  const {token} = global.userinfo;
-  // console.log(global,token)
+
+  const {token} = global.userInfo;
+
   try {
     const res = await axiosServices({
       url,

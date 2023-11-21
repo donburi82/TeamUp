@@ -7,7 +7,7 @@ import logger from 'redux-logger';
 const persistConfig = {
   key: 'global',
   storage: AsyncStorage,
-  whitelist: ['global'],
+  // whitelist: ['global'],
 };
 
 const persistedReducer = persistReducer(persistConfig, globalReducer);
