@@ -5,7 +5,9 @@ const auth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer")) {
-    return res.json({ msg: "Authentication invalid" }).status(401);
+    return res
+      .status(401)
+      .json({ status: "fail", msg: "Authentication invalid" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -15,7 +17,9 @@ const auth = async (req, res, next) => {
     req.user = { userId: payload.userId, role: payload.role };
     next();
   } catch (error) {
-    return res.json({ msg: "Authentication invalid" }).status(401);
+    return res
+      .status(401)
+      .json({ status: "fail", msg: "Authentication invalid" });
   }
 };
 

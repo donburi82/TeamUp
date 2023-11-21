@@ -15,26 +15,24 @@ router.route("/getInfo").get(async (req, res) => {
     const userInfo = await User.findOne({ _id: userId });
     if (!userInfo) {
       return res
-        .json({ status: "fail", msg: "user doesn't exist" })
-        .status(400);
+        .status(400)
+        .json({ status: "fail", msg: "user doesn't exist" });
     }
-    res
-      .json({
-        status: "success",
-        userInfo: {
-          userId: userInfo._id,
-          email: userInfo.email,
-          name: userInfo?.name,
-          gender: userInfo?.gender,
-          isFullTime: userInfo?.isFullTime,
-          nationality: userInfo?.nationality,
-          major: userInfo?.major,
-          year: userInfo?.year,
-        },
-      })
-      .status(200);
+    res.status(200).json({
+      status: "success",
+      userInfo: {
+        userId: userInfo._id,
+        email: userInfo.email,
+        name: userInfo?.name,
+        gender: userInfo?.gender,
+        isFullTime: userInfo?.isFullTime,
+        nationality: userInfo?.nationality,
+        major: userInfo?.major,
+        year: userInfo?.year,
+      },
+    });
   } catch (error) {
-    res.json({ status: "error", msg: error }).status(400);
+    res.status(400).json({ status: "error", msg: error.message });
   }
 });
 
@@ -55,10 +53,10 @@ router.route("/updateInfo").patch(async (req, res) => {
         year: info?.year,
       }
     );
-    res.json({ status: "success" }).status(200);
+    res.status(200).json({ status: "success" });
   } catch (error) {
     console.log(error);
-    res.json({ status: "error", error }).status(400);
+    res.status(400).json({ status: "error", error });
   }
 });
 
@@ -69,18 +67,18 @@ router.route("/updatePassword").patch(async (req, res) => {
   try {
     const user = await User.findOne({ _id: userId });
     if (user == null) {
-      return res.send({ status: "fail", msg: "user don't exist" }).status(400);
+      return res.status(400).send({ status: "fail", msg: "user don't exist" });
     }
     if (await user.comparePassword(pre)) {
       user.password = cur;
       await user.save();
-      res.json({ status: "success" }).status(200);
+      res.status(200).json({ status: "success" });
     } else {
-      res.json({ status: "fail", msg: "incorrect credentials" }).status(401);
+      res.status(401).json({ status: "fail", msg: "incorrect credentials" });
     }
   } catch (error) {
     console.log(error);
-    res.json({ msg: "fail", error }).status(400);
+    res.status(400).json({ msg: "fail", error });
   }
 });
 
@@ -91,14 +89,20 @@ router.patch("/profilePic", upload.single("image"), async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    const user = await User.findOneAndUpdate(
+    const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
-      { profilePic: { data: req.file.buffer, contentType: req.file.minetype } }
+      {
+        $set: {
+          "profilePic.data": req.file.buffer,
+          "profilePic.contentType": req.file.mimetype,
+        },
+      },
+      { new: true } // To return the updated document
     );
 
     return res.json({ status: "success" });
   } catch (error) {
-    return res.json({ status: "error", msg: error });
+    return res.json({ status: "error", msg: error.message });
   }
 });
 
@@ -115,7 +119,7 @@ router.get("/profilePic/:id", async (req, res) => {
       contentType: user.profilePic.contentType,
     });
   } catch (error) {
-    return res.status(500).json({ status: "error", msg: error });
+    return res.status(500).json({ status: "error", msg: error.message });
   }
 });
 
