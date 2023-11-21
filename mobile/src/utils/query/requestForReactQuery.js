@@ -1,11 +1,12 @@
 import axios from 'axios';
 import {store} from '../reduxStore';
 
-const BASE_URL = 'http://129.105.10.100:3000/';
+const BASE_URL = 'http://129.105.10.228:3000/';
 
 const axiosServices = axios.create({
   baseURL: BASE_URL,
   method: 'post',
+  timeout: 3000,
 });
 
 const requestURL = {

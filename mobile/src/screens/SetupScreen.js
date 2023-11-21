@@ -76,17 +76,24 @@ export default function SetupScreen({navigation}) {
   handleProceed = async () => {
     if (password !== passwordAgain) {
       alert('password and confirm password do not match');
-    } else {
-      const verifyCodePromise = verifycode.mutateAsync(
-        {verificationCode: veriCode, email: email + '@connect.ust.hk'}, // 好像只能这样传参！
-      );
-
-      const registerPromise = verifyPassword.mutateAsync({
-        email: email + '@connect.ust.hk',
+    } else if (
+      !/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/.test(
         password,
-      });
+      )
+    ) {
+      alert(
+        'Password should contain at least 8 character, one number, one lowercase and one uppercase letter',
+      );
+    } else {
       try {
+        const verifyCodePromise = verifycode.mutateAsync(
+          {verificationCode: veriCode, email: email + '@connect.ust.hk'}, // 好像只能这样传参！
+        );
         const _ = await verifyCodePromise;
+        const registerPromise = verifyPassword.mutateAsync({
+          email: email + '@connect.ust.hk',
+          password,
+        });
         console.log('first promise returned value', _);
         const value2 = await registerPromise;
         console.log('value2 is ', value2);
