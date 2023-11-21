@@ -6,8 +6,8 @@ const auth = async (req, res, next) => {
 
   if (!authHeader || !authHeader.startsWith("Bearer")) {
     return res
-      .json({ status: "fail", msg: "Authentication invalid" })
-      .status(401);
+      .status(401)
+      .json({ status: "fail", msg: "Authentication invalid" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -18,8 +18,8 @@ const auth = async (req, res, next) => {
     next();
   } catch (error) {
     return res
-      .json({ status: "fail", msg: "Authentication invalid" })
-      .status(401);
+      .status(401)
+      .json({ status: "fail", msg: "Authentication invalid" });
   }
 };
 

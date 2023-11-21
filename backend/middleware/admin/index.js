@@ -5,13 +5,13 @@ const adminAuth = async (req, res, next) => {
       next();
     } else {
       return res
-        .json({ status: "fail", msg: "Authentication invalid" })
-        .status(401);
+        .status(401)
+        .json({ status: "fail", msg: "Authentication invalid" });
     }
   } catch (error) {
     return res
-      .json({ status: "fail", msg: "Authentication invalid" })
-      .status(401);
+      .status(401)
+      .json({ status: "fail", msg: "Authentication invalid" });
   }
 };
 
