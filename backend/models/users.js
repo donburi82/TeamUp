@@ -32,6 +32,7 @@ const UserSchema = new mongoose.Schema({
     ],
   },
   groupPreferences: [groupPreferenceSchema],
+  socketId: String,
 });
 
 UserSchema.pre("save", async function (next) {
