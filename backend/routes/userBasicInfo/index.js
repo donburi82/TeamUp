@@ -1,7 +1,126 @@
 const express = require("express");
 const router = express.Router();
+const User = require("../../models/users");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // req.body{ userId: string}
-router.route("/getUserInfo").get(async (req, res) => {});
+router.route("/getInfo").get(async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const userInfo = await User.findOne({ _id: userId });
+    if (!userInfo) {
+      return res
+        .status(400)
+        .json({ status: "fail", msg: "user doesn't exist" });
+    }
+    res.status(200).json({
+      status: "success",
+      userInfo: {
+        userId: userInfo._id,
+        email: userInfo.email,
+        name: userInfo?.name,
+        gender: userInfo?.gender,
+        isFullTime: userInfo?.isFullTime,
+        nationality: userInfo?.nationality,
+        major: userInfo?.major,
+        year: userInfo?.year,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", msg: error.message });
+  }
+});
+
+// req.body{name: string}
+router.route("/updateInfo").patch(async (req, res) => {
+  const userId = req.user.userId;
+  const info = req.body;
+  try {
+    await User.updateOne(
+      { _id: userId },
+      {
+        name: info?.name,
+        isFullTime: info?.isFullTime,
+        gender: info?.gender,
+        isFullTime: info?.isFullTime,
+        nationality: info?.nationality,
+        major: info?.major,
+        year: info?.year,
+      }
+    );
+    res.status(200).json({ status: "success" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: "error", error });
+  }
+});
+
+// req.body{pre: string, cur: string}
+router.route("/updatePassword").patch(async (req, res) => {
+  const { pre, cur } = req.body;
+  const userId = req.user.userId;
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (user == null) {
+      return res.status(400).send({ status: "fail", msg: "user don't exist" });
+    }
+    if (await user.comparePassword(pre)) {
+      user.password = cur;
+      await user.save();
+      res.status(200).json({ status: "success" });
+    } else {
+      res.status(401).json({ status: "fail", msg: "incorrect credentials" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ msg: "fail", error });
+  }
+});
+
+router.patch("/profilePic", upload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ status: "fail", msg: "No file uploaded." });
+  }
+  const userId = req.user.userId;
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $set: {
+          "profilePic.data": req.file.buffer,
+          "profilePic.contentType": req.file.mimetype,
+        },
+      },
+      { new: true } // To return the updated document
+    );
+
+    return res.json({ status: "success" });
+  } catch (error) {
+    return res.json({ status: "error", msg: error.message });
+  }
+});
+
+router.get("/profilePic/:id", async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ status: "fail", msg: "user not found" });
+    }
+    res.status(200).send({
+      status: "success",
+      data: user.profilePic.data,
+      contentType: user.profilePic.contentType,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", msg: error.message });
+  }
+});
 
 module.exports = router;
