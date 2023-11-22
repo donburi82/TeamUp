@@ -21,6 +21,7 @@ import {
   useVerifyCodeMutation,
   useRegisterEmailMutation,
 } from '../utils/query/customHook';
+import {ROUTES} from '../navigator/constant';
 import {login, logOut} from '../utils/reduxStore/reducer';
 import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
 import {useState, useEffect} from 'react';
@@ -97,10 +98,7 @@ export default function SetupScreen({navigation}) {
 
         const value2 = await registerPromise;
 
-        const {token} = value2;
-
-        dispatch(login({token}));
-
+        navigation.navigate(ROUTES.INFOFILLING);
         // alert('congratulations, you have sucessfully registered');
       } catch (err) {
         console.log('one of the promse failed, please retry', err);

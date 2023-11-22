@@ -5,14 +5,14 @@ import {useDispatch} from 'react-redux';
 import {logOut} from '../utils/reduxStore/reducer';
 
 export default function Home() {
-  const dispatch = useDispatch;
-  const logOut = () => {
+  const dispatch = useDispatch();
+  const logout = () => {
     dispatch(logOut());
   };
   return (
     <View>
       <Text>this is a empty home</Text>
-      <Button onPress={logOut}>
+      <Button onPress={logout}>
         <ButtonText>log out</ButtonText>
       </Button>
     </View>

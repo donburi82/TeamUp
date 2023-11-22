@@ -1,5 +1,7 @@
 import {request, requestURL} from './requestForReactQuery';
 import {useMutation} from 'react-query';
+import {useDispatch} from 'react-redux';
+import {login, logOut} from '../reduxStore/reducer';
 export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
@@ -24,11 +26,30 @@ export const useVerifyCodeMutation = () => {
 };
 
 export const useRegisterEmailMutation = () => {
+  const dispatch = useDispatch();
   const url = requestURL.register;
   const reqFunc = async ({email, password}) => {
     console.log('I am sending request register', email, password);
     const res = await request(url, {email, password});
     return res;
   };
-  return useMutation(reqFunc, {});
+  return useMutation(reqFunc, {
+    onSuccess: ({token}) => {
+      dispatch(login({token}));
+    },
+  });
+};
+export const useLoginMutation = () => {
+  const dispatch = useDispatch();
+  const url = requestURL.login;
+  const reqFunc = async ({email, password}) => {
+    console.log('I am sending request login', email, password);
+    const res = await request(url, {email, password});
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: ({token}) => {
+      dispatch(login({token}));
+    },
+  });
 };
