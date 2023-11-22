@@ -7,13 +7,13 @@ const courseProjectSchema = new mongoose.Schema({
     courseCode: String,
     projectInterest: String,
     skillset: [String],
-    targetGrade: { type: String, enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"]},
+    targetGrade: { type: String, enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"], default: "A+" },
     experience: String,
 });
 
 const courseStudySchema = new mongoose.Schema({
     courseCode: String,
-    targetGrade: { type: String, enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"]},
+    targetGrade: { type: String, enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"], default: "A+" },
     preferredLanguage: String,
 });
 
