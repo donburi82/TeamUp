@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const User = require("./models/users.js");
+const User = require("./models/user.js");
 const { DBconnection } = require("./db/dbconnection");
 const authRoute = require("./routes/auth/index.js");
 const groupPreference = require("./routes/group-preference/index.js");
