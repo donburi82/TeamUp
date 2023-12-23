@@ -1,9 +1,14 @@
 const ObjectId = require('mongodb').ObjectId;
-const { groupPreferenceSchema, GroupPreference, CourseProject, CourseStudy, Extracurricular } = require("../models/preferences");
+const { User, groupPreferenceSchema, GroupPreference, CourseProject, CourseStudy, Extracurricular } = require("../models/user");
 
-async function getCourseProjectPreference() {
+async function getCourseProjectPreference(userId) {
     try {
-        const preferences = await CourseProject.find().exec();
+        const user = await User.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const preferences = user.groupPreferences.filter(preference => preference.__t.toString()==="CourseProject");
         console.log(preferences);
         return preferences;
     } catch (error) {
@@ -11,9 +16,14 @@ async function getCourseProjectPreference() {
     }
 }
 
-async function createCourseProjectPreference(courseCode, projectInterest, skillset, targetGrade, experience) {
+async function createCourseProjectPreference(userId, courseCode, projectInterest, skillset, targetGrade, experience) {
     try {
         // need param checking
+        const user = await User.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
         const courseProjectPreference = await CourseProject({
             courseCode: courseCode,
             projectInterest: projectInterest,
@@ -21,15 +31,25 @@ async function createCourseProjectPreference(courseCode, projectInterest, skills
             targetGrade: targetGrade,
             experience: experience,
         });
-        return await courseProjectPreference.save();
+
+        user.groupPreferences.push(courseProjectPreference);
+
+        return await user.save();
     } catch (error) {
         throw error;
     }
 }
 
-async function deleteCourseProjectPreference(id) {
+async function deleteCourseProjectPreference(userId, preferenceId) {
     try {
-        return await CourseProject.deleteOne({ _id: new ObjectId(id) }).exec();
+        const user = await User.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        user.groupPreferences = user.groupPreferences.filter(preference => preference._id.toString()!==preferenceId);
+        
+        return await user.save();
     } catch (error) {
         throw error;
     }

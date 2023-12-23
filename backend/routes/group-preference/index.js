@@ -11,7 +11,7 @@ router.get("/hello", (req, res) => {
 
 router.get("/courseproject", async (req, res) => {
     try {
-        const preferences = await getCourseProjectPreference();
+        const preferences = await getCourseProjectPreference(req.body.userId);
         return res.status(200).json({ success: true, data: preferences });
     } catch (error) {
         console.log(error);
@@ -22,7 +22,7 @@ router.get("/courseproject", async (req, res) => {
 router.post("/courseproject", async (req, res) => {
     try {
         console.log(req.body);
-        await createCourseProjectPreference(req.body.courseCode, req.body.projectInterest, req.body.skillset, req.body.targetGrade, req.body.experience);
+        await createCourseProjectPreference(req.body.userId, req.body.courseCode, req.body.projectInterest, req.body.skillset, req.body.targetGrade, req.body.experience);
         return res.status(200).json({ success: true });
     } catch (error) {
         console.log(error);
@@ -32,8 +32,7 @@ router.post("/courseproject", async (req, res) => {
 
 router.delete("/courseproject", async (req, res) => {
     try {
-        const id = req.query.id;
-        const result = await deleteCourseProjectPreference(id);
+        const result = await deleteCourseProjectPreference(req.body.userId, req.body.preferenceId);
         console.log(result);
         return res.status(200).json({ success: true });
     } catch (error) {
