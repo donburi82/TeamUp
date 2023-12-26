@@ -82,12 +82,40 @@ router.route("/updatePassword").patch(async (req, res) => {
   }
 });
 
-router.patch("/profilePic", upload.single("image"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ status: "fail", msg: "No file uploaded." });
-  }
+// router.patch("/profilePic", upload.single("image"), async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ status: "fail", msg: "No file uploaded." });
+//   }
+//   const userId = req.user.userId;
+//   if (req.file.size > 256000000) {
+//     return res
+//       .status(400)
+//       .json({ status: "fail", msg: "file size exceed limit" });
+//   }
+//   try {
+//     const updatedUser = await User.findOneAndUpdate(
+//       { _id: userId },
+//       {
+//         $set: {
+//           "profilePic.data": req.file.buffer,
+//           "profilePic.contentType": req.file.mimetype,
+//         },
+//       },
+//       { new: true } // To return the updated document
+//     );
+
+//     return res.status(200).json({ status: "success" });
+//   } catch (error) {
+//     return res.status(400).json({ status: "error", msg: error.message });
+//   }
+// });
+
+router.patch("/profilePic", async (req, res) => {
+  const { image, type } = req.body;
   const userId = req.user.userId;
-  if (req.file.size > 256000000) {
+  const buffer = Buffer.from(image, "base64");
+
+  if (Buffer.byteLength(buffer) > 256000000) {
     return res
       .status(400)
       .json({ status: "fail", msg: "file size exceed limit" });
@@ -97,11 +125,10 @@ router.patch("/profilePic", upload.single("image"), async (req, res) => {
       { _id: userId },
       {
         $set: {
-          "profilePic.data": req.file.buffer,
-          "profilePic.contentType": req.file.mimetype,
+          "profilePic.data": buffer,
+          "profilePic.contentType": type,
         },
-      },
-      { new: true } // To return the updated document
+      }
     );
 
     return res.status(200).json({ status: "success" });
