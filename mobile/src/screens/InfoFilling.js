@@ -10,6 +10,7 @@ import {StyleSheet} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
+import RNFS from 'react-native-fs';
 import mime from 'mime';
 import {
   Image,
@@ -60,7 +61,7 @@ export default function InfoFilling() {
     {key: '9', value: 'Other'},
   ];
 
-  const [formData, setFormData] = React.useState(new FormData());
+  const [formData, setFormData] = React.useState(null);
   const [firstname, setFirstName] = React.useState('');
   const [lastname, setLastName] = React.useState('');
   const [gender, setGender] = React.useState(dataGender[0].value);
@@ -92,15 +93,17 @@ export default function InfoFilling() {
         let imageUri = response.uri || response.assets?.[0]?.uri;
         console.log(response.type, mime.getType(imageUri));
         setSelectedImage(imageUri);
-        let newformData = new FormData();
-        newformData.append('image', {
-          uri: response.uri,
-          // name: 'image.jpg', // 可以根据需要设置文件名
-          name: imageUri.split('/').pop(),
-          // type: response.type, // 使用 react-native-image-picker 提供的类型
-          type: mime.getType(imageUri),
-        });
-        setFormData(newformData);
+        const base64Image = await RNFS.readFile(imageUri, 'base64');
+        setFormData(base64Image);
+        // let newformData = new FormData();
+        // newformData.append('image', {
+        //   uri: response.uri,
+        //   // name: 'image.jpg', // 可以根据需要设置文件名
+        //   name: imageUri.split('/').pop(),
+        //   // type: response.type, // 使用 react-native-image-picker 提供的类型
+        //   type: mime.getType(imageUri),
+        // });
+        // setFormData(newformData);
       }
     });
   };
@@ -232,44 +235,32 @@ export default function InfoFilling() {
               mb={20}
               disabled={!firstname || !lastname || !imageUri}
               opacity={!firstname || !lastname || !imageUri ? 0.4 : 1}
-              onPress={() => {
-                // fetch('http://10.0.2.2:3000/userBasicInfo/profilePic').then(
-                //   () => {},
-                //   () => {},
-                // );
-                // const updateIndoPromise = updateInfo.mutateAsync({
-                //   name: firstname + ' ' + lastname,
-                //   isFullTime,
-                //   gender,
-                //   nationality: origin,
-                //   major,
-                //   year,
-                // });
-                console.log('about to send picture', formData);
+              onPress={async () => {
+                const updateIndoPromise = updateInfo.mutateAsync({
+                  name: firstname + ' ' + lastname,
+                  isFullTime,
+                  gender,
+                  nationality: origin,
+                  major,
+                  year,
+                });
+
                 const uploadImagePromise = request(
                   requestURL.profilePic,
-                  formData,
+                  {image: formData, type: mime.getType(imageUri)},
                   {method: 'patch'},
-                  // {'Content-Type': 'multipart/form-data'},
-                  null,
-                  false,
-                ).then(
-                  () => {},
+                );
+                // console.log('here', uploadImagePromise);
+                Promise.all([uploadImagePromise, updateIndoPromise]).then(
+                  () => {
+                    console.log('update info and pictures successful');
+
+                    dispatch(update());
+                  },
                   err => {
-                    console.log('err', err);
+                    console.log(err);
                   },
                 );
-                console.log('here', uploadImagePromise);
-                // Promise.all([uploadImagePromise, updateIndoPromise]).then(
-                //   () => {
-                //     console.log('update info and pictures successful');
-
-                //     dispatch(update());
-                //   },
-                //   err => {
-                //     console.log(err);
-                //   },
-                // );
               }}
               text="Sign Up"
             />

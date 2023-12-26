@@ -19,7 +19,7 @@ const requestURL = {
   profilePic: 'userBasicInfo/profilePic',
 };
 
-async function request(url, datum, options, header, stringify = true) {
+async function request(url, datum, options) {
   const global = store.getState();
 
   const {token} = global.userInfo;
@@ -28,12 +28,11 @@ async function request(url, datum, options, header, stringify = true) {
     const res = await axiosServices({
       url,
       // data: stringify ? JSON.stringify(datum) : datum,
-      data: stringify ? JSON.stringify(datum) : datum,
+      data: JSON.stringify(datum),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
         // 'Content-Type': 'multipart/form-data',
-        ...header,
       },
 
       ...options,
