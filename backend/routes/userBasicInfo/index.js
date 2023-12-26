@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../../models/user");
+const { User } = require("../../models/user");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -9,8 +9,8 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // req.body{ userId: string}
-router.route("/getInfo").get(async (req, res) => {
-  const userId = req.body.userId;
+router.route("/getInfo/:userId").get(async (req, res) => {
+  const userId = req.params.userId;
   try {
     const userInfo = await User.findOne({ _id: userId });
     if (!userInfo) {
@@ -87,7 +87,11 @@ router.patch("/profilePic", upload.single("image"), async (req, res) => {
     return res.status(400).json({ status: "fail", msg: "No file uploaded." });
   }
   const userId = req.user.userId;
-
+  if (req.file.size > 256000000) {
+    return res
+      .status(400)
+      .json({ status: "fail", msg: "file size exceed limit" });
+  }
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
@@ -100,9 +104,9 @@ router.patch("/profilePic", upload.single("image"), async (req, res) => {
       { new: true } // To return the updated document
     );
 
-    return res.json({ status: "success" });
+    return res.status(200).json({ status: "success" });
   } catch (error) {
-    return res.json({ status: "error", msg: error.message });
+    return res.status(400).json({ status: "error", msg: error.message });
   }
 });
 

@@ -9,22 +9,17 @@ router
     try {
       const adminInfo = await AdminInfo.findOne();
 
-      if (!adminInfo) {
-        const newAdminInfo = new AdminInfo({
-          WhiteListEmailDomain: [req.body.domain],
-          courseList: [],
-        });
-        await newAdminInfo.save();
-        return res.status(200).send({
-          status: "success",
-          data: adminInfo.WhiteListEmailDomain,
-        });
-      } else {
+      if (!adminInfo.WhiteListEmailDomain.includes(req.body.domain)) {
         adminInfo.WhiteListEmailDomain.push(req.body.domain);
         await adminInfo.save();
         return res.status(200).send({
           status: "success",
           data: adminInfo.WhiteListEmailDomain,
+        });
+      } else {
+        return res.status(400).send({
+          status: "fail",
+          msg: "domain already exist",
         });
       }
     } catch (error) {
