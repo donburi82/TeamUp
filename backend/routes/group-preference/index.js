@@ -1,17 +1,17 @@
 const express = require("express");
 const router = express.Router();
 
-const { getCourseProjectPreference, createCourseProjectPreference, deleteCourseProjectPreference,
-    getCourseStudyPreference, createCourseStudyPreference, deleteCourseStudyPreference,
-    getExtracurricularPreference, createExtracurricularPreference, deleteExtracurricularPreference } = require("../../helpers/preference");
+const {
+    getGroupPreferences,
+    createCourseProjectPreference, createCourseStudyPreference, createExtracurricularPreference,
+    deleteGroupPreference
+} = require("../../helpers/preference");
 
-router.get("/hello", (req, res) => {
-    res.send("<h1>Hello world</h1>");
-});
-
-router.get("/courseproject", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
-        const preferences = await getCourseProjectPreference(req.body.userId);
+        const { userId, groupType } = req.query;
+        const preferences = await getGroupPreferences(userId, groupType);
+        console.log(preferences);
         return res.status(200).json({ success: true, data: preferences });
     } catch (error) {
         console.log(error);
@@ -30,54 +30,11 @@ router.post("/courseproject", async (req, res) => {
     }
 });
 
-router.delete("/courseproject", async (req, res) => {
-    try {
-        const result = await deleteCourseProjectPreference(req.body.userId, req.body.preferenceId);
-        console.log(result);
-        return res.status(200).json({ success: true });
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({ success: false });
-    }
-});
-
-router.get("/coursestudy", async (req, res) => {
-    try {
-        const preferences = await getCourseStudyPreference();
-        return res.status(200).json({ success: true, data: preferences });
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({ success: false });
-    }
-});
-
 router.post("/coursestudy", async (req, res) => {
     try {
         console.log(req.body);
-        await createCourseStudyPreference(req.body.courseCode, req.body.targetGrade, req.body.preferredLanguage);
+        await createCourseStudyPreference(req.body.userId, req.body.courseCode, req.body.targetGrade, req.body.preferredLanguage);
         return res.status(200).json({ success: true });
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({ success: false });
-    }
-});
-
-router.delete("/coursestudy", async (req, res) => {
-    try {
-        const id = req.query.id;
-        const result = await deleteCourseStudyPreference(id);
-        console.log(result);
-        return res.status(200).json({ success: true });
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({ success: false });
-    }
-});
-
-router.get("/extracurricular", async (req, res) => {
-    try {
-        const preferences = await getExtracurricularPreference();
-        return res.status(200).json({ success: true, data: preferences });
     } catch (error) {
         console.log(error);
         return res.status(401).json({ success: false });
@@ -87,7 +44,7 @@ router.get("/extracurricular", async (req, res) => {
 router.post("/extracurricular", async (req, res) => {
     try {
         console.log(req.body);
-        await createExtracurricularPreference(req.body.projectInterest, req.body.skillset, req.body.experience, req.body.preferredLanguage);
+        await createExtracurricularPreference(req.body.userId, req.body.projectInterest, req.body.skillset, req.body.experience, req.body.preferredLanguage);
         return res.status(200).json({ success: true });
     } catch (error) {
         console.log(error);
@@ -95,10 +52,10 @@ router.post("/extracurricular", async (req, res) => {
     }
 });
 
-router.delete("/extracurricular", async (req, res) => {
+router.delete("/", async (req, res) => {
     try {
-        const id = req.query.id;
-        const result = await deleteExtracurricularPreference(id);
+        const { userId, preferenceId } = req.query;
+        const result = await deleteGroupPreference(userId, preferenceId);
         console.log(result);
         return res.status(200).json({ success: true });
     } catch (error) {
