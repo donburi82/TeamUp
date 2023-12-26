@@ -4,38 +4,58 @@ const jwt = require("jsonwebtoken");
 
 // Schemas for Group Preference Information
 const groupPreferenceSchema = new mongoose.Schema({});
-const GroupPreference = mongoose.model("GroupPreference", groupPreferenceSchema);
+const GroupPreference = mongoose.model(
+  "GroupPreference",
+  groupPreferenceSchema
+);
 
 const courseProjectSchema = new mongoose.Schema({
-    courseCode: String,
-    projectInterest: String,
-    skillset: [String],
-    targetGrade: { type: String, enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"], default: "A+" },
-    experience: String,
+  courseCode: String,
+  projectInterest: String,
+  skillset: [String],
+  targetGrade: {
+    type: String,
+    enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"],
+    default: "A+",
+  },
+  experience: String,
 });
 
 const courseStudySchema = new mongoose.Schema({
-    courseCode: String,
-    targetGrade: { type: String, enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"], default: "A+" },
-    preferredLanguage: String,
+  courseCode: String,
+  targetGrade: {
+    type: String,
+    enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"],
+    default: "A+",
+  },
+  preferredLanguage: String,
 });
 
 const extracurricularSchema = new mongoose.Schema({
-    projectInterest: String,
-    skillset: [String],
-    experience: String,
-    preferredLanguage: String,
+  projectInterest: String,
+  skillset: [String],
+  experience: String,
+  preferredLanguage: String,
 });
 
-const CourseProject = GroupPreference.discriminator("CourseProject", courseProjectSchema);
-const CourseStudy = GroupPreference.discriminator("CourseStudy", courseStudySchema);
-const Extracurricular = GroupPreference.discriminator("Extracurricular", extracurricularSchema);
+const CourseProject = GroupPreference.discriminator(
+  "CourseProject",
+  courseProjectSchema
+);
+const CourseStudy = GroupPreference.discriminator(
+  "CourseStudy",
+  courseStudySchema
+);
+const Extracurricular = GroupPreference.discriminator(
+  "Extracurricular",
+  extracurricularSchema
+);
 
 // User Schema
 const UserSchema = new mongoose.Schema({
   profilePic: { data: Buffer, contentType: String },
   name: { type: String, trim: true, default: "anonymous" },
-  role: { type: String, enum: ["admin", "user"], default: "user" },
+  isAdmin: { type: Boolean, default: false },
   gender: { type: String, enum: ["M", "F"] },
   isFullTime: { type: Boolean, default: true },
   email: {
@@ -50,10 +70,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide password"],
     // temporarily removed
-    // match: [
-    //   /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
-    //   "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
-    // ],
+    match: [
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
+      "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
+    ],
   },
   groupPreferences: [groupPreferenceSchema],
   socketId: String,

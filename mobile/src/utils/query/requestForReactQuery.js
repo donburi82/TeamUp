@@ -14,6 +14,8 @@ const requestURL = {
   verifyCode: 'auth/verify',
   register: 'auth/register',
   login: 'auth/login',
+  updateInfo: '/userBasicInfo/updateInfo',
+  profilePic: '/userBasicInfo/profilePic',
 };
 
 async function request(url, datum, options) {
