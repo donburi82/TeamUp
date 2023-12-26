@@ -64,7 +64,7 @@ export const useUpdateInfoMutation = () => {
     major,
     year,
   }) => {
-    console.log('I am sending request login', email, password);
+    console.log('I am sending request updateInfo');
     const res = await request(
       url,
       {
@@ -82,13 +82,15 @@ export const useUpdateInfoMutation = () => {
   return useMutation(reqFunc);
 };
 
-export const useUpdateImageMutation = () => {
-  const dispatch = useDispatch();
-  const url = requestURL.profilePic;
-  const reqFunc = async file => {
-    console.log('I am sending request updateImage');
-    const res = await request(url, {file});
-    return res;
-  };
-  return useMutation(reqFunc);
-};
+// export const useUpdateImageMutation = () => {
+//   const dispatch = useDispatch();
+//   const url = requestURL.profilePic;
+//   const reqFunc = async file => {
+//     console.log('I am sending request updateImage');
+//     const res = await request(url, {file}, {method: 'patch'},{
+//       'Content-Type': 'multipart/form-data'
+//     });
+//     return res;
+//   };
+//   return useMutation(reqFunc);
+// };

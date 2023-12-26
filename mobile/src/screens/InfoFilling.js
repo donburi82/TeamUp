@@ -4,14 +4,13 @@ import {ButtonText, Button, InputField} from '@gluestack-ui/themed';
 import {useDispatch} from 'react-redux';
 import {SelectList} from 'react-native-dropdown-select-list';
 import {logOut, update} from '../utils/reduxStore/reducer';
-import {
-  useUpdateInfoMutation,
-  useUpdateImageMutation,
-} from '../utils/query/customHook';
+import {useUpdateInfoMutation} from '../utils/query/customHook';
+import {request, requestURL} from '../utils/query/requestForReactQuery';
 import {StyleSheet} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
+import mime from 'mime';
 import {
   Image,
   HStack,
@@ -27,7 +26,7 @@ import {
 export default function InfoFilling() {
   const dispatch = useDispatch();
   const updateInfo = useUpdateInfoMutation();
-  const updateImage = useUpdateImageMutation();
+
   const dataGender = [
     {key: '1', value: 'male'},
     {key: '2', value: 'female'},
@@ -61,6 +60,7 @@ export default function InfoFilling() {
     {key: '9', value: 'Other'},
   ];
 
+  const [formData, setFormData] = React.useState(new FormData());
   const [firstname, setFirstName] = React.useState('');
   const [lastname, setLastName] = React.useState('');
   const [gender, setGender] = React.useState(dataGender[0].value);
@@ -78,8 +78,9 @@ export default function InfoFilling() {
     const options = {
       mediaType: 'photo',
       includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      quality: 0.6,
+      maxHeight: 1000,
+      maxWidth: 1000,
     };
 
     launchImageLibrary(options).then(async response => {
@@ -89,7 +90,17 @@ export default function InfoFilling() {
         console.log('Image picker error: ', response.error);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
+        console.log(response.type, mime.getType(imageUri));
         setSelectedImage(imageUri);
+        let newformData = new FormData();
+        newformData.append('image', {
+          uri: response.uri,
+          // name: 'image.jpg', // 可以根据需要设置文件名
+          name: imageUri.split('/').pop(),
+          // type: response.type, // 使用 react-native-image-picker 提供的类型
+          type: mime.getType(imageUri),
+        });
+        setFormData(newformData);
       }
     });
   };
@@ -102,6 +113,7 @@ export default function InfoFilling() {
             {imageUri ? (
               <Image
                 source={{uri: imageUri}}
+                alt="avartar"
                 style={{width: '100%', height: '100%', borderRadius: 100}}
               />
             ) : (
@@ -221,31 +233,43 @@ export default function InfoFilling() {
               disabled={!firstname || !lastname || !imageUri}
               opacity={!firstname || !lastname || !imageUri ? 0.4 : 1}
               onPress={() => {
-                RNFetchBlob.fs.readFile(imageUri, 'base64').then(data => {
-                  const mimeType = 'image/jpeg'; // 根据实际情况设置图像类型
+                // fetch('http://10.0.2.2:3000/userBasicInfo/profilePic').then(
+                //   () => {},
+                //   () => {},
+                // );
+                // const updateIndoPromise = updateInfo.mutateAsync({
+                //   name: firstname + ' ' + lastname,
+                //   isFullTime,
+                //   gender,
+                //   nationality: origin,
+                //   major,
+                //   year,
+                // });
+                console.log('about to send picture', formData);
+                const uploadImagePromise = request(
+                  requestURL.profilePic,
+                  formData,
+                  {method: 'patch'},
+                  // {'Content-Type': 'multipart/form-data'},
+                  null,
+                  false,
+                ).then(
+                  () => {},
+                  err => {
+                    console.log('err', err);
+                  },
+                );
+                console.log('here', uploadImagePromise);
+                // Promise.all([uploadImagePromise, updateIndoPromise]).then(
+                //   () => {
+                //     console.log('update info and pictures successful');
 
-                  // 构建一个对象以符合后端要求
-                  const file = {
-                    buffer: data,
-                    mimetype: mimeType,
-                  };
-                  const updateIndoPromise = updateInfo.mutateAsync({
-                    name: firstname + ' ' + lastname,
-                    isFullTime,
-                    gender,
-                    nationality: origin,
-                    major,
-                    year,
-                  });
-                  const uploadImagePromise = updateImage.mutateAsync(file);
-                  Promise.all([uploadImagePromise, updateIndoPromise]).then(
-                    () => {
-                      console.log('update info and pictures successful');
-
-                      dispatch(update());
-                    },
-                  );
-                });
+                //     dispatch(update());
+                //   },
+                //   err => {
+                //     console.log(err);
+                //   },
+                // );
               }}
               text="Sign Up"
             />

@@ -20,6 +20,7 @@
     "@react-navigation/native-stack": "^6.9.14",
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.6.0",
+    "mime": "^4.0.1",
     "react": "18.2.0",
     "react-native": "0.72.4",
     "react-native-dropdown-select-list": "^2.0.5",
