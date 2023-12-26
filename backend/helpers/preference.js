@@ -1,15 +1,20 @@
 const ObjectId = require('mongodb').ObjectId;
 const { User, groupPreferenceSchema, GroupPreference, CourseProject, CourseStudy, Extracurricular } = require("../models/user");
 
-async function getCourseProjectPreference(userId) {
+async function getGroupPreferences(userId, groupType) {
     try {
         const user = await User.findOne({ _id: new ObjectId(userId) });
         if (!user) {
             throw new Error("User not found");
         }
-
-        const preferences = user.groupPreferences.filter(preference => preference.__t.toString()==="CourseProject");
-        console.log(preferences);
+        
+        let preferences;
+        if (groupType) {
+            preferences = user.groupPreferences.filter(preference => preference.__t.toString()===groupType);
+        } else {
+            preferences = user.groupPreferences;
+        }
+        
         return preferences;
     } catch (error) {
         throw error;
@@ -39,36 +44,6 @@ async function createCourseProjectPreference(userId, courseCode, projectInterest
     }
 }
 
-async function deleteCourseProjectPreference(userId, preferenceId) {
-    try {
-        const user = await User.findOne({ _id: new ObjectId(userId) });
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        user.groupPreferences = user.groupPreferences.filter(preference => preference._id.toString()!==preferenceId);
-        
-        return await user.save();
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function getCourseStudyPreference(userId) {
-    try {
-        const user = await User.findOne({ _id: new ObjectId(userId)});
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        const preferences = user.groupPreferences.filter(preference => preference.__t.toString()==="CourseStudy");
-        console.log(preferences);
-        return preferences;
-    } catch (error) {
-        throw error;
-    }
-}
-
 async function createCourseStudyPreference(userId, courseCode, targetGrade, preferredLanguage) {
     try {
         const user = await User.findOne({ _id: new ObjectId(userId) });
@@ -85,36 +60,6 @@ async function createCourseStudyPreference(userId, courseCode, targetGrade, pref
         user.groupPreferences.push(courseStudyPreference);
 
         return await user.save();
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function deleteCourseStudyPreference(userId, preferenceId) {
-    try {
-        const user = await User.findOne({ _id: new ObjectId(userId) });
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        user.groupPreferences = user.groupPreferences.filter(preference => preference._id.toString()!==preferenceId);
-        
-        return await user.save();
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function getExtracurricularPreference(userId) {
-    try {
-        const user = await User.findOne({ _id: new ObjectId(userId)});
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        const preferences = user.groupPreferences.filter(preference => preference.__t.toString()==="Extracurricular");
-        console.log(preferences);
-        return preferences;
     } catch (error) {
         throw error;
     }
@@ -142,7 +87,7 @@ async function createExtracurricularPreference(userId, projectInterest, skillset
     }
 }
 
-async function deleteExtracurricularPreference(userId, preferenceId) {
+async function deleteGroupPreference(userId, preferenceId) {
     try {
         const user = await User.findOne({ _id: new ObjectId(userId) });
         if (!user) {
@@ -158,7 +103,7 @@ async function deleteExtracurricularPreference(userId, preferenceId) {
 }
 
 module.exports = {
-    getCourseProjectPreference, createCourseProjectPreference, deleteCourseProjectPreference,
-    getCourseStudyPreference, createCourseStudyPreference, deleteCourseStudyPreference,
-    getExtracurricularPreference, createExtracurricularPreference, deleteExtracurricularPreference 
+    getGroupPreferences,
+    createCourseProjectPreference, createCourseStudyPreference, createExtracurricularPreference,
+    deleteGroupPreference
 };
