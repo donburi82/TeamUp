@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const nodemailer = require("nodemailer");
-const User = require("../../models/user");
+const { User } = require("../../models/user");
 const AdminInfo = require("../../models/adminInfo");
 
 const express = require("express");
