@@ -43,7 +43,7 @@ router.delete("/courseproject", async (req, res) => {
 
 router.get("/coursestudy", async (req, res) => {
     try {
-        const preferences = await getCourseStudyPreference();
+        const preferences = await getCourseStudyPreference(req.body.userId);
         return res.status(200).json({ success: true, data: preferences });
     } catch (error) {
         console.log(error);
@@ -54,7 +54,7 @@ router.get("/coursestudy", async (req, res) => {
 router.post("/coursestudy", async (req, res) => {
     try {
         console.log(req.body);
-        await createCourseStudyPreference(req.body.courseCode, req.body.targetGrade, req.body.preferredLanguage);
+        await createCourseStudyPreference(req.body.userId, req.body.courseCode, req.body.targetGrade, req.body.preferredLanguage);
         return res.status(200).json({ success: true });
     } catch (error) {
         console.log(error);
@@ -64,8 +64,7 @@ router.post("/coursestudy", async (req, res) => {
 
 router.delete("/coursestudy", async (req, res) => {
     try {
-        const id = req.query.id;
-        const result = await deleteCourseStudyPreference(id);
+        const result = await deleteCourseStudyPreference(req.body.userId, req.body.preferenceId);
         console.log(result);
         return res.status(200).json({ success: true });
     } catch (error) {
@@ -76,7 +75,7 @@ router.delete("/coursestudy", async (req, res) => {
 
 router.get("/extracurricular", async (req, res) => {
     try {
-        const preferences = await getExtracurricularPreference();
+        const preferences = await getExtracurricularPreference(req.body.userId);
         return res.status(200).json({ success: true, data: preferences });
     } catch (error) {
         console.log(error);
@@ -87,7 +86,7 @@ router.get("/extracurricular", async (req, res) => {
 router.post("/extracurricular", async (req, res) => {
     try {
         console.log(req.body);
-        await createExtracurricularPreference(req.body.projectInterest, req.body.skillset, req.body.experience, req.body.preferredLanguage);
+        await createExtracurricularPreference(req.body.userId, req.body.projectInterest, req.body.skillset, req.body.experience, req.body.preferredLanguage);
         return res.status(200).json({ success: true });
     } catch (error) {
         console.log(error);
@@ -97,8 +96,7 @@ router.post("/extracurricular", async (req, res) => {
 
 router.delete("/extracurricular", async (req, res) => {
     try {
-        const id = req.query.id;
-        const result = await deleteExtracurricularPreference(id);
+        const result = await deleteExtracurricularPreference(req.body.userId, req.body.preferenceId);
         console.log(result);
         return res.status(200).json({ success: true });
     } catch (error) {

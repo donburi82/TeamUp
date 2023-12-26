@@ -18,7 +18,6 @@ async function getCourseProjectPreference(userId) {
 
 async function createCourseProjectPreference(userId, courseCode, projectInterest, skillset, targetGrade, experience) {
     try {
-        // need param checking
         const user = await User.findOne({ _id: new ObjectId(userId) });
         if (!user) {
             throw new Error("User not found");
@@ -55,9 +54,14 @@ async function deleteCourseProjectPreference(userId, preferenceId) {
     }
 }
 
-async function getCourseStudyPreference() {
+async function getCourseStudyPreference(userId) {
     try {
-        const preferences = await CourseStudy.find().exec();
+        const user = await User.findOne({ _id: new ObjectId(userId)});
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const preferences = user.groupPreferences.filter(preference => preference.__t.toString()==="CourseStudy");
         console.log(preferences);
         return preferences;
     } catch (error) {
@@ -65,31 +69,50 @@ async function getCourseStudyPreference() {
     }
 }
 
-async function createCourseStudyPreference(courseCode, targetGrade, preferredLanguage) {
+async function createCourseStudyPreference(userId, courseCode, targetGrade, preferredLanguage) {
     try {
-        // need param checking
+        const user = await User.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
         const courseStudyPreference = await CourseStudy({
             courseCode: courseCode,
             targetGrade: targetGrade,
             preferredLanguage: preferredLanguage,
         });
-        return await courseStudyPreference.save();
+
+        user.groupPreferences.push(courseStudyPreference);
+
+        return await user.save();
     } catch (error) {
         throw error;
     }
 }
 
-async function deleteCourseStudyPreference(id) {
+async function deleteCourseStudyPreference(userId, preferenceId) {
     try {
-        return await CourseStudy.deleteOne({ _id: new ObjectId(id) }).exec();
+        const user = await User.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        user.groupPreferences = user.groupPreferences.filter(preference => preference._id.toString()!==preferenceId);
+        
+        return await user.save();
     } catch (error) {
         throw error;
     }
 }
 
-async function getExtracurricularPreference() {
+async function getExtracurricularPreference(userId) {
     try {
-        const preferences = await Extracurricular.find().exec();
+        const user = await User.findOne({ _id: new ObjectId(userId)});
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const preferences = user.groupPreferences.filter(preference => preference.__t.toString()==="Extracurricular");
         console.log(preferences);
         return preferences;
     } catch (error) {
@@ -97,24 +120,38 @@ async function getExtracurricularPreference() {
     }
 }
 
-async function createExtracurricularPreference(projectInterest, skillset, experience, preferredLanguage) {
+async function createExtracurricularPreference(userId, projectInterest, skillset, experience, preferredLanguage) {
     try {
-        // need param checking
+        const user = await User.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
         const extracurricularPreference = await Extracurricular({
             projectInterest: projectInterest,
             skillset: skillset,
             experience: experience,
             preferredLanguage: preferredLanguage,
         });
-        return await extracurricularPreference.save();
+
+        user.groupPreferences.push(extracurricularPreference);
+
+        return await user.save();
     } catch (error) {
         throw error;
     }
 }
 
-async function deleteExtracurricularPreference(id) {
+async function deleteExtracurricularPreference(userId, preferenceId) {
     try {
-        return await Extracurricular.deleteOne({ _id: new ObjectId(id) }).exec();
+        const user = await User.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        user.groupPreferences = user.groupPreferences.filter(preference => preference._id.toString()!==preferenceId);
+        
+        return await user.save();
     } catch (error) {
         throw error;
     }

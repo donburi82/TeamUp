@@ -70,10 +70,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide password"],
     // temporarily removed
-    match: [
-      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
-      "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
-    ],
+    // match: [
+    //   /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
+    //   "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
+    // ],
   },
   groupPreferences: [groupPreferenceSchema],
   socketId: String,
