@@ -14,7 +14,7 @@ import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {QueryClient, QueryClientProvider} from 'react-query';
-
+import InfoFilling from './src/screens/InfoFilling';
 import AuthRouting from './src/navigator/AuthNav.js';
 import HomeRouting from './src/navigator/HomeNav';
 import {useMemo} from 'react';
@@ -61,6 +61,7 @@ function App() {
             />
 
             {Child}
+            {/* <InfoFilling /> */}
           </SafeAreaView>
         </NavigationContainer>
       </GluestackUIProvider>

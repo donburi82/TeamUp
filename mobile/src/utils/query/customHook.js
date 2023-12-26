@@ -53,3 +53,42 @@ export const useLoginMutation = () => {
     },
   });
 };
+export const useUpdateInfoMutation = () => {
+  const dispatch = useDispatch();
+  const url = requestURL.updateInfo;
+  const reqFunc = async ({
+    name,
+    isFullTime,
+    gender,
+    nationality,
+    major,
+    year,
+  }) => {
+    console.log('I am sending request login', email, password);
+    const res = await request(
+      url,
+      {
+        name,
+        isFullTime,
+        gender,
+        nationality,
+        major,
+        year,
+      },
+      {method: 'patch'},
+    );
+    return res;
+  };
+  return useMutation(reqFunc);
+};
+
+export const useUpdateImageMutation = () => {
+  const dispatch = useDispatch();
+  const url = requestURL.profilePic;
+  const reqFunc = async file => {
+    console.log('I am sending request updateImage');
+    const res = await request(url, {file});
+    return res;
+  };
+  return useMutation(reqFunc);
+};
