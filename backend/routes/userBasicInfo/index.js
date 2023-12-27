@@ -5,9 +5,6 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
 // req.body{ userId: string}
 router.route("/getInfo/:userId").get(async (req, res) => {
   const userId = req.params.userId;
