@@ -12,15 +12,10 @@ let verified = new Set([]);
 router.route("/verification").post(async (req, res) => {
   const adminInfo = await AdminInfo.findOne();
   domains = adminInfo.WhiteListEmailDomain;
-  // Escape special characters in domain names
-  const escapedDomains = domains.map((domain) =>
-    domain.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-  );
 
   // Create the regular expression pattern
   const re = new RegExp(`^[a-zA-Z0-9._-]+@(${domains.join("|")})$`);
-  // const re =
-  //   /^[a-zA-Z0-9._-]+@(connect.ust.hk|connect.polyu.hk|@connect.hku.hk)$/;
+
   if (!req.body.email.match(re)) {
     return res
       .status(400)
@@ -95,7 +90,6 @@ router.route("/register").post(async (req, res) => {
     const user = await User.create({
       email: req.body.email,
       password: req.body.password,
-      role: req.body.role,
     });
     const token = user.createJWT();
     verified.delete(req.body.email);
