@@ -1,12 +1,13 @@
 import axios from 'axios';
 import {store} from '../reduxStore';
+import {err} from 'react-native-svg/lib/typescript/xml';
 
 const BASE_URL = 'http://10.0.2.2:3000/';
 
 const axiosServices = axios.create({
   baseURL: BASE_URL,
   method: 'post',
-  timeout: 3000,
+  timeout: 4000,
 });
 
 const requestURL = {
@@ -14,23 +15,26 @@ const requestURL = {
   verifyCode: 'auth/verify',
   register: 'auth/register',
   login: 'auth/login',
-  updateInfo: '/userBasicInfo/updateInfo',
-  profilePic: '/userBasicInfo/profilePic',
+  updateInfo: 'userBasicInfo/updateInfo',
+  profilePic: 'userBasicInfo/profilePic',
 };
 
 async function request(url, datum, options) {
   const global = store.getState();
 
   const {token} = global.userInfo;
-
+  // console.log(url, datum, options, header, stringify);
   try {
     const res = await axiosServices({
       url,
+      // data: stringify ? JSON.stringify(datum) : datum,
       data: JSON.stringify(datum),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        // 'Content-Type': 'multipart/form-data',
       },
+
       ...options,
     });
     console.log('status code is', res.status);
@@ -47,9 +51,10 @@ async function request(url, datum, options) {
       throw new Error(serverMessage);
     } else {
       // 如果没有 response，抛出通用错误
+      console.log(error);
       throw new Error('Request failed');
     }
   }
 }
 
-export {requestURL, request};
+export {requestURL, request, BASE_URL};

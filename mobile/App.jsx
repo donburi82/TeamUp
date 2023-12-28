@@ -27,6 +27,7 @@ const queryClient = new QueryClient({
     },
     mutations: {
       onError: error => alert(error.message),
+      // onError: error => alert('666'),
     },
   },
 });
