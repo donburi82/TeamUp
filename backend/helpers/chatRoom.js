@@ -54,13 +54,26 @@ const leaveChatRoom = async (userId, chatRoomId) => {
 
 const pushMessage = async (message, type, chatRoomId, senderId) => {
   try {
-    messageModel.create({
-      messageFrom: senderId,
-      sentDate: Date.now(),
-      messageType: type,
-      messageData: message,
-    });
+    const chatRoom = await chatRoom.findById(chatRoomId);
+
+    if (chatRoom) {
+      if (type == "text") {
+        const newMessage = await messageModel.create({
+          messageFrom: senderId,
+          sentDate: Date.now(),
+          messageType: type,
+          messageData: message,
+        });
+
+        chatRoom.messages.push(newMessage);
+        await chatRoom.save();
+      } else {
+        const buffer = new Buffer.from(message.image, "base64");
+      }
+    } else {
+      throw new Error("Chat room not found");
+    }
   } catch (error) {
-    throw new Error("message cannot be sent");
+    throw new Error("Message cannot be sent");
   }
 };

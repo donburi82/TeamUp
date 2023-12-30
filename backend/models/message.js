@@ -15,7 +15,7 @@ const messageSchema = new mongoose.Schema({
     required: true,
   },
   messageData: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
     required: true,
   },
   messageStatus: [messageStatusSchema],
