@@ -7,6 +7,7 @@ const globalSlice = createSlice({
     userInfo: {
       isAuthed: false,
       updated: false,
+      welcomed: false,
     },
   },
 
@@ -30,9 +31,15 @@ const globalSlice = createSlice({
         updated: true,
       };
     },
+    welcome: state => {
+      state.userInfo = {
+        ...state.userInfo,
+        welcomed: true,
+      };
+    },
   },
 });
 
-export const {login, logOut, update} = globalSlice.actions;
+export const {login, logOut, update, welcome} = globalSlice.actions;
 
 export default globalSlice.reducer;

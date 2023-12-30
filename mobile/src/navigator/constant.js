@@ -7,4 +7,7 @@ export const ROUTES = {
   GROUPS: 'Groups',
   CHAT: 'Chat',
   SETTINGS: 'Settings',
+
+  BASICINFO: 'BASICINFO',
+  PREFERENCE: 'PREFERENCE',
 };

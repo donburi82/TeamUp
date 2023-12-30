@@ -5,6 +5,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
 import InfoFilling from '../screens/InfoFilling';
+// import Settings from '../screens/Settings';
+import SettingStack from './SettingStack';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {StatusBar} from 'react-native';
@@ -12,7 +14,7 @@ const NativeStack = createNativeStackNavigator();
 const BottomStack = createBottomTabNavigator();
 export default function HomeRouting() {
   const {updated} = useSelector(state => state.userInfo);
-  console.log(updated, 'updated');
+  // console.log(updated, 'updated');
   return !updated ? (
     <NativeStack.Navigator>
       <NativeStack.Screen
@@ -99,13 +101,17 @@ export default function HomeRouting() {
         />
         <BottomStack.Screen
           name={ROUTES.SETTINGS}
-          component={Home}
+          component={SettingStack}
           options={{
-            headerStyle: {
-              backgroundColor: 'rgba(63, 43, 190, 0.22)',
-              // backgroundColor: 'red',
-            },
-            headerTitle: 'Team Up now!',
+            // headerStyle: {
+            //   backgroundColor: 'rgba(63, 43, 190, 0.22)',
+
+            //   // backgroundColor: 'white',
+
+            //   elevation: 0, // For Android: Remove shadow
+            // },
+            // headerTitle: 'Team Up now!!',
+            headerShown: false,
             tabBarIcon: ({color, size, focused}) => (
               <Ionicons
                 name="settings-sharp"

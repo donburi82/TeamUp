@@ -2,6 +2,7 @@ import {View, Text} from 'react-native';
 import React from 'react';
 import {ButtonText, Button} from '@gluestack-ui/themed';
 import {useDispatch} from 'react-redux';
+import InfoModal from '../components/InfoModal';
 import {logOut} from '../utils/reduxStore/reducer';
 
 export default function Home() {
@@ -10,11 +11,12 @@ export default function Home() {
     dispatch(logOut());
   };
   return (
-    <View>
+    <>
+      <InfoModal />
       <Text>this is a empty home</Text>
       <Button onPress={logout}>
         <ButtonText>log out</ButtonText>
       </Button>
-    </View>
+    </>
   );
 }

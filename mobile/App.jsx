@@ -56,10 +56,10 @@ function App() {
       <GluestackUIProvider config={config}>
         <NavigationContainer>
           <SafeAreaView style={backgroundStyle}>
-            {/* <StatusBar
-            barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-            backgroundColor={backgroundStyle.backgroundColor}
-          /> */}
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+              backgroundColor={backgroundStyle.backgroundColor}
+            />
 
             {Child}
             {/* <InfoFilling /> */}

@@ -23,7 +23,7 @@ export default function LoginScreen({navigation}) {
   const handleLogin = async () => {
     try {
       await sendLogin.mutateAsync({email, password});
-      navigation.navigate(ROUTES.HOME);
+      // navigation.navigate(ROUTES.SETTINGS);
     } catch (err) {
       console.log(err);
     }
