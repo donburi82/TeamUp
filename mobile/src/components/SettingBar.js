@@ -2,6 +2,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useState} from 'react';
 import React from 'react';
 import AntIcon from 'react-native-vector-icons/AntDesign';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {logOut} from '../utils/reduxStore/reducer';
 import {useDispatch} from 'react-redux';
 import Alert from './Alert';
@@ -28,6 +29,18 @@ export default function SettingBar({text, type, destination}) {
             }}
           />
           <Text style={{...styles.textStyle, color: 'red'}}>{text}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  if (type === 'groupPreference') {
+    return (
+      <TouchableOpacity style={styles.barContainer}>
+        <View style={styles.innerContainer}>
+          <Text style={styles.textStyle}>{text}</Text>
+          <TouchableOpacity>
+            <EntypoIcon name="circle-with-cross" size={20} color="red" />
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );

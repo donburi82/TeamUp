@@ -23,7 +23,11 @@ export default function SettingStackNavigator() {
       <SettingStack.Screen name={ROUTES.SETTINGS} component={Settings} />
       <SettingStack.Screen name={ROUTES.BASICINFO} component={BasicInfo} />
 
-      <SettingStack.Screen name={ROUTES.PREFERENCE} component={Preference} />
+      <SettingStack.Screen
+        name={ROUTES.PREFERENCE}
+        component={Preference}
+        options={{headerTitle: 'Group Preference Information'}}
+      />
       <SettingStack.Screen name={ROUTES.RESETPASSWORD} component={Preference} />
     </SettingStack.Navigator>
   );
