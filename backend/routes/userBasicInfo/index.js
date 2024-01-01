@@ -71,6 +71,7 @@ router.route("/updatePassword").patch(async (req, res) => {
       await user.save();
       res.status(200).json({ status: "success" });
     } else {
+      console.log(pre, cur);
       res.status(401).json({ status: "fail", msg: "incorrect credentials" });
     }
   } catch (error) {

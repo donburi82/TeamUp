@@ -3,7 +3,7 @@ import {ROUTES} from './constant';
 import Settings from '../screens/Settings';
 import BasicInfo from '../screens/BasicInfo';
 import Preference from '../screens/Preference';
-
+import ResetPassword from '../screens/ResetPassword';
 const SettingStack = createNativeStackNavigator();
 
 export default function SettingStackNavigator() {
@@ -28,7 +28,11 @@ export default function SettingStackNavigator() {
         component={Preference}
         options={{headerTitle: 'Group Preference Information'}}
       />
-      <SettingStack.Screen name={ROUTES.RESETPASSWORD} component={Preference} />
+      <SettingStack.Screen
+        name={ROUTES.RESETPASSWORD}
+        component={ResetPassword}
+        options={{headerTitle: 'Reset Password'}}
+      />
     </SettingStack.Navigator>
   );
 }

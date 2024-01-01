@@ -1,10 +1,13 @@
 import {View, Text, StyleSheet} from 'react-native';
 import {Button, ButtonText, ScrollView} from '@gluestack-ui/themed';
 import AntIcon from 'react-native-vector-icons/AntDesign';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import SettingBar from '../components/SettingBar';
+import BottomWindow from '../components/BottomWindow';
+
 export default function Preference() {
   const [activeButton, setActiveButton] = useState(1);
+
   const handleButtonPress = buttonId => {
     setActiveButton(buttonId);
   };
@@ -32,7 +35,6 @@ export default function Preference() {
         <SettingBar text="COMP3211" type="groupPreference" />
         <SettingBar text="COMP3311" type="groupPreference" />
         <SettingBar text="COMP4211" type="groupPreference" />
-
         <AntIcon
           name="pluscircle"
           size={40}
@@ -40,6 +42,7 @@ export default function Preference() {
           style={styles.plusIcon}
         />
       </ScrollView>
+      <BottomWindow />
     </View>
   );
 }

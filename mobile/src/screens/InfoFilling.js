@@ -95,15 +95,6 @@ export default function InfoFilling() {
         setSelectedImage(imageUri);
         const base64Image = await RNFS.readFile(imageUri, 'base64');
         setFormData(base64Image);
-        // let newformData = new FormData();
-        // newformData.append('image', {
-        //   uri: response.uri,
-        //   // name: 'image.jpg', // 可以根据需要设置文件名
-        //   name: imageUri.split('/').pop(),
-        //   // type: response.type, // 使用 react-native-image-picker 提供的类型
-        //   type: mime.getType(imageUri),
-        // });
-        // setFormData(newformData);
       }
     });
   };
@@ -250,17 +241,14 @@ export default function InfoFilling() {
                   {image: formData, type: mime.getType(imageUri)},
                   {method: 'patch'},
                 );
-                // console.log('here', uploadImagePromise);
-                Promise.all([uploadImagePromise, updateIndoPromise]).then(
-                  () => {
-                    console.log('update info and pictures successful');
-
-                    dispatch(update());
-                  },
-                  err => {
-                    console.log(err);
-                  },
-                );
+                try {
+                  const result = await Promise.all([
+                    uploadImagePromise,
+                    updateIndoPromise,
+                  ]);
+                } catch (e) {
+                  console.log('sign up failed');
+                }
               }}
               text="Sign Up"
             />

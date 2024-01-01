@@ -103,14 +103,6 @@ export default function HomeRouting() {
           name={ROUTES.SETTINGS}
           component={SettingStack}
           options={{
-            // headerStyle: {
-            //   backgroundColor: 'rgba(63, 43, 190, 0.22)',
-
-            //   // backgroundColor: 'white',
-
-            //   elevation: 0, // For Android: Remove shadow
-            // },
-            // headerTitle: 'Team Up now!!',
             headerShown: false,
             tabBarIcon: ({color, size, focused}) => (
               <Ionicons

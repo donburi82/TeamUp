@@ -98,7 +98,7 @@ export default function SetupScreen({navigation}) {
 
         const value2 = await registerPromise;
 
-        navigation.navigate(ROUTES.INFOFILLING);
+        // navigation.navigate(ROUTES.INFOFILLING);
         // alert('congratulations, you have sucessfully registered');
       } catch (err) {
         console.log('one of the promse failed, please retry', err);

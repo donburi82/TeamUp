@@ -81,6 +81,23 @@ export const useUpdateInfoMutation = () => {
   };
   return useMutation(reqFunc);
 };
+export const useUpdatePasswordMutation = () => {
+  const dispatch = useDispatch();
+  const url = requestURL.updatePassword;
+  const reqFunc = async ({oldPassword, newPassword}) => {
+    console.log('I am sending request updateInfo');
+    const res = await request(
+      url,
+      {
+        pre: oldPassword,
+        cur: newPassword,
+      },
+      {method: 'patch'},
+    );
+    return res;
+  };
+  return useMutation(reqFunc);
+};
 
 // export const useUpdateImageMutation = () => {
 //   const dispatch = useDispatch();
