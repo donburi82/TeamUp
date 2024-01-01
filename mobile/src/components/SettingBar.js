@@ -7,7 +7,7 @@ import {logOut} from '../utils/reduxStore/reducer';
 import {useDispatch} from 'react-redux';
 import Alert from './Alert';
 import {useNavigation} from '@react-navigation/native';
-export default function SettingBar({text, type, destination}) {
+export default function SettingBar({text, type, destination, children}) {
   if (type === 'signOut') {
     const [alertOpen, setAlertOpen] = useState(false);
     const dispatch = useDispatch();
@@ -41,6 +41,23 @@ export default function SettingBar({text, type, destination}) {
           <TouchableOpacity>
             <EntypoIcon name="circle-with-cross" size={20} color="red" />
           </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  if (type === 'basicInfo') {
+    return (
+      <TouchableOpacity
+        style={styles.barContainer}
+        onPress={() => {
+          navigation.navigate(destination);
+        }}>
+        <View style={styles.innerContainer}>
+          <Text style={styles.textStyle}>{text}</Text>
+          <View style={styles.rightPart}>
+            {children}
+            <AntIcon name="right" size={20} />
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -87,7 +104,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textStyle: {
+    // alignSelf: '',
     color: 'black',
     fontSize: 20,
+  },
+  rightPart: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    fontSize: 30,
+    flex: 1,
+    alignItems: 'center',
+    // backgroundColor: 'red',
   },
 });

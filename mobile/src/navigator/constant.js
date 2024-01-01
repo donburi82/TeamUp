@@ -8,6 +8,6 @@ export const ROUTES = {
   CHAT: 'Chat',
   SETTINGS: 'Settings',
 
-  BASICINFO: 'BASICINFO',
+  BASICINFO: 'Basic Information',
   PREFERENCE: 'PREFERENCE',
 };
