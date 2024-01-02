@@ -7,7 +7,8 @@ export const ROUTES = {
   GROUPS: 'Groups',
   CHAT: 'Chat',
   SETTINGS: 'Settings',
-
+  CHANGEMAJOR: 'Major',
+  ChANGEYEAR: 'Year Of Study',
   BASICINFO: 'Basic Information',
   PREFERENCE: 'PREFERENCE',
 };

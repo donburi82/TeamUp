@@ -1,6 +1,7 @@
 import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import SettingBar from '../components/SettingBar';
+import {ROUTES} from '../navigator/constant';
 import BasicInfoUser from '../components/BasicInfoUser';
 export default function BasicInfo() {
   return (
@@ -24,7 +25,10 @@ export default function BasicInfo() {
           }}
         />
       </SettingBar>
-      <SettingBar text="Major" type="basicInfo">
+      <SettingBar
+        text="Major"
+        type="basicInfo"
+        destination={ROUTES.CHANGEMAJOR}>
         <Text style={styles.textStyle}>Computer Science</Text>
       </SettingBar>
       <SettingBar text="Year Of Study" type="basicInfo">

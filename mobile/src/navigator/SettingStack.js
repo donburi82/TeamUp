@@ -4,6 +4,7 @@ import Settings from '../screens/Settings';
 import BasicInfo from '../screens/BasicInfo';
 import Preference from '../screens/Preference';
 import ResetPassword from '../screens/ResetPassword';
+import ChangeMajor from '../screens/ChangeMajor';
 const SettingStack = createNativeStackNavigator();
 
 export default function SettingStackNavigator() {
@@ -32,6 +33,16 @@ export default function SettingStackNavigator() {
         name={ROUTES.RESETPASSWORD}
         component={ResetPassword}
         options={{headerTitle: 'Reset Password'}}
+      />
+      <SettingStack.Screen
+        name={ROUTES.ChANGEYEAR}
+        component={ResetPassword}
+        options={{headerTitle: 'Reset Password'}}
+      />
+      <SettingStack.Screen
+        name={ROUTES.CHANGEMAJOR}
+        component={ChangeMajor}
+        options={{headerTitle: 'Major'}}
       />
     </SettingStack.Navigator>
   );

@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {useState} from 'react';
 import React from 'react';
 import AntIcon from 'react-native-vector-icons/AntDesign';
@@ -8,9 +8,11 @@ import {useDispatch} from 'react-redux';
 import Alert from './Alert';
 import {useNavigation} from '@react-navigation/native';
 export default function SettingBar({text, type, destination, children}) {
+  const navigation = useNavigation();
   if (type === 'signOut') {
     const [alertOpen, setAlertOpen] = useState(false);
     const dispatch = useDispatch();
+
     return (
       <TouchableOpacity
         style={styles.barContainer}
@@ -50,7 +52,14 @@ export default function SettingBar({text, type, destination, children}) {
       <TouchableOpacity
         style={styles.barContainer}
         onPress={() => {
-          navigation.navigate(destination);
+          React.Children.forEach(children, child => {
+            if (child.type === Text) {
+              navigation.navigate(destination);
+            }
+            if (child.type === Image) {
+              console.log('this is Image');
+            }
+          });
         }}>
         <View style={styles.innerContainer}>
           <Text style={styles.textStyle}>{text}</Text>
@@ -62,7 +71,7 @@ export default function SettingBar({text, type, destination, children}) {
       </TouchableOpacity>
     );
   }
-  const navigation = useNavigation();
+
   return (
     <TouchableOpacity
       style={styles.barContainer}
