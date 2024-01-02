@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {store} from '../reduxStore';
 import {err} from 'react-native-svg/lib/typescript/xml';
-
+import {showErrorToast} from '../showToast';
 const BASE_URL = 'http://10.0.2.2:3000/';
 
 const axiosServices = axios.create({
@@ -24,7 +24,7 @@ async function request(url, datum, options) {
   const global = store.getState();
 
   const {token} = global.userInfo;
-  // console.log(url, datum, options, header, stringify);
+  console.log('sending request', url, datum);
   try {
     const res = await axiosServices({
       url,
@@ -52,7 +52,7 @@ async function request(url, datum, options) {
       throw new Error(serverMessage);
     } else {
       // 如果没有 response，抛出通用错误
-      console.log(error);
+      showErrorToast();
       throw new Error('Request failed');
     }
   }

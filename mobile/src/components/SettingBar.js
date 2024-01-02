@@ -1,14 +1,40 @@
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import React from 'react';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {logOut} from '../utils/reduxStore/reducer';
 import {useDispatch} from 'react-redux';
 import Alert from './Alert';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import RNFS from 'react-native-fs';
+import mime from 'mime';
 import {useNavigation} from '@react-navigation/native';
-export default function SettingBar({text, type, destination, children}) {
+import {request, requestURL} from '../utils/query/requestForReactQuery';
+import {showUpdateToast} from '../utils/showToast';
+export default function SettingBar({
+  text,
+  type,
+  destination,
+  children,
+  setSelectedImage,
+}) {
   const navigation = useNavigation();
+  const [imageUri, setImage] = useState(null);
+  const [formData, setFormData] = React.useState(null);
+  useEffect(() => {
+    console.log(imageUri);
+    if (formData) {
+      request(
+        requestURL.profilePic,
+        {image: formData, type: mime.getType(imageUri)},
+        {method: 'patch'},
+      ).then(() => {
+        showUpdateToast();
+        setSelectedImage(imageUri);
+      });
+    }
+  }, [imageUri, formData]);
   if (type === 'signOut') {
     const [alertOpen, setAlertOpen] = useState(false);
     const dispatch = useDispatch();
@@ -48,6 +74,31 @@ export default function SettingBar({text, type, destination, children}) {
     );
   }
   if (type === 'basicInfo') {
+    const openImagePicker = () => {
+      console.log('open');
+      const options = {
+        mediaType: 'photo',
+        includeBase64: false,
+        quality: 0.6,
+        maxHeight: 1000,
+        maxWidth: 1000,
+      };
+
+      launchImageLibrary(options).then(async response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('Image picker error: ', response.error);
+        } else {
+          let imageUri = response.uri || response.assets?.[0]?.uri;
+          console.log(response.type, mime.getType(imageUri), imageUri);
+
+          const base64Image = await RNFS.readFile(imageUri, 'base64');
+          setImage(imageUri);
+          setFormData(base64Image);
+        }
+      });
+    };
     return (
       <TouchableOpacity
         style={styles.barContainer}
@@ -58,6 +109,7 @@ export default function SettingBar({text, type, destination, children}) {
             }
             if (child.type === Image) {
               console.log('this is Image');
+              openImagePicker();
             }
           });
         }}>

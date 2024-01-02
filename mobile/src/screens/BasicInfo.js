@@ -1,9 +1,11 @@
 import {View, Text, StyleSheet, Image} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import SettingBar from '../components/SettingBar';
 import {ROUTES} from '../navigator/constant';
 import BasicInfoUser from '../components/BasicInfoUser';
+
 export default function BasicInfo() {
+  const [imageUri, setSelectedImage] = React.useState('');
   return (
     <View>
       <BasicInfoUser
@@ -11,14 +13,19 @@ export default function BasicInfo() {
         gender="M"
         status="Full-time"
         nationality="China"
+        profilePic={imageUri}
       />
-      <SettingBar text="Photos" type="basicInfo">
+      <SettingBar
+        text="Photos"
+        type="basicInfo"
+        setSelectedImage={setSelectedImage}>
         <Image
-          source={{uri: null}}
+          source={{uri: imageUri || null}}
           alt="avartar"
           style={{
             width: 30,
             height: 30,
+
             marginRight: 30,
             borderRadius: 100,
             backgroundColor: 'gray',

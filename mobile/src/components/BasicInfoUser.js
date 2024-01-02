@@ -12,11 +12,12 @@ export default function BasicInfoUser({
   return (
     <View style={styles.container}>
       <Image
-        source={{uri: null}}
+        source={{uri: profilePic}}
         alt="avartar"
         style={{
           width: 150,
           height: 150,
+          marginLeft: 20,
           marginRight: 30,
           borderRadius: 100,
           backgroundColor: 'gray',
