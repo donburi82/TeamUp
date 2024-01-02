@@ -24,7 +24,7 @@ async function request(url, datum, options) {
   const global = store.getState();
 
   const {token} = global.userInfo;
-  console.log('sending request', url, datum);
+  // console.log('sending request', url, datum);
   try {
     const res = await axiosServices({
       url,

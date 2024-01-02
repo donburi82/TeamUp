@@ -23,7 +23,6 @@ export default function SettingBar({
   const [imageUri, setImage] = useState(null);
   const [formData, setFormData] = React.useState(null);
   useEffect(() => {
-    console.log(imageUri);
     if (formData) {
       request(
         requestURL.profilePic,
@@ -75,7 +74,6 @@ export default function SettingBar({
   }
   if (type === 'basicInfo') {
     const openImagePicker = () => {
-      console.log('open');
       const options = {
         mediaType: 'photo',
         includeBase64: false,
@@ -91,7 +89,6 @@ export default function SettingBar({
           console.log('Image picker error: ', response.error);
         } else {
           let imageUri = response.uri || response.assets?.[0]?.uri;
-          console.log(response.type, mime.getType(imageUri), imageUri);
 
           const base64Image = await RNFS.readFile(imageUri, 'base64');
           setImage(imageUri);

@@ -246,6 +246,7 @@ export default function InfoFilling() {
                     uploadImagePromise,
                     updateIndoPromise,
                   ]);
+                  dispatch(update());
                 } catch (e) {
                   console.log('sign up failed');
                 }
