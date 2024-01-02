@@ -10,29 +10,43 @@ import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
 import React, {useState, useEffect} from 'react';
 import renderList from '../components/RenderList';
 import RenderList from '../components/RenderList';
-
-export default function ChangeMajor({navigation}) {
-  const [major, setMajor] = useState([]);
-
-  const [majorData, setMajorData] = useState([
-    {id: 0, name: 'ACCT', selected: false},
-    {id: 1, name: 'COMP', selected: false},
-    {id: 2, name: 'CPEG', selected: false},
-    {id: 3, name: 'MATH', selected: false},
-    {id: 4, name: 'MECH', selected: false},
-    {id: 5, name: 'OCEA', selected: false},
+import {useUpdateInfoMutation} from '../utils/query/customHook';
+import {showUpdateToast} from '../utils/showToast';
+export default function ChangeYear({navigation}) {
+  const [year, setYear] = useState('');
+  const updateYearMutation = useUpdateInfoMutation();
+  const updateYear = async () => {
+    const updateIndoPromise = updateYearMutation.mutateAsync({
+      year,
+    });
+    try {
+      const result = await updateIndoPromise;
+    } catch (error) {
+      console.log(error);
+    }
+    showUpdateToast();
+    navigation.goBack();
+  };
+  const [yearData, setYearData] = useState([
+    {id: 0, name: '1', selected: false},
+    {id: 1, name: '2', selected: false},
+    {id: 2, name: '3', selected: false},
+    {id: 3, name: '4', selected: false},
+    {id: 4, name: '5', selected: false},
   ]);
-
+  // console.log(year, yearData, !year);
   useEffect(() => {
-    setMajor(state => {
-      const name = [];
-      majorData.forEach(item => {
-        if (item.selected === true) name.push(item.name);
+    console.log('this is use effect');
+    setYear(state => {
+      let name = '';
+      yearData.forEach(item => {
+        if (item.selected === true) name = item.name;
       });
       return name;
     });
-  }, majorData);
+  }, yearData);
   React.useLayoutEffect(() => {
+    console.log('this is  useLayoutEffect');
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -44,22 +58,23 @@ export default function ChangeMajor({navigation}) {
           style={styles.button}
           fontSize="$sm"
           bg="#4fbe28"
-          disabled={!major}
-          opacity={!major ? 0.4 : 1}
-          onPress={null}
+          disabled={!year}
+          opacity={!year ? 0.4 : 1}
+          onPress={updateYear}
           text="Done"
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, year]);
   return (
     <View style={styles.container}>
       <FlatList
-        data={majorData}
+        data={yearData}
         renderItem={({item}) => (
           <RenderList
             item={item}
-            setData={setMajorData}
+            clearBefore={true}
+            setData={setYearData}
             renderTick={item.selected}
             clearOther
           />

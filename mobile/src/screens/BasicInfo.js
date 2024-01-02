@@ -31,7 +31,10 @@ export default function BasicInfo() {
         destination={ROUTES.CHANGEMAJOR}>
         <Text style={styles.textStyle}>Computer Science</Text>
       </SettingBar>
-      <SettingBar text="Year Of Study" type="basicInfo">
+      <SettingBar
+        text="Year Of Study"
+        type="basicInfo"
+        destination={ROUTES.ChANGEYEAR}>
         <Text style={styles.textStyle}>Year 3</Text>
       </SettingBar>
     </View>

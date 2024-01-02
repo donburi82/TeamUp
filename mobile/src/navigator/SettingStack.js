@@ -5,6 +5,7 @@ import BasicInfo from '../screens/BasicInfo';
 import Preference from '../screens/Preference';
 import ResetPassword from '../screens/ResetPassword';
 import ChangeMajor from '../screens/ChangeMajor';
+import ChangeYear from '../screens/ChangeYear';
 const SettingStack = createNativeStackNavigator();
 
 export default function SettingStackNavigator() {
@@ -36,8 +37,8 @@ export default function SettingStackNavigator() {
       />
       <SettingStack.Screen
         name={ROUTES.ChANGEYEAR}
-        component={ResetPassword}
-        options={{headerTitle: 'Reset Password'}}
+        component={ChangeYear}
+        options={{headerTitle: ROUTES.ChANGEYEAR}}
       />
       <SettingStack.Screen
         name={ROUTES.CHANGEMAJOR}

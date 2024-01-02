@@ -5,13 +5,21 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 export default function RenderList({
   item: {id, name},
   renderTick,
-  setMajorData,
+  setData,
+  clearBefore,
 }) {
   return (
     <TouchableOpacity
       style={styles.listBar}
       onPress={() => {
-        setMajorData(state => {
+        if (clearBefore === true) {
+          setData(state => {
+            return state.map(item => {
+              return {...item, selected: false};
+            });
+          });
+        }
+        setData(state => {
           return state.map(item => {
             return item.id === id ? {...item, selected: !item.selected} : item;
           });
@@ -31,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'white',
-    marginBottom: 20,
+    marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

@@ -62,7 +62,6 @@ function App() {
             />
 
             {Child}
-            {/* <InfoFilling /> */}
           </SafeAreaView>
         </NavigationContainer>
       </GluestackUIProvider>
