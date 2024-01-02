@@ -12,6 +12,7 @@ const { DBconnection } = require("./db/dbconnection");
 const authRoute = require("./routes/auth/index.js");
 const groupPreference = require("./routes/group-preference/index.js");
 const userBasicInfoRoute = require("./routes/userBasicInfo/index.js");
+const chatAuth = require("./routes/chat/index.js");
 const adminRoute = require("./routes/admin/index.js");
 const auth = require("./middleware/auth/index.js");
 const adminAuth = require("./middleware/admin/index.js");
@@ -22,6 +23,7 @@ app.use("/auth", authRoute);
 app.use("/userBasicInfo", auth, userBasicInfoRoute);
 app.use("/preference", groupPreference);
 app.use("/admin", auth, adminAuth, adminRoute);
+app.use("/chat", auth, chatAuth);
 
 io.on("connection", async (socket) => {
   const userId = socket.handshake.query.userId;

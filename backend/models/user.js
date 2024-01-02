@@ -64,7 +64,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide email"],
   },
   nationality: String,
-  major: String,
+  major: [String],
   year: { type: String, enum: [1, 2, 3, 4, 5], default: 1 },
   password: {
     type: String,
