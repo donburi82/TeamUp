@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const ObjectId = require('mongodb').ObjectId;
 
 // Schemas for Group Preference Information
 const groupPreferenceSchema = new mongoose.Schema({});
@@ -75,7 +76,15 @@ const UserSchema = new mongoose.Schema({
     //   "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
     // ],
   },
+  // for group preference & matching
   groupPreferences: [groupPreferenceSchema],
+  // // single array for matches - need to discuss (problem with deletion)
+  // needRematch: { type: Boolean, default: true },
+  // matches: [ObjectId],
+  // temporary solution - one for each category
+  courseProjectRematch: { type: Boolean, default: true },
+  courseProjectMatches: [ObjectId],
+  // for chat
   socketId: String,
 });
 
