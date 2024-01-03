@@ -83,25 +83,48 @@ router.route("/verify").post(async (req, res) => {
 });
 
 router.route("/register").post(async (req, res) => {
-  if (!verified.has(req.body.email)) {
-    return res.status(400).send({ status: "fail", msg: "email not verified" });
-  }
+  // if (!verified.has(req.body.email)) {
+  //   return res.status(400).send({ status: "fail", msg: "email not verified" });
+  // }
+
+  // if (
+  //   !req.body.email ||
+  //   !req.body.password ||
+  //   !req.body.name ||
+  //   !req.body.isFullTime ||
+  //   !req.body.gender ||
+  //   !req.body.nationality ||
+  //   !req.body.major ||
+  //   !req.body.year
+  // ) {
+  //   return res
+  //     .status(400)
+  //     .send({ status: "fail", msg: "incomplete information" });
+  // }
   try {
     const user = await User.create({
       email: req.body.email,
       password: req.body.password,
+      // name: req.body.name,
+      // isFullTime: req.body.isFullTime,
+      // gender: req.body.gender,
+      // nationality: req.body.nationality,
+      // major: req.body.major,
+      // year: req.body.year,
     });
     const token = user.createJWT();
     verified.delete(req.body.email);
-    res.status(201).json({ status: "success", msg: "user created", token });
+    return res
+      .status(201)
+      .json({ status: "success", msg: "user created", token });
   } catch (error) {
     if (error.code === 11000) {
-      res.status(409).json({
+      return res.status(409).json({
         status: "error",
         msg: `EmailDuplicate`,
       });
     } else if (error.name == "ValidationError") {
-      res
+      return res
         .status(403)
         .json({ status: "error", error: error.name, msg: error.message });
     } else {
