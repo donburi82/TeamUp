@@ -7,6 +7,8 @@ const {
   sendMessage,
   markMessagesAsRead,
   getMessagesFromChatRoom,
+  getChatRoomsForUser,
+  getMessageStatus,
 } = require("../../helpers/chat");
 
 module.exports = router;
@@ -59,27 +61,39 @@ router
     }
   });
 // req.body {members:[string]}
-router.route("/chatRoom").post(async (req, res) => {
-  try {
-    const { members, groupId } = req.body;
-    if (!members) {
-      return res
-        .status(400)
-        .send({ status: "fail", msg: "memebers cannot be empty" });
+router
+  .route("/chatRoom")
+  .post(async (req, res) => {
+    try {
+      const { members, groupId } = req.body;
+      if (!members) {
+        return res
+          .status(400)
+          .send({ status: "fail", msg: "memebers cannot be empty" });
+      }
+      let room;
+      if (groupId) {
+        room = await createChatRoom(members, groupId);
+      } else {
+        room = await createChatRoom(members);
+      }
+      return res.status(200).send({ status: "success", room });
+    } catch (error) {
+      return res.status(400).send({ status: "error", msg: error.message });
     }
-    let room;
-    if (groupId) {
-      room = await createChatRoom(members, groupId);
-    } else {
-      room = await createChatRoom(members);
+  })
+  .get(async (req, res) => {
+    try {
+      const { userId } = req.user;
+      const chatRooms = await getChatRoomsForUser(userId);
+      console.log("chatrooms:", chatRooms);
+      return res.status(200).send({ status: "success", chatRooms });
+    } catch (error) {
+      return res.status(400).send({ status: "error", msg: error.message });
     }
-    return res.status(200).send({ status: "success", room });
-  } catch (error) {
-    return res.status(400).send({ status: "error", msg: error.message });
-  }
-});
+  });
 
-router.route("/updateMessage/:chatRoomId").patch(async (req, res) => {
+router.route("/messageStatus/:chatRoomId").patch(async (req, res) => {
   try {
     const { chatRoomId } = req.params;
     const { userId } = req.user;
@@ -89,3 +103,13 @@ router.route("/updateMessage/:chatRoomId").patch(async (req, res) => {
     return res.status(400).send({ status: "error", msg: error.message });
   }
 });
+// .get(async (req, res) => {
+//   try {
+//     const { chatRoomId } = req.params;
+//     const { messageId } = req.query;
+//     const messageStatus = await getMessageStatus(chatRoomId, messageId);
+//     return res.status(200).send({ status: "success", messageStatus });
+//   } catch (error) {
+//     return res.status(400).send({ status: "error", msg: error.message });
+//   }
+// });
