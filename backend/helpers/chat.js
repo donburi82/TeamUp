@@ -191,6 +191,56 @@ const getMessagesFromChatRoom = async (chatRoomId) => {
   }
 };
 
+const getChatRoomsForUser = async (userId) => {
+  try {
+    const chatRooms = await chatRoomModel
+      .find({ members: { $in: [userId] } })
+      .sort({ lastTS: -1 })
+      .select("-messages")
+      .exec();
+    return chatRooms;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// const getMessageStatus = async (chatRoomId, messageId) => {
+//   try {
+//     const chatRoom = await chatRoomModel
+//       .findOne({ _id: chatRoomId, "messages._id": messageId })
+//       .select("messages.messageStatus")
+//       .populate({
+//         path: "messages.messageStatus.userId",
+//         model: "user",
+//         select: "name",
+//       })
+//       .exec();
+
+//     if (!chatRoom) {
+//       throw new Error("Chat room not found");
+//     }
+//     // console.log(chatRoom);
+//     const message = chatRoom.messages.find((msg) => {
+//       return msg._id == messageId;
+//     });
+
+//     if (!message) {
+//       throw new Error("Message not found in the specified chat room");
+//     }
+
+//     // Extracting user names from the populated messageStatus
+//     const messageStatusWithNames = message.messageStatus.map((status) => ({
+//       userName: status.userId.name, // Assuming 'name' is the field in your User model
+//       read_date: status.read_date,
+//     }));
+
+//     return messageStatusWithNames;
+//   } catch (error) {
+//     console.error("Error getting message status:", error);
+//     throw error;
+//   }
+// };
+
 module.exports = {
   createChatRoom,
   updateChatRoom,
@@ -198,4 +248,6 @@ module.exports = {
   sendMessage,
   markMessagesAsRead,
   getMessagesFromChatRoom,
+  getChatRoomsForUser,
+  // getMessageStatus,
 };
