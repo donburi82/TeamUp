@@ -1,7 +1,8 @@
 import {request, requestURL} from './requestForReactQuery';
-import {useMutation} from 'react-query';
+import {useMutation, useQuery} from 'react-query';
 import {useDispatch} from 'react-redux';
 import {login, logOut} from '../reduxStore/reducer';
+import {useQueryClient} from 'react-query';
 export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
@@ -98,16 +99,34 @@ export const useUpdatePasswordMutation = () => {
   };
   return useMutation(reqFunc);
 };
+export const useGetProfilePicQuery = () => {
+  const url = requestURL.profilePic;
+  const reqFunc = async () => {
+    const res = await request(url, null, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {});
+};
 
-// export const useUpdateImageMutation = () => {
-//   const dispatch = useDispatch();
-//   const url = requestURL.profilePic;
-//   const reqFunc = async file => {
-//     console.log('I am sending request updateImage');
-//     const res = await request(url, {file}, {method: 'patch'},{
-//       'Content-Type': 'multipart/form-data'
-//     });
-//     return res;
-//   };
-//   return useMutation(reqFunc);
-// };
+export const useUpdateProfileMutation = () => {
+  const url = requestURL.profilePic;
+  const queryClient = useQueryClient();
+  const reqFunc = async (image, type) => {
+    console.log('I am sending request useUpdateProfileMutation', image, type);
+    const res = await request(url, {image, type}, {method: 'patch'});
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([requestURL.profilePic]);
+    },
+  });
+};
+// request(
+//   requestURL.profilePic,
+//   {image: formData, type: mime.getType(imageUri)},
+//   {method: 'patch'},
+// ).then(() => {
+//   showUpdateToast();
+//   setSelectedImage(imageUri);
+// });

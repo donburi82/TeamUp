@@ -1,11 +1,25 @@
 import {View, Text, StyleSheet, Image} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import SettingBar from '../components/SettingBar';
+import {useGetProfilePicQuery} from '../utils/query/customHook';
 import {ROUTES} from '../navigator/constant';
 import BasicInfoUser from '../components/BasicInfoUser';
 
 export default function BasicInfo() {
   const [imageUri, setSelectedImage] = React.useState('');
+  const {data, isLoading, error} = useGetProfilePicQuery();
+  useEffect(() => {
+    if (data) {
+      console.log('get data from backend profile', data);
+      const blob = data.data;
+      const reader = new FileReader();
+      reader.onloadend = function () {
+        const base64data = reader.result;
+        setImageSource(base64data);
+      };
+      reader.readAsDataURL(blob);
+    }
+  }, [data]);
   return (
     <View>
       <BasicInfoUser

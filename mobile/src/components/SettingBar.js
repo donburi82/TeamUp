@@ -11,6 +11,7 @@ import RNFS from 'react-native-fs';
 import mime from 'mime';
 import {useNavigation} from '@react-navigation/native';
 import {request, requestURL} from '../utils/query/requestForReactQuery';
+import {useUpdateProfileMutation} from '../utils/query/customHook';
 import {showUpdateToast} from '../utils/showToast';
 export default function SettingBar({
   text,
@@ -20,18 +21,23 @@ export default function SettingBar({
   setSelectedImage,
 }) {
   const navigation = useNavigation();
+  const updateProfile = useUpdateProfileMutation();
   const [imageUri, setImage] = useState(null);
   const [formData, setFormData] = React.useState(null);
   useEffect(() => {
     if (formData) {
-      request(
-        requestURL.profilePic,
-        {image: formData, type: mime.getType(imageUri)},
-        {method: 'patch'},
-      ).then(() => {
+      updateProfile.mutateAsync(formData, mime.getType(imageUri)).then(() => {
         showUpdateToast();
-        setSelectedImage(imageUri);
+        // setSelectedImage(imageUri);
       });
+      // request(
+      //   requestURL.profilePic,
+      //   {image: formData, type: mime.getType(imageUri)},
+      //   {method: 'patch'},
+      // ).then(() => {
+      //   showUpdateToast();
+      //   setSelectedImage(imageUri);
+      // });
     }
   }, [imageUri, formData]);
   if (type === 'signOut') {
