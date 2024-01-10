@@ -10,7 +10,7 @@ const { isStrongPassword } = require("../../helpers/userBasicInfo.js");
 
 router.route("/getUserId").get(async (req, res) => {
   const userId = req.user.userId;
-  return res.status(200).send({ status: "success" });
+  return res.status(200).send({ status: "success", userId });
 });
 
 router.route("/getInfo/:userId").get(async (req, res) => {
