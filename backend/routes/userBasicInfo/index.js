@@ -152,4 +152,21 @@ router.get("/profilePic/:id", async (req, res) => {
   }
 });
 
+router.get("/profilePic/:id", async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ status: "fail", msg: "user not found" });
+    }
+    res.status(200).send({
+      status: "success",
+      data: user.profilePic.data,
+      contentType: user.profilePic.contentType,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", msg: error.message });
+  }
+});
+
 module.exports = router;
