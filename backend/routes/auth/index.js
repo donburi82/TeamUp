@@ -2,6 +2,7 @@ const _ = require("lodash");
 const nodemailer = require("nodemailer");
 const { User } = require("../../models/user");
 const AdminInfo = require("../../models/adminInfo");
+const { isStrongPassword } = require("../../helpers/userBasicInfo");
 
 const express = require("express");
 const router = express.Router();
@@ -83,34 +84,37 @@ router.route("/verify").post(async (req, res) => {
 });
 
 router.route("/register").post(async (req, res) => {
-  // if (!verified.has(req.body.email)) {
-  //   return res.status(400).send({ status: "fail", msg: "email not verified" });
-  // }
+  if (!verified.has(req.body.email)) {
+    return res.status(400).send({ status: "fail", msg: "email not verified" });
+  }
 
-  // if (
-  //   !req.body.email ||
-  //   !req.body.password ||
-  //   !req.body.name ||
-  //   !req.body.isFullTime ||
-  //   !req.body.gender ||
-  //   !req.body.nationality ||
-  //   !req.body.major ||
-  //   !req.body.year
-  // ) {
-  //   return res
-  //     .status(400)
-  //     .send({ status: "fail", msg: "incomplete information" });
-  // }
+  if (
+    !req.body.email ||
+    !req.body.password ||
+    !req.body.name ||
+    !req.body.isFullTime ||
+    !req.body.gender ||
+    !req.body.nationality ||
+    !req.body.major ||
+    !req.body.year
+  ) {
+    return res
+      .status(400)
+      .send({ status: "fail", msg: "incomplete information" });
+  }
+  if (!isStrongPassword(req.body.password)) {
+    return res.status(400).send({ status: "fail", msg: "weak password" });
+  }
   try {
     const user = await User.create({
       email: req.body.email,
       password: req.body.password,
-      // name: req.body.name,
-      // isFullTime: req.body.isFullTime,
-      // gender: req.body.gender,
-      // nationality: req.body.nationality,
-      // major: req.body.major,
-      // year: req.body.year,
+      name: req.body.name,
+      isFullTime: req.body.isFullTime,
+      gender: req.body.gender,
+      nationality: req.body.nationality,
+      major: req.body.major,
+      year: req.body.year,
     });
     const token = user.createJWT();
     verified.delete(req.body.email);
