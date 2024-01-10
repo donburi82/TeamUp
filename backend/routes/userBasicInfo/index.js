@@ -4,10 +4,44 @@ const { User } = require("../../models/user");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { isStrongPassword } = require("../../helpers/userBasicInfo.js");
 
 // req.body{ userId: string}
+
+router.route("/getUserId").get(async (req, res) => {
+  const userId = req.user.userId;
+  return res.status(200).send({ status: "success" });
+});
+
 router.route("/getInfo/:userId").get(async (req, res) => {
   const userId = req.params.userId;
+  try {
+    const userInfo = await User.findOne({ _id: userId });
+    if (!userInfo) {
+      return res
+        .status(400)
+        .json({ status: "fail", msg: "user doesn't exist" });
+    }
+    res.status(200).json({
+      status: "success",
+      userInfo: {
+        userId: userInfo._id,
+        email: userInfo.email,
+        name: userInfo?.name,
+        gender: userInfo?.gender,
+        isFullTime: userInfo?.isFullTime,
+        nationality: userInfo?.nationality,
+        major: userInfo?.major,
+        year: userInfo?.year,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", msg: error.message });
+  }
+});
+
+router.route("/getInfo").get(async (req, res) => {
+  const userId = req.user.userId;
   try {
     const userInfo = await User.findOne({ _id: userId });
     if (!userInfo) {
@@ -67,6 +101,10 @@ router.route("/updatePassword").patch(async (req, res) => {
       return res.status(400).send({ status: "fail", msg: "user don't exist" });
     }
     if (await user.comparePassword(pre)) {
+      if (!isStrongPassword(cur))
+        return res
+          .status(400)
+          .send({ status: "fail", msg: "password is not strong enough" });
       user.password = cur;
       await user.save();
       res.status(200).json({ status: "success" });
@@ -152,8 +190,8 @@ router.get("/profilePic/:id", async (req, res) => {
   }
 });
 
-router.get("/profilePic/:id", async (req, res) => {
-  const userId = req.params.id;
+router.get("/profilePic", async (req, res) => {
+  const userId = req.user.userid;
   try {
     const user = await User.findById(userId);
     if (!user) {
