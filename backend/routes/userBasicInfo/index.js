@@ -70,6 +70,7 @@ router.route("/getInfo").get(async (req, res) => {
 // req.body{name: string}
 router.route("/updateInfo").patch(async (req, res) => {
   const userId = req.user.userId;
+  console.log(userId);
   const info = req.body;
   try {
     await User.updateOne(
@@ -191,7 +192,8 @@ router.get("/profilePic/:id", async (req, res) => {
 });
 
 router.get("/profilePic", async (req, res) => {
-  const userId = req.user.userid;
+  const userId = req.user.userId;
+  console.log(userId);
   try {
     const user = await User.findById(userId);
     if (!user) {

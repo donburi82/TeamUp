@@ -4,20 +4,26 @@ import SettingBar from '../components/SettingBar';
 import {useGetProfilePicQuery} from '../utils/query/customHook';
 import {ROUTES} from '../navigator/constant';
 import BasicInfoUser from '../components/BasicInfoUser';
-
+import {Buffer} from 'buffer';
 export default function BasicInfo() {
   const [imageUri, setSelectedImage] = React.useState('');
   const {data, isLoading, error} = useGetProfilePicQuery();
   useEffect(() => {
-    if (data) {
-      console.log('get data from backend profile', data);
-      const blob = data.data;
-      const reader = new FileReader();
-      reader.onloadend = function () {
-        const base64data = reader.result;
-        setImageSource(base64data);
-      };
-      reader.readAsDataURL(blob);
+    if (data?.data?.data) {
+      // console.log('the data back is', data);
+      const byteArray = new Uint8Array(data.data.data);
+      const base64String = Buffer.from(byteArray).toString('base64');
+      const imageData = `data:${data.contentType};base64,${base64String}`;
+      setSelectedImage(imageData);
+      // const blob = new Blob([byteArray], {type: data.contentType});
+      // // console.log('blob is ', blob);
+      // const reader = new FileReader();
+      // reader.onloadend = function () {
+      //   const base64data = reader.result;
+      //   setSelectedImage(base64data);
+      //   console.log('base64 data is', base64data);
+      // };
+      // reader.readAsDataURL(blob);
     }
   }, [data]);
   return (
