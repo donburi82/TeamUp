@@ -58,6 +58,7 @@ export const useLoginMutation = () => {
 export const useUpdateInfoMutation = () => {
   const dispatch = useDispatch();
   const url = requestURL.updateInfo;
+  const queryClient = useQueryClient();
   const reqFunc = async ({
     name,
     isFullTime,
@@ -66,6 +67,7 @@ export const useUpdateInfoMutation = () => {
     major,
     year,
   }) => {
+    console.log(major);
     const res = await request(
       url,
       {
@@ -80,7 +82,11 @@ export const useUpdateInfoMutation = () => {
     );
     return res;
   };
-  return useMutation(reqFunc);
+  return useMutation(reqFunc, {
+    onSuccess: data => {
+      queryClient.invalidateQueries([requestURL.getInfo]);
+    },
+  });
 };
 export const useUpdatePasswordMutation = () => {
   const dispatch = useDispatch();
@@ -144,7 +150,8 @@ export const useGetUserInfoQuery = () => {
   return useQuery([url], reqFunc, {
     onSuccess: data => {
       console.log('get back data is ', data);
-      if (data?.data) {
+      if (data?.userInfo) {
+        dispatch(updateInfo(data?.userInfo));
       }
     },
   });

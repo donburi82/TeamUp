@@ -36,9 +36,9 @@ export default function SettingStackNavigator() {
         options={{headerTitle: 'Reset Password'}}
       />
       <SettingStack.Screen
-        name={ROUTES.ChANGEYEAR}
+        name={ROUTES.CHANGEYEAR}
         component={ChangeYear}
-        options={{headerTitle: ROUTES.ChANGEYEAR}}
+        options={{headerTitle: ROUTES.CHANGEYEAR}}
       />
       <SettingStack.Screen
         name={ROUTES.CHANGEMAJOR}

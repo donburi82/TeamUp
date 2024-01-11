@@ -5,26 +5,23 @@ import SettingBar from '../components/SettingBar';
 import {useGetProfilePicQuery} from '../utils/query/customHook';
 import {ROUTES} from '../navigator/constant';
 import BasicInfoUser from '../components/BasicInfoUser';
-import {Buffer} from 'buffer';
+
 export default function BasicInfo() {
   const imageUri = useSelector(state => state?.userInfo?.imageUri);
-  // const [imageUri, setSelectedImage] = React.useState('');
-  // const {data, isLoading, error} = useGetProfilePicQuery();
-  // useEffect(() => {
-  //   if (data?.data?.data) {
-  //     const byteArray = new Uint8Array(data.data.data);
-  //     const base64String = Buffer.from(byteArray).toString('base64');
-  //     const imageData = `data:${data.contentType};base64,${base64String}`;
-  //     setSelectedImage(imageData);
-  //   }
-  // }, [data]);
+  const year = useSelector(state => state?.userInfo?.year);
+  const major = useSelector(state => state?.userInfo?.major).join(',');
+  const name = useSelector(state => state?.userInfo?.name);
+  const gender = useSelector(state => state?.userInfo?.gender);
+  const isFullTime = useSelector(state => state?.userInfo?.isFullTime);
+  const nationality = useSelector(state => state?.userInfo?.nationality);
+
   return (
     <View>
       <BasicInfoUser
-        name="River Mu"
-        gender="M"
-        status="Full-time"
-        nationality="China"
+        name={name}
+        gender={gender === 'male' ? 'M' : 'F'}
+        isFullTime={isFullTime}
+        nationality={nationality}
         profilePic={imageUri}
       />
       <SettingBar
@@ -49,13 +46,13 @@ export default function BasicInfo() {
         text="Major"
         type="basicInfo"
         destination={ROUTES.CHANGEMAJOR}>
-        <Text style={styles.textStyle}>Computer Science</Text>
+        <Text style={styles.textStyle}>{major}</Text>
       </SettingBar>
       <SettingBar
         text="Year Of Study"
         type="basicInfo"
-        destination={ROUTES.ChANGEYEAR}>
-        <Text style={styles.textStyle}>Year 3</Text>
+        destination={ROUTES.CHANGEYEAR}>
+        <Text style={styles.textStyle}>Year {year}</Text>
       </SettingBar>
     </View>
   );

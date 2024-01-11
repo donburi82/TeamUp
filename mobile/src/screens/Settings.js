@@ -5,12 +5,12 @@ import {ROUTES} from '../navigator/constant';
 import {useSelector} from 'react-redux';
 export default function Settings() {
   const imageUri = useSelector(state => state?.userInfo?.imageUri);
-
+  const name = useSelector(state => state?.userInfo?.name);
   return (
     <>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{uri: imageUri}} />
-        <Text style={styles.name}>River Mu</Text>
+        <Text style={styles.name}>{name}</Text>
       </View>
 
       <SettingBar

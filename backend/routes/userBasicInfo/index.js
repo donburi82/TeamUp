@@ -70,8 +70,9 @@ router.route("/getInfo").get(async (req, res) => {
 // req.body{name: string}
 router.route("/updateInfo").patch(async (req, res) => {
   const userId = req.user.userId;
-  console.log(userId);
+  // console.log(userId);
   const info = req.body;
+  console.log(info?.major);
   try {
     await User.updateOne(
       { _id: userId },

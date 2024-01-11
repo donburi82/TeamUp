@@ -10,7 +10,8 @@ import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
 import React, {useState, useEffect} from 'react';
 import renderList from '../components/RenderList';
 import RenderList from '../components/RenderList';
-
+import {useUpdateInfoMutation} from '../utils/query/customHook';
+import {showUpdateToast} from '../utils/showToast';
 export default function ChangeMajor({navigation}) {
   const [major, setMajor] = useState([]);
 
@@ -23,12 +24,28 @@ export default function ChangeMajor({navigation}) {
     {id: 5, name: 'OCEA', selected: false},
   ]);
 
+  const updateMajorMutation = useUpdateInfoMutation();
+  const updateMajor = async () => {
+    console.log('major is', major, majorData);
+    const updateIndoPromise = updateMajorMutation.mutateAsync({
+      major,
+    });
+    try {
+      const result = await updateIndoPromise;
+    } catch (error) {
+      console.log(error);
+    }
+    showUpdateToast();
+    navigation.goBack();
+  };
+
   useEffect(() => {
     setMajor(state => {
       const name = [];
       majorData.forEach(item => {
         if (item.selected === true) name.push(item.name);
       });
+
       return name;
     });
   }, majorData);
@@ -46,12 +63,12 @@ export default function ChangeMajor({navigation}) {
           bg="#4fbe28"
           disabled={!major}
           opacity={!major ? 0.4 : 1}
-          onPress={null}
+          onPress={updateMajor}
           text="Done"
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, major]);
   return (
     <View style={styles.container}>
       <FlatList
@@ -78,8 +95,5 @@ const styles = StyleSheet.create({
   button: {
     width: 75,
     height: 30,
-
-    // alignItems: 'flex-start',
-    // justifyContent: 'center',
   },
 });

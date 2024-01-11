@@ -8,7 +8,7 @@ export const ROUTES = {
   CHAT: 'Chat',
   SETTINGS: 'Settings',
   CHANGEMAJOR: 'Major',
-  ChANGEYEAR: 'Year Of Study',
+  CHANGEYEAR: 'Year Of Study',
   BASICINFO: 'Basic Information',
   PREFERENCE: 'PREFERENCE',
 };

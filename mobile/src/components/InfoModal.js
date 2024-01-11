@@ -7,7 +7,7 @@ export default function InfoModal() {
   const {welcomed} = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(welcomed !== true);
   const dispatch = useDispatch();
-  console.log(welcomed);
+
   return (
     <Modal
       animationType="slide"

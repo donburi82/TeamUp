@@ -33,7 +33,11 @@ export default function BasicInfoUser({
               size={30}
             />
           ) : (
-            <MaterialCommunityIcons name="gender-female" color="pink" />
+            <MaterialCommunityIcons
+              name="gender-female"
+              color="pink"
+              size={30}
+            />
           )}
         </View>
         {isFullTime ? (

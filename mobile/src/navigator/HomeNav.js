@@ -14,7 +14,7 @@ const NativeStack = createNativeStackNavigator();
 const BottomStack = createBottomTabNavigator();
 export default function HomeRouting() {
   const {updated} = useSelector(state => state.userInfo);
-  console.log(updated, 'updated');
+
   return !updated ? (
     <NativeStack.Navigator>
       <NativeStack.Screen

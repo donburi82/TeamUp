@@ -45,7 +45,6 @@ function App() {
     // return <HomeRouting />;
 
     if (userInfo.isAuthed) {
-      console.log('渲染home捏');
       return <HomeRouting />;
     }
     return <AuthRouting />;
