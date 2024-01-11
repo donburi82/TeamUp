@@ -1,12 +1,15 @@
 import {View, Text, Image, StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import SettingBar from '../components/SettingBar';
 import {ROUTES} from '../navigator/constant';
+import {useSelector} from 'react-redux';
 export default function Settings() {
+  const imageUri = useSelector(state => state?.userInfo?.imageUri);
+
   return (
     <>
       <View style={styles.imageContainer}>
-        <Image style={styles.image} />
+        <Image style={styles.image} source={{uri: imageUri}} />
         <Text style={styles.name}>River Mu</Text>
       </View>
 

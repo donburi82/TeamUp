@@ -26,9 +26,16 @@ const globalSlice = createSlice({
       };
     },
     update: state => {
+      //this is to verify if the user complete the sign up form, may change later
       state.userInfo = {
         ...state.userInfo,
         updated: true,
+      };
+    },
+    updateInfo: (state, action) => {
+      state.userInfo = {
+        ...state.userInfo,
+        ...action.payload,
       };
     },
     welcome: state => {
@@ -37,9 +44,16 @@ const globalSlice = createSlice({
         welcomed: true,
       };
     },
+    updateImageUri: (state, action) => {
+      state.userInfo = {
+        ...state.userInfo,
+        imageUri: action.payload.imageUri,
+      };
+    },
   },
 });
 
-export const {login, logOut, update, welcome} = globalSlice.actions;
+export const {login, logOut, update, welcome, updateImageUri, updateInfo} =
+  globalSlice.actions;
 
 export default globalSlice.reducer;

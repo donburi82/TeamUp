@@ -1,8 +1,9 @@
 import {request, requestURL} from './requestForReactQuery';
 import {useMutation, useQuery} from 'react-query';
 import {useDispatch} from 'react-redux';
-import {login, logOut} from '../reduxStore/reducer';
+import {login, logOut, updateImageUri, updateInfo} from '../reduxStore/reducer';
 import {useQueryClient} from 'react-query';
+import {Buffer} from 'buffer';
 export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
@@ -65,7 +66,6 @@ export const useUpdateInfoMutation = () => {
     major,
     year,
   }) => {
-    console.log('I am sending request updateInfo');
     const res = await request(
       url,
       {
@@ -100,12 +100,23 @@ export const useUpdatePasswordMutation = () => {
   return useMutation(reqFunc);
 };
 export const useGetProfilePicQuery = () => {
+  const dispatch = useDispatch();
   const url = requestURL.profilePic;
   const reqFunc = async () => {
     const res = await request(url, null, {method: 'get'});
     return res;
   };
-  return useQuery([url], reqFunc, {});
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      if (data?.data?.data) {
+        const byteArray = new Uint8Array(data.data.data);
+        const base64String = Buffer.from(byteArray).toString('base64');
+        const imageData = `data:${data.contentType};base64,${base64String}`;
+
+        dispatch(updateImageUri({imageUri: imageData}));
+      }
+    },
+  });
 };
 
 export const useUpdateProfileMutation = () => {
@@ -122,11 +133,19 @@ export const useUpdateProfileMutation = () => {
     },
   });
 };
-// request(
-//   requestURL.profilePic,
-//   {image: formData, type: mime.getType(imageUri)},
-//   {method: 'patch'},
-// ).then(() => {
-//   showUpdateToast();
-//   setSelectedImage(imageUri);
-// });
+
+export const useGetUserInfoQuery = () => {
+  const dispatch = useDispatch();
+  const url = requestURL.getInfo;
+  const reqFunc = async () => {
+    const res = await request(url, null, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('get back data is ', data);
+      if (data?.data) {
+      }
+    },
+  });
+};

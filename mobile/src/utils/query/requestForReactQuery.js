@@ -18,6 +18,7 @@ const requestURL = {
   updateInfo: 'userBasicInfo/updateInfo',
   profilePic: 'userBasicInfo/profilePic',
   updatePassword: 'userBasicInfo/updatePassword',
+  getInfo: 'userBasicInfo/getInfo',
 };
 
 async function request(url, datum, options) {

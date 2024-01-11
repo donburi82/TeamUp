@@ -30,14 +30,6 @@ export default function SettingBar({
         showUpdateToast();
         // setSelectedImage(imageUri);
       });
-      // request(
-      //   requestURL.profilePic,
-      //   {image: formData, type: mime.getType(imageUri)},
-      //   {method: 'patch'},
-      // ).then(() => {
-      //   showUpdateToast();
-      //   setSelectedImage(imageUri);
-      // });
     }
   }, [imageUri, formData]);
   if (type === 'signOut') {
