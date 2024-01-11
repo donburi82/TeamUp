@@ -64,7 +64,7 @@ export default function InfoFilling() {
   const [formData, setFormData] = React.useState(null);
   const [firstname, setFirstName] = React.useState('');
   const [lastname, setLastName] = React.useState('');
-  const [gender, setGender] = React.useState(dataGender[0].value);
+  const [gender, setGender] = React.useState('M');
   const [origin, setOrigin] = React.useState(dataOrigin[0].value);
   const [isFullTime, setFullTime] = React.useState(true);
   const [major, setMajor] = React.useState(dataMajor[0].value);
@@ -159,7 +159,7 @@ export default function InfoFilling() {
             <VStack>
               <Text style={styles.attributeName}>Gender</Text>
               <SelectList
-                setSelected={val => setGender(val)}
+                setSelected={val => setGender(val === 'male' ? 'M' : 'F')}
                 placeholder={dataGender[0].value}
                 boxStyles={{borderWidth: 0, ...styles.inputSmallBox}}
                 search={false}
@@ -213,14 +213,6 @@ export default function InfoFilling() {
               save="value"
             />
 
-            {/* const [firstname, setFirstName] = React.useState('');
-  const [lastname, setLastName] = React.useState('');
-  const [gender, setGender] = React.useState(dataGender[0].value);
-  const [origin, setOrigin] = React.useState(dataOrigin[0].value);
-  const [isFullTime, setFullTime] = React.useState(true);
-  const [major, setMajor] = React.useState(dataMajor[0].value);
-  const [year, setYear] = React.useState(dataYear[0].value);
-  const [imageUri, setSelectedImage] = React.useState(''); */}
             <DebouncedWaitingButton
               mt={30}
               mb={20}

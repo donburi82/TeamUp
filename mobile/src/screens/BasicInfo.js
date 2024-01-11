@@ -19,7 +19,7 @@ export default function BasicInfo() {
     <View>
       <BasicInfoUser
         name={name}
-        gender={gender === 'male' ? 'M' : 'F'}
+        gender={gender}
         isFullTime={isFullTime}
         nationality={nationality}
         profilePic={imageUri}
