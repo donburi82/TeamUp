@@ -10,6 +10,7 @@ const {
 } = require("../../helpers/preference");
 
 router.get("/", async (req, res) => {
+  console.log("called get preference");
   try {
     const { userId, groupType } = req.query;
     const preferences = await getGroupPreferences(userId, groupType);
@@ -74,9 +75,11 @@ router.post("/extracurricular", async (req, res) => {
 
 router.delete("/", async (req, res) => {
   try {
+    console.log("call delete");
     const { userId, preferenceId } = req.query;
+    console.log(userId, preferenceId);
     const result = await deleteGroupPreference(userId, preferenceId);
-    console.log(result);
+    // console.log(result);
     return res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);

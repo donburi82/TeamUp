@@ -11,17 +11,26 @@ import RNFS from 'react-native-fs';
 import mime from 'mime';
 import {useNavigation} from '@react-navigation/native';
 import {request, requestURL} from '../utils/query/requestForReactQuery';
-import {useUpdateProfileMutation} from '../utils/query/customHook';
+import {
+  useUpdateProfileMutation,
+  useDeleteCourseProjectMutation,
+  useDeleteExtracurricularMutation,
+  useDeleteCourseStudyMutation,
+} from '../utils/query/customHook';
 import {showUpdateToast} from '../utils/showToast';
 export default function SettingBar({
   text,
   type,
   destination,
   children,
-  setSelectedImage,
+  preferenceId,
+  preferenceType,
 }) {
   const navigation = useNavigation();
   const updateProfile = useUpdateProfileMutation();
+  const deleteCP = useDeleteCourseProjectMutation();
+  const deleteCS = useDeleteCourseStudyMutation();
+  const deleteE = useDeleteExtracurricularMutation();
   const [imageUri, setImage] = useState(null);
   const [formData, setFormData] = React.useState(null);
   useEffect(() => {
@@ -63,7 +72,16 @@ export default function SettingBar({
       <TouchableOpacity style={styles.barContainer}>
         <View style={styles.innerContainer}>
           <Text style={styles.textStyle}>{text}</Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              if (preferenceType === 'CourseStudy') {
+                deleteCS.mutateAsync(preferenceId);
+              } else if (preferenceType === 'CourseProject') {
+                deleteCP.mutateAsync(preferenceId);
+              } else {
+                deleteE.mutateAsync(preferenceId);
+              }
+            }}>
             <EntypoIcon name="circle-with-cross" size={20} color="red" />
           </TouchableOpacity>
         </View>
