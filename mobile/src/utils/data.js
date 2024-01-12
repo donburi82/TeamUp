@@ -30,6 +30,14 @@ export const GradeData = [
   {key: '4', value: 'B-'},
   {key: '7', value: 'P'},
 ];
+export const languageData = [
+  {key: '0', value: 'English'},
+  {key: '1', value: 'Mandarin'},
+  {key: '3', value: 'Cantonese'},
+  {key: '5', value: 'Korean'},
+  {key: '6', value: 'Hindi'},
+  {key: '4', value: 'Other'},
+];
 export const skillData = [
   {key: '0', value: 'React'},
   {key: '1', value: 'React Native'},

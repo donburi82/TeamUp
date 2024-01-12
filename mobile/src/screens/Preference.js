@@ -80,7 +80,7 @@ export default function Preference() {
           />
         </TouchableOpacity>
       </ScrollView>
-      <BottomWindow reference={bottomSheetRef} />
+      <BottomWindow reference={bottomSheetRef} activeButton={activeButton} />
     </View>
   );
 }

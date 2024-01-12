@@ -11,35 +11,279 @@ import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
-import AntIcon from 'react-native-vector-icons/AntDesign';
+import {
+  useAddCourseProjectMutation,
+  useAddCourseStudyMutation,
+  useAddExtracurricularMutation,
+} from '../utils/query/customHook';
 import {ScrollView} from 'react-native-gesture-handler';
 import {
   SelectList,
   MultipleSelectList,
 } from 'react-native-dropdown-select-list';
 import DebouncedWaitingButton from './DebouncedWaitingButton';
-import {CourseData, GradeData, skillData} from '../utils/data';
-export default function BottomWindow({reference}) {
-  // const bottomSheetRef = useRef(null);
+import {CourseData, GradeData, skillData, languageData} from '../utils/data';
+
+function CourseProject({
+  setCourseCode,
+  projectInterest,
+  setProjectInterest,
+  experience,
+  setExperience,
+  setTargetGrade,
+  skillset,
+  setSkillset,
+}) {
+  return (
+    <ScrollView style={styles.container}>
+      <View>
+        <Text style={styles.textStyle}>Course Code</Text>
+        <SelectList
+          setSelected={setCourseCode}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          search={false}
+          data={CourseData}
+          dropdownStyles={styles.dropDownStyle}
+          save="value"
+        />
+      </View>
+      <View>
+        <Text style={styles.textStyle}>Project Interest</Text>
+        <TextInput
+          style={{
+            ...styles.boxStyle,
+            borderRadius: 0,
+            textAlignVertical: 'top',
+          }}
+          multiline
+          numberOfLines={4} // You can adjust the number of lines
+          onChangeText={setProjectInterest}
+          value={projectInterest}
+          placeholder=" "
+        />
+      </View>
+      <View>
+        <Text style={styles.textStyle}>Skillset</Text>
+
+        <MultipleSelectList
+          setSelected={setSkillset}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          dropdownStyles={styles.dropDownStyle}
+          search={true}
+          data={skillData}
+          save="value"
+        />
+      </View>
+      <View>
+        <Text style={styles.textStyle}>Target Grade</Text>
+        <SelectList
+          setSelected={setTargetGrade}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          dropdownStyles={styles.dropDownStyle}
+          search={false}
+          data={GradeData}
+          label="Categories"
+          save="value"
+        />
+      </View>
+      <View>
+        <Text style={styles.textStyle}>Experience</Text>
+        <TextInput
+          style={{
+            ...styles.boxStyle,
+            borderRadius: 0,
+            textAlignVertical: 'top',
+          }}
+          multiline
+          numberOfLines={4} // You can adjust the number of lines
+          onChangeText={setExperience}
+          value={experience}
+          placeholder=" "
+        />
+      </View>
+    </ScrollView>
+  );
+}
+function CourseStudy({setCourseCode, setPreferredLanguage, setTargetGrade}) {
+  return (
+    <ScrollView style={styles.container}>
+      <View>
+        <Text style={styles.textStyle}>Course Code</Text>
+        <SelectList
+          setSelected={setCourseCode}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          search={false}
+          data={CourseData}
+          dropdownStyles={styles.dropDownStyle}
+          save="value"
+        />
+      </View>
+
+      <View>
+        <Text style={styles.textStyle}>Preferred Language</Text>
+        <SelectList
+          setSelected={setPreferredLanguage}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          dropdownStyles={styles.dropDownStyle}
+          search={false}
+          data={languageData}
+          label="Categories"
+          save="value"
+        />
+      </View>
+      <View>
+        <Text style={styles.textStyle}>Target Grade</Text>
+        <SelectList
+          setSelected={setTargetGrade}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          dropdownStyles={styles.dropDownStyle}
+          search={false}
+          data={GradeData}
+          label="Categories"
+          save="value"
+        />
+      </View>
+    </ScrollView>
+  );
+}
+function ExtraCurricular({
+  setPreferredLanguage,
+  projectInterest,
+  setProjectInterest,
+  experience,
+  setExperience,
+  setSkillset,
+}) {
+  return (
+    <ScrollView style={styles.container}>
+      <View>
+        <View>
+          <Text style={styles.textStyle}>Preferred Language</Text>
+          <SelectList
+            setSelected={setPreferredLanguage}
+            placeholder={' '}
+            boxStyles={styles.boxStyle}
+            dropdownStyles={styles.dropDownStyle}
+            search={false}
+            data={languageData}
+            label="Categories"
+            save="value"
+          />
+        </View>
+        <View>
+          <Text style={styles.textStyle}>Skillset</Text>
+
+          <MultipleSelectList
+            setSelected={setSkillset}
+            placeholder={' '}
+            boxStyles={styles.boxStyle}
+            dropdownStyles={styles.dropDownStyle}
+            search={true}
+            data={skillData}
+            save="value"
+          />
+        </View>
+        <Text style={styles.textStyle}>Project Interest</Text>
+        <TextInput
+          style={{
+            ...styles.boxStyle,
+            borderRadius: 0,
+            textAlignVertical: 'top',
+          }}
+          multiline
+          numberOfLines={4} // You can adjust the number of lines
+          onChangeText={setProjectInterest}
+          value={projectInterest}
+          placeholder=" "
+        />
+      </View>
+
+      <View>
+        <Text style={styles.textStyle}>Experience</Text>
+        <TextInput
+          style={{
+            ...styles.boxStyle,
+            borderRadius: 0,
+            textAlignVertical: 'top',
+          }}
+          multiline
+          numberOfLines={4} // You can adjust the number of lines
+          onChangeText={setExperience}
+          value={experience}
+          placeholder=" "
+        />
+      </View>
+    </ScrollView>
+  );
+}
+export default function BottomWindow({reference, activeButton}) {
   const [courseCode, setCourseCode] = useState('');
   const [projectInterest, setProjectInterest] = useState('');
   const [experience, setExperience] = useState('');
   const [targetGrade, setTargetGrade] = useState('');
+  const [preferredLanguage, setPreferredLanguage] = useState('');
   const [skillset, setSkillset] = useState([]);
-  const [newSkill, setNewSkill] = useState('');
+  const addCP = useAddCourseProjectMutation();
+  const addCS = useAddCourseStudyMutation();
+  const addE = useAddExtracurricularMutation();
+  const handleDone = () => {
+    if (activeButton === 0) {
+      addCP
+        .mutateAsync(
+          courseCode,
+          projectInterest,
+          skillset,
+          targetGrade,
+          experience,
+        )
+        .then(() => {
+          setCourseCode('');
+          setProjectInterest('');
+          setExperience('');
+          setTargetGrade('');
+          setPreferredLanguage('');
+          setSkillset([]);
+        });
+    } else if (activeButton === 1) {
+      addCS.mutateAsync(courseCode, targetGrade, preferredLanguage).then(() => {
+        setCourseCode('');
+        setProjectInterest('');
+        setExperience('');
+        setTargetGrade('');
+        setPreferredLanguage('');
+        setSkillset([]);
+      });
+    } else if (activeButton === 2) {
+      addE
+        .mutateAsync(projectInterest, skillset, experience, preferredLanguage)
+        .then(() => {
+          setCourseCode('');
+          setProjectInterest('');
+          setExperience('');
+          setTargetGrade('');
+          setPreferredLanguage('');
+          setSkillset([]);
+        });
+    }
 
+    reference?.current?.close();
+  };
+  useEffect(() => {
+    setCourseCode('');
+    setProjectInterest('');
+    setExperience('');
+    setTargetGrade('');
+    setPreferredLanguage('');
+    setSkillset([]);
+  }, [activeButton]);
   // variables
   const snapPoints = ['93%'];
-  const addSkill = () => {
-    setSkillset([...skillset, newSkill]);
-    setNewSkill(''); // Reset newSkill after adding
-  };
-
-  const deleteSkill = index => {
-    const updatedSkills = skillset.filter((_, idx) => idx !== index);
-    setSkillset(updatedSkills);
-  };
   return (
     <BottomSheet
       ref={reference}
@@ -65,127 +309,50 @@ export default function BottomWindow({reference}) {
           style={styles.button}
           fontSize="$md"
           bg="#4fbe28"
-          disabled={!courseCode}
-          opacity={!courseCode ? 0.4 : 1}
-          onPress={null}
+          disabled={
+            (!courseCode && activeButton === 0) ||
+            (!courseCode && activeButton === 1) ||
+            (activeButton === 2 && !projectInterest)
+          }
+          opacity={
+            (!courseCode && activeButton === 0) ||
+            (!courseCode && activeButton === 1) ||
+            (activeButton === 2 && !projectInterest)
+              ? 0.4
+              : 1
+          }
+          onPress={handleDone}
           text="Done"
         />
       </View>
-      <ScrollView style={styles.container}>
-        <View>
-          <Text style={styles.textStyle}>Course Code</Text>
-          <SelectList
-            setSelected={setCourseCode}
-            placeholder={' '}
-            boxStyles={styles.boxStyle}
-            search={false}
-            data={CourseData}
-            dropdownStyles={styles.dropDownStyle}
-            save="value"
-          />
-        </View>
-        <View>
-          <Text style={styles.textStyle}>Project Interest</Text>
-          <TextInput
-            style={{
-              ...styles.boxStyle,
-              borderRadius: 0,
-              textAlignVertical: 'top',
-            }}
-            multiline
-            numberOfLines={4} // You can adjust the number of lines
-            onChangeText={setProjectInterest}
-            value={projectInterest}
-            placeholder=" "
-          />
-          {/* <Input
-            style={{
-              ...styles.boxStyle,
-              borderRadius: 0,
-              height: 100,
-             
-            }}>
-            <InputField
-              placeholder=""
-              type="text"
-              style={{fontSize: 15}}
-              onChangeText={setProjectInterest}
-            />
-          </Input> */}
-        </View>
-        <View>
-          <Text style={styles.textStyle}>Skillset</Text>
-
-          {/* <View style={styles.skillRow}> */}
-          <MultipleSelectList
-            setSelected={setSkillset}
-            placeholder={' '}
-            boxStyles={styles.boxStyle}
-            dropdownStyles={styles.dropDownStyle}
-            // searchInputStyle={{backgroundColor: 'red'}}
-            // labelStyles={{marginTop: -40, position: 'absolute', zIndex: 9}}
-
-            search={true}
-            data={skillData}
-            save="value"
-          />
-          {/* <TouchableOpacity>
-              <EntypoIcon
-                name="circle-with-cross"
-                size={20}
-                color="red"
-                style={{marginLeft: -30}}
-              />
-            </TouchableOpacity> */}
-        </View>
-
-        {/* <TouchableOpacity onPress={addSkill}>
-            <AntIcon
-              name="pluscircle"
-              size={40}
-              color="rgba(63,43,190,0.50)"
-              style={styles.plusIcon}
-            />
-          </TouchableOpacity> */}
-        {/* </View> */}
-        <View>
-          <Text style={styles.textStyle}>Target Grade</Text>
-          <SelectList
-            setSelected={setTargetGrade}
-            placeholder={' '}
-            boxStyles={styles.boxStyle}
-            dropdownStyles={styles.dropDownStyle}
-            search={false}
-            data={GradeData}
-            label="Categories"
-            save="value"
-          />
-        </View>
-        <View>
-          <Text style={styles.textStyle}>Experience</Text>
-          <TextInput
-            style={{
-              ...styles.boxStyle,
-              borderRadius: 0,
-              textAlignVertical: 'top',
-            }}
-            multiline
-            numberOfLines={4} // You can adjust the number of lines
-            onChangeText={setExperience}
-            value={experience}
-            placeholder=" "
-          />
-          {/* <Input style={{...styles.boxStyle, borderRadius: 0, height: 100}}>
-            <InputField
-              numberOfLines={4}
-              placeholder=""
-              type="text"
-              style={{fontSize: 15}}
-              onChangeText={setCourseCode}
-            />
-          </Input> */}
-        </View>
-      </ScrollView>
+      {activeButton === 0 ? (
+        <CourseProject
+          setCourseCode={setCourseCode}
+          projectInterest={projectInterest}
+          setProjectInterest={setProjectInterest}
+          experience={experience}
+          setExperience={setExperience}
+          setTargetGrade={setTargetGrade}
+          skillset={skillset}
+          setSkillset={setSkillset}
+        />
+      ) : activeButton === 1 ? (
+        <CourseStudy
+          setCourseCode={setCourseCode}
+          setTargetGrade={setTargetGrade}
+          setPreferredLanguage={setPreferredLanguage}
+        />
+      ) : (
+        <ExtraCurricular
+          projectInterest={projectInterest}
+          setProjectInterest={setProjectInterest}
+          experience={experience}
+          setExperience={setExperience}
+          setPreferredLanguage={setPreferredLanguage}
+          skillset={skillset}
+          setSkillset={setSkillset}
+        />
+      )}
     </BottomSheet>
   );
 }

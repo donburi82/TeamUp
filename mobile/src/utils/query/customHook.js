@@ -273,3 +273,77 @@ export const useDeleteExtracurricularMutation = () => {
     },
   });
 };
+export const useAddCourseStudyMutation = () => {
+  const url = requestURL.coursestudy;
+  const queryClient = useQueryClient();
+  const userId = useSelector(state => state?.userInfo?.userId);
+  const reqFunc = async (courseCode, targetGrade, preferredLanguage) => {
+    const res = await request(url, {
+      userId,
+      courseCode,
+      targetGrade,
+      preferredLanguage,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['CourseStudy']);
+      showUpdateToast();
+    },
+  });
+};
+export const useAddCourseProjectMutation = () => {
+  const url = requestURL.courseproject;
+  const queryClient = useQueryClient();
+  const userId = useSelector(state => state?.userInfo?.userId);
+  const reqFunc = async (
+    courseCode,
+    projectInterest,
+    skillset,
+    targetGrade,
+    experience,
+  ) => {
+    const res = await request(url, {
+      userId,
+      courseCode,
+      projectInterest,
+      skillset,
+      targetGrade,
+      experience,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['CourseProject']);
+      showUpdateToast();
+    },
+  });
+};
+export const useAddExtracurricularMutation = () => {
+  const url = requestURL.extracurricular;
+  const queryClient = useQueryClient();
+  const userId = useSelector(state => state?.userInfo?.userId);
+  const reqFunc = async (
+    projectInterest,
+    skillset,
+    experience,
+    preferredLanguage,
+  ) => {
+    const res = await request(url, {
+      userId,
+      projectInterest,
+      skillset,
+      experience,
+      preferredLanguage,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['Extracurricular']);
+      showUpdateToast();
+    },
+  });
+};

@@ -20,6 +20,9 @@ const requestURL = {
   updatePassword: 'userBasicInfo/updatePassword',
   getInfo: 'userBasicInfo/getInfo',
   preference: 'preference',
+  courseproject: 'preference/courseproject',
+  coursestudy: 'preference/coursestudy',
+  extracurricular: 'preference/extracurricular',
 };
 
 async function request(url, datum, options, isGetRequest) {
