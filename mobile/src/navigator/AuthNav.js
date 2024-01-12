@@ -3,7 +3,7 @@ import {ROUTES} from './constant';
 
 import LoginScreen from '../screens/LoginScreen';
 import SetupScreen from '../screens/SetupScreen';
-
+import InfoFilling from '../screens/InfoFilling';
 const AuthStack = createNativeStackNavigator();
 
 export default function AuthRouting() {
@@ -21,6 +21,17 @@ export default function AuthRouting() {
           // headerBackTitleVisible: false, // iOS上隐藏返回按钮旁边的文本
           headerTransparent: true,
           headerTitle: '', // 不显示标题
+          // headerLeft: () => null, // 隐藏左侧组件
+          // headerRight: () => null, // 隐藏右侧组件
+        }}
+      />
+      <AuthStack.Screen
+        name={ROUTES.INFOFILLING}
+        component={InfoFilling}
+        options={{
+          // headerBackTitleVisible: false, // iOS上隐藏返回按钮旁边的文本
+          headerTransparent: true,
+          headerTitle: 'Basic Information',
           // headerLeft: () => null, // 隐藏左侧组件
           // headerRight: () => null, // 隐藏右侧组件
         }}

@@ -3,8 +3,11 @@ import React from 'react';
 import {ButtonText, Button, InputField} from '@gluestack-ui/themed';
 import {useDispatch} from 'react-redux';
 import {SelectList} from 'react-native-dropdown-select-list';
-import {logOut, update} from '../utils/reduxStore/reducer';
-import {useUpdateInfoMutation} from '../utils/query/customHook';
+import {useRoute} from '@react-navigation/native';
+import {
+  useUpdateInfoMutation,
+  useRegisterEmailMutation,
+} from '../utils/query/customHook';
 import {request, requestURL} from '../utils/query/requestForReactQuery';
 import {StyleSheet} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -26,8 +29,10 @@ import {
 
 export default function InfoFilling() {
   const dispatch = useDispatch();
-  const updateInfo = useUpdateInfoMutation();
-
+  const registerHook = useRegisterEmailMutation();
+  const route = useRoute();
+  // console.log(route);
+  const {email, password} = route?.params;
   const dataGender = [
     {key: '1', value: 'male'},
     {key: '2', value: 'female'},
@@ -219,7 +224,9 @@ export default function InfoFilling() {
               disabled={!firstname || !lastname || !imageUri}
               opacity={!firstname || !lastname || !imageUri ? 0.4 : 1}
               onPress={async () => {
-                const updateIndoPromise = updateInfo.mutateAsync({
+                const registerPromise = registerHook.mutateAsync({
+                  email,
+                  password,
                   name: firstname + ' ' + lastname,
                   isFullTime,
                   gender,
@@ -236,9 +243,9 @@ export default function InfoFilling() {
                 try {
                   const result = await Promise.all([
                     uploadImagePromise,
-                    updateIndoPromise,
+                    registerPromise,
                   ]);
-                  dispatch(update());
+                  // dispatch(update());
                 } catch (e) {
                   console.log('sign up failed');
                 }

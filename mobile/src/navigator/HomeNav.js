@@ -13,23 +13,7 @@ import {StatusBar} from 'react-native';
 const NativeStack = createNativeStackNavigator();
 const BottomStack = createBottomTabNavigator();
 export default function HomeRouting() {
-  const {updated} = useSelector(state => state.userInfo);
-
-  return !updated ? (
-    <NativeStack.Navigator>
-      <NativeStack.Screen
-        name={ROUTES.INFOFILLING}
-        component={InfoFilling}
-        options={{
-          // headerBackTitleVisible: false, // iOS上隐藏返回按钮旁边的文本
-          headerTransparent: true,
-          headerTitle: 'Basic Information', // 不显示标题
-          // headerLeft: () => null, // 隐藏左侧组件
-          // headerRight: () => null, // 隐藏右侧组件
-        }}
-      />
-    </NativeStack.Navigator>
-  ) : (
+  return (
     <>
       <StatusBar backgroundColor="rgba(63, 43, 190, 0.26)" />
       <BottomStack.Navigator

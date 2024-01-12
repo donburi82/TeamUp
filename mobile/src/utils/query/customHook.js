@@ -31,9 +31,27 @@ export const useVerifyCodeMutation = () => {
 export const useRegisterEmailMutation = () => {
   const dispatch = useDispatch();
   const url = requestURL.register;
-  const reqFunc = async ({email, password}) => {
+  const reqFunc = async ({
+    email,
+    password,
+    name,
+    isFullTime,
+    gender,
+    nationality,
+    major,
+    year,
+  }) => {
     console.log('I am sending request register', email, password);
-    const res = await request(url, {email, password});
+    const res = await request(url, {
+      email,
+      password,
+      name,
+      isFullTime,
+      gender,
+      nationality,
+      major,
+      year,
+    });
     return res;
   };
   return useMutation(reqFunc, {

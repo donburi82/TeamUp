@@ -6,7 +6,7 @@ const globalSlice = createSlice({
   initialState: {
     userInfo: {
       isAuthed: false,
-      updated: false,
+
       welcomed: false,
     },
   },
@@ -23,15 +23,11 @@ const globalSlice = createSlice({
       state.userInfo = {
         ...state.userInfo,
         isAuthed: false,
+
+        welcomed: false,
       };
     },
-    update: state => {
-      //this is to verify if the user complete the sign up form, may change later
-      state.userInfo = {
-        ...state.userInfo,
-        updated: true,
-      };
-    },
+
     updateInfo: (state, action) => {
       state.userInfo = {
         ...state.userInfo,
