@@ -8,6 +8,7 @@ const express = require("express");
 const router = express.Router();
 
 let verificationCodes = new Map();
+let passwordVerificationCodes = new Map();
 let verified = new Set([]);
 
 router.route("/verification").post(async (req, res) => {
@@ -161,5 +162,84 @@ router.route("/login").post(async (req, res) => {
     return res.status(400).json({ status: "error", msg: error.nessage });
   }
 });
+
+router
+  .route("/password")
+  .get(async (req, res) => {
+    const { email } = req.query;
+    try {
+      const user = await User.findOne({ email: email });
+      console.log(user);
+      if (!user) {
+        return res
+          .status(400)
+          .send({ status: "fail", msg: "user Don't exist" });
+      }
+
+      const verificatoinCode = _.random(100000, 999999);
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "noreplyteamup78@gmail.com",
+          pass: "tldfmpkeprxlvmhu",
+        },
+      });
+
+      const mailOptions = {
+        from: "no-reply-teamup78@gmail.com",
+        to: email,
+        subject: "Verification Code for Password Reset",
+        html: `<p>Hello,</p>
+              <br/>
+              <p>To reset your password, please enter the following code in the app:</p>
+              <p><strong>${verificatoinCode}</strong></p>
+              <p>This code will expire in 5 minutes.</p>
+              <p>Please do not reply to this email. This mailbox is not monitored and you will not receive a response.</p>
+              <br/>
+              <p>TeamUp Team</p>
+  `,
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+          res
+            .status(500)
+            .send({ status: "error", msg: "Internal Server Error" });
+        } else {
+          passwordVerificationCodes.set(email, verificatoinCode);
+          setTimeout(() => {
+            passwordVerificationCodes.delete(req.body.email);
+          }, 1000 * 60 * 5);
+          res.status(200).send({ status: "success" });
+        }
+      });
+    } catch (error) {
+      return res.status(400).send({ status: "error", msg: error.msg });
+    }
+  })
+  .patch(async (req, res) => {
+    const { email, verificationCode, password } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (passwordVerificationCodes.get(email) != verificationCode) {
+        res
+          .status(400)
+          .send({ stuats: "fail", msg: "incorrect verification Code" });
+      }
+      if (!isStrongPassword(password)) {
+        res.status(400).send({ stuats: "fail", msg: "password too weak" });
+      }
+
+      user.password = password;
+      await user.save();
+      passwordVerificationCodes.delete(email);
+
+      return res.status(200).send({ status: "success" });
+    } catch (error) {
+      return res.status(400).send({ status: "error", msg: error.msg });
+    }
+  });
 
 module.exports = router;
