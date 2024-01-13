@@ -6,8 +6,9 @@ const path = require("path");
 const fs = require("fs");
 const { isStrongPassword } = require("../../helpers/userBasicInfo.js");
 
-// req.body{ userId: string}
+let verificationCodes = new Map();
 
+// req.body{ userId: string}
 router.route("/getUserId").get(async (req, res) => {
   const userId = req.user.userId;
   return res.status(200).send({ status: "success", userId });
@@ -88,32 +89,6 @@ router.route("/updateInfo").patch(async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ status: "error", error });
-  }
-});
-
-// req.body{pre: string, cur: string}
-router.route("/updatePassword").patch(async (req, res) => {
-  const { pre, cur } = req.body;
-  const userId = req.user.userId;
-  try {
-    const user = await User.findOne({ _id: userId });
-    if (user == null) {
-      return res.status(400).send({ status: "fail", msg: "user don't exist" });
-    }
-    if (await user.comparePassword(pre)) {
-      if (!isStrongPassword(cur))
-        return res
-          .status(400)
-          .send({ status: "fail", msg: "password is not strong enough" });
-      user.password = cur;
-      await user.save();
-      res.status(200).json({ status: "success" });
-    } else {
-      res.status(401).json({ status: "fail", msg: "incorrect credentials" });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ msg: "fail", error });
   }
 });
 
@@ -203,6 +178,32 @@ router.get("/profilePic", async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ status: "error", msg: error.message });
+  }
+});
+
+// req.body{pre: string, cur: string}
+router.route("/password").patch(async (req, res) => {
+  const { pre, cur } = req.body;
+  const userId = req.user.userId;
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (user == null) {
+      return res.status(400).send({ status: "fail", msg: "user don't exist" });
+    }
+    if (await user.comparePassword(pre)) {
+      if (!isStrongPassword(cur))
+        return res
+          .status(400)
+          .send({ status: "fail", msg: "password is not strong enough" });
+      user.password = cur;
+      await user.save();
+      res.status(200).json({ status: "success" });
+    } else {
+      res.status(401).json({ status: "fail", msg: "incorrect credentials" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ msg: "fail", error });
   }
 });
 
