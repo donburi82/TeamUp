@@ -103,13 +103,12 @@ router.route("/messageStatus/:chatRoomId").patch(async (req, res) => {
     return res.status(400).send({ status: "error", msg: error.message });
   }
 });
-// .get(async (req, res) => {
-//   try {
-//     const { chatRoomId } = req.params;
-//     const { messageId } = req.query;
-//     const messageStatus = await getMessageStatus(chatRoomId, messageId);
-//     return res.status(200).send({ status: "success", messageStatus });
-//   } catch (error) {
-//     return res.status(400).send({ status: "error", msg: error.message });
-//   }
-// });
+router.route("/messageStatus").get(async (req, res) => {
+  try {
+    const { messageId } = req.query;
+    const messageStatus = await getMessageStatus(messageId);
+    return res.status(200).send({ status: "success", messageStatus });
+  } catch (error) {
+    return res.status(400).send({ status: "error", msg: error.message });
+  }
+});
