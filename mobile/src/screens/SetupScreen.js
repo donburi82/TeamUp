@@ -20,6 +20,8 @@ import {
   useSendVerificationEmailMutation,
   useVerifyCodeMutation,
   useRegisterEmailMutation,
+  useSendVerificationEmailForgetMutation,
+  useVerifyCodeForgetMutation,
 } from '../utils/query/customHook';
 import {ROUTES} from '../navigator/constant';
 import {login, logOut} from '../utils/reduxStore/reducer';
@@ -33,8 +35,10 @@ export default function SetupScreen({navigation}) {
   const [email, setEmail] = useState('');
 
   const sendEmail = useSendVerificationEmailMutation();
+  const sendEmailForget = useSendVerificationEmailForgetMutation();
   const verifycode = useVerifyCodeMutation();
-  const verifyPassword = useRegisterEmailMutation();
+  const verifycodeForget = useVerifyCodeForgetMutation();
+
   const [veriCode, setVeriCode] = useState('');
   const [password, setPassword] = useState('');
   const [passwordAgain, setPasswordAgain] = useState('');
@@ -42,6 +46,7 @@ export default function SetupScreen({navigation}) {
   const [veriCounter, setVeriCounter] = useState(0);
   const route = useRoute();
   const type = route?.params?.type;
+
   useEffect(() => {
     let timer = null;
     if (veriCounter > 0) {
@@ -56,10 +61,16 @@ export default function SetupScreen({navigation}) {
       };
     }
   }, [veriCounter]);
+
   const sendEmailOnPress = async () => {
     try {
-      const {status} = await sendEmail.mutateAsync(email + '@connect.ust.hk');
-
+      if (type) {
+        const {_} = await sendEmailForget.mutateAsync(
+          email + '@connect.ust.hk',
+        );
+      } else {
+        const {status} = await sendEmail.mutateAsync(email + '@connect.ust.hk');
+      }
       setVeriCounter(60);
       Alert.alert(
         'Email has been sent',
@@ -114,10 +125,14 @@ export default function SetupScreen({navigation}) {
       );
     } else {
       try {
-        // const verifyCodePromise = verifycode.mutateAsync(
-        //   {verificationCode: veriCode, email: email + '@connect.ust.hk'}, // 好像只能这样传参！
-        // );
-        // const _ = await verifyCodePromise;
+        const verifyCodePromise = verifycodeForget.mutateAsync(
+          {
+            verificationCode: veriCode,
+            email: email + '@connect.ust.hk',
+            password,
+          }, // 好像只能这样传参！
+        );
+        const _ = await verifyCodePromise;
         //wait api to be done
       } catch (err) {
         console.log('one of the promse failed, please retry', err);
@@ -235,7 +250,7 @@ export default function SetupScreen({navigation}) {
                         : 1
                     }
                     onPress={handleRetrieve}
-                    text="Retrieve"
+                    text="Reset"
                   />
                 ) : (
                   <DebouncedWaitingButton

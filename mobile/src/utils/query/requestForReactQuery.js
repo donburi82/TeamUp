@@ -15,9 +15,10 @@ const requestURL = {
   verifyCode: 'auth/verify',
   register: 'auth/register',
   login: 'auth/login',
+  password: 'auth/password',
   updateInfo: 'userBasicInfo/updateInfo',
   profilePic: 'userBasicInfo/profilePic',
-  updatePassword: 'userBasicInfo/updatePassword',
+  updatePassword: 'userBasicInfo/password',
   getInfo: 'userBasicInfo/getInfo',
   preference: 'preference',
   courseproject: 'preference/courseproject',
@@ -56,6 +57,7 @@ async function request(url, datum, options, isGetRequest) {
   } catch (error) {
     if (error.response && error.response.data) {
       // 如果有服务器返回的错误消息，就把它作为错误对象的消息
+
       const serverMessage =
         error.response.data.msg || 'Server responded with an error';
       throw new Error(serverMessage);

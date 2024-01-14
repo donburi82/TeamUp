@@ -14,6 +14,17 @@ export const useSendVerificationEmailMutation = () => {
   };
   return useMutation(reqFunc, {});
 };
+
+export const useSendVerificationEmailForgetMutation = () => {
+  const url = requestURL.password;
+  const reqFunc = async email => {
+    console.log('I am sending request of auth/password ', email);
+    const res = await request(url, {email}, {method: 'get'}, true);
+    return res;
+  };
+  return useMutation(reqFunc, {});
+};
+
 export const useVerifyCodeMutation = () => {
   const url = requestURL.verifyCode;
   const reqFunc = async ({verificationCode, email}) => {
@@ -26,6 +37,27 @@ export const useVerifyCodeMutation = () => {
     return res;
   };
   return useMutation(reqFunc, {});
+};
+export const useVerifyCodeForgetMutation = () => {
+  const url = requestURL.password;
+  const reqFunc = async ({verificationCode, email, password}) => {
+    console.log(
+      'I am sending request of auth/verify ',
+      email,
+      verificationCode,
+    );
+    const res = await request(
+      url,
+      {email, verificationCode, password},
+      {method: 'patch'},
+    );
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      showUpdateToast();
+    },
+  });
 };
 
 export const useRegisterEmailMutation = () => {
