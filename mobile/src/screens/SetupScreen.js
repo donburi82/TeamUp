@@ -26,7 +26,7 @@ import {login, logOut} from '../utils/reduxStore/reducer';
 import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
 import {useState, useEffect} from 'react';
 import Icons from '../components/Icons';
-
+import {useRoute} from '@react-navigation/native';
 export default function SetupScreen({navigation}) {
   // const state = useSelector((state)=>state)
   const dispatch = useDispatch();
@@ -40,6 +40,8 @@ export default function SetupScreen({navigation}) {
   const [passwordAgain, setPasswordAgain] = useState('');
 
   const [veriCounter, setVeriCounter] = useState(0);
+  const route = useRoute();
+  const type = route?.params?.type;
   useEffect(() => {
     let timer = null;
     if (veriCounter > 0) {
@@ -94,6 +96,29 @@ export default function SetupScreen({navigation}) {
           password,
           email: email + '@connect.ust.hk',
         });
+      } catch (err) {
+        console.log('one of the promse failed, please retry', err);
+      }
+    }
+  };
+  handleRetrieve = async () => {
+    if (password !== passwordAgain) {
+      alert('password and confirm password do not match');
+    } else if (
+      !/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/.test(
+        password,
+      )
+    ) {
+      alert(
+        'Password should contain at least 8 character, one number, one lowercase and one uppercase letter',
+      );
+    } else {
+      try {
+        // const verifyCodePromise = verifycode.mutateAsync(
+        //   {verificationCode: veriCode, email: email + '@connect.ust.hk'}, // 好像只能这样传参！
+        // );
+        // const _ = await verifyCodePromise;
+        //wait api to be done
       } catch (err) {
         console.log('one of the promse failed, please retry', err);
       }
@@ -197,17 +222,37 @@ export default function SetupScreen({navigation}) {
                     </Input>
                   </FormControl>
                 </Box>
-
-                <DebouncedWaitingButton
-                  mt={20}
-                  mb={20}
-                  disabled={!email || !veriCode || !password || !passwordAgain}
-                  opacity={
-                    !email || !veriCode || !password || !passwordAgain ? 0.4 : 1
-                  }
-                  onPress={handleProceed}
-                  text="proceed"
-                />
+                {type === 'retrievePassword' ? (
+                  <DebouncedWaitingButton
+                    mt={20}
+                    mb={20}
+                    disabled={
+                      !email || !veriCode || !password || !passwordAgain
+                    }
+                    opacity={
+                      !email || !veriCode || !password || !passwordAgain
+                        ? 0.4
+                        : 1
+                    }
+                    onPress={handleRetrieve}
+                    text="Retrieve"
+                  />
+                ) : (
+                  <DebouncedWaitingButton
+                    mt={20}
+                    mb={20}
+                    disabled={
+                      !email || !veriCode || !password || !passwordAgain
+                    }
+                    opacity={
+                      !email || !veriCode || !password || !passwordAgain
+                        ? 0.4
+                        : 1
+                    }
+                    onPress={handleProceed}
+                    text="proceed"
+                  />
+                )}
               </VStack>
             </Box>
           </Box>

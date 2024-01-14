@@ -92,7 +92,13 @@ export default function LoginScreen({navigation}) {
               <ButtonText>Sign up here</ButtonText>
             </Button>
           </HStack>
-          <Button variant="link">
+          <Button
+            variant="link"
+            onPress={() =>
+              navigation.navigate(ROUTES.EMAILVERIFICATION, {
+                type: 'retrievePassword',
+              })
+            }>
             <ButtonText color="black">Forgot password?</ButtonText>
           </Button>
         </VStack>
