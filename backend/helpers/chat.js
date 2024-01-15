@@ -58,6 +58,10 @@ const updateChatRoom = async (userId, chatRoomId, isJoin) => {
 
     const memberIndex = room.members.indexOf(userIdObj);
 
+    if (!room.isGroup) {
+      throw new Error("cannot update private chat");
+    }
+
     if (isJoin) {
       if (memberIndex === -1) {
         room.members.push(userIdObj);
@@ -73,8 +77,11 @@ const updateChatRoom = async (userId, chatRoomId, isJoin) => {
     } else {
       if (memberIndex !== -1) {
         room.members.splice(memberIndex, 1);
-        await room.save();
-
+        if (room.members.length == 0) {
+          await deleteChatRoom(room._id);
+        } else {
+          await room.save();
+        }
         // Remove the chat room reference from the user's chatRooms array
         await User.findByIdAndUpdate(userId, {
           $pull: { chatRooms: chatRoomId },
@@ -117,6 +124,7 @@ const deleteChatRoom = async (chatRoomId) => {
 
 const sendMessage = async (message, type, chatRoomId, senderId) => {
   try {
+    console.log("chatroomId", chatRoomId);
     const chatRoom = await ChatRoom.findById(chatRoomId).populate("members");
 
     if (!chatRoom) {
@@ -196,7 +204,7 @@ const getMessagesFromChatRoom = async (chatRoomId) => {
       populate: {
         path: "messageFrom",
         model: "User",
-        select: "name _id",
+        select: "name _id profilePic",
       },
     });
 
@@ -218,6 +226,7 @@ const getMessagesFromChatRoom = async (chatRoomId) => {
       messages.push({
         messageId: message._id,
         senderId: message.messageFrom._id,
+        profilePic: message.messageFrom.profilePic,
         senderName: message.messageFrom.name,
         sentDate: message.sentDate,
         messageType: message.messageType,
@@ -235,10 +244,20 @@ const getMessagesFromChatRoom = async (chatRoomId) => {
 const getChatRoomsForUser = async (userId) => {
   try {
     // Find user with chat rooms
-    const user = await User.findById(userId).populate("chatRooms");
+    const user = await User.findById(userId).populate({
+      path: "chatRooms",
+      populate: {
+        path: "members",
+        model: "User",
+      },
+    });
 
     if (!user) {
       throw new Error("User not found");
+    }
+
+    if (!user.chatRooms || user.chatRooms.length === 0) {
+      throw new Error("No chat rooms for this user");
     }
 
     // Extract relevant information from chat rooms
@@ -246,56 +265,39 @@ const getChatRoomsForUser = async (userId) => {
       user.chatRooms.map(async (chatRoom) => {
         const lastMessage =
           chatRoom.messages.length > 0
-            ? chatRoom.messages[chatRoom.messages.length - 1]
+            ? await Message.findById(
+                chatRoom.messages[chatRoom.messages.length - 1]
+              )
             : null;
 
         let chatmateName = null;
         let senderProfilePic = null;
 
         if (!chatRoom.isGroup) {
-          const otherMemberId = chatRoom.members.find(
-            (memberId) => String(memberId) !== userId
+          const otherMember = chatRoom.members.find(
+            (member) => String(member._id) !== userId
           );
-          const chatmate = await User.findById(otherMemberId);
-          chatmateName = chatmate.name;
-          senderProfilePic = chatmate.profilePic || null;
 
-          return {
-            chatRoomId: chatRoom._id,
-            lastTS: chatRoom.lastTS,
-            isGroup: chatRoom.isGroup,
-            chatmateName: chatmateName,
-            senderProfilePic: senderProfilePic,
-            lastMessage: lastMessage
-              ? {
-                  messageType: lastMessage.messageType,
-                  messageData: lastMessage.messageData,
-                  isAllRead: chatRoom.messages.every((message) =>
-                    message.messageStatus.every(
-                      (status) => status.read_date !== null
-                    )
-                  ),
-                }
-              : null,
-          };
-        } else {
-          return {
-            chatRoomId: chatRoom._id,
-            lastTS: chatRoom.lastTS,
-            isGroup: chatRoom.isGroup,
-            lastMessage: lastMessage
-              ? {
-                  messageType: lastMessage.messageType,
-                  messageData: lastMessage.messageData,
-                  isAllRead: chatRoom.messages.every((message) =>
-                    message.messageStatus.every(
-                      (status) => status.read_date !== null
-                    )
-                  ),
-                }
-              : null,
-          };
+          chatmateName = otherMember.name;
+          senderProfilePic = otherMember.profilePic || null;
         }
+
+        return {
+          chatRoomId: chatRoom._id,
+          lastTS: chatRoom.lastTS,
+          isGroup: chatRoom.isGroup,
+          chatmateName: chatmateName,
+          senderProfilePic: senderProfilePic,
+          lastMessage: lastMessage
+            ? {
+                messageType: lastMessage.messageType,
+                messageData: lastMessage.messageData,
+                isAllRead: lastMessage.messageStatus.every(
+                  (status) => status.read_date !== null
+                ),
+              }
+            : null,
+        };
       })
     );
 
