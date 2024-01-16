@@ -7,6 +7,7 @@ import Home from '../screens/Home';
 import InfoFilling from '../screens/InfoFilling';
 // import Settings from '../screens/Settings';
 import SettingStack from './SettingStack';
+import ChatStackNavigator from './ChatStack';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {StatusBar} from 'react-native';
@@ -66,14 +67,9 @@ export default function HomeRouting() {
         />
         <BottomStack.Screen
           name={ROUTES.CHAT}
-          component={Home}
+          component={ChatStackNavigator}
           options={{
-            headerStyle: {
-              backgroundColor: 'rgba(63, 43, 190, 0.22)',
-              // backgroundColor: 'red',
-            },
-            headerTitle: 'Team Up now!',
-            tabBarLabel: 'Chat',
+            headerShown: false,
             tabBarIcon: ({focused, color, size}) => (
               <EntypoIcon
                 name="chat"
