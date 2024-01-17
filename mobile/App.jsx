@@ -43,9 +43,8 @@ function App() {
 
   const Child = useMemo(() => {
     // return <HomeRouting />;
-    console.log(userInfo);
+
     if (userInfo.isAuthed) {
-      console.log('渲染home捏');
       return <HomeRouting />;
     }
     return <AuthRouting />;
@@ -62,7 +61,6 @@ function App() {
             />
 
             {Child}
-            {/* <InfoFilling /> */}
           </SafeAreaView>
         </NavigationContainer>
       </GluestackUIProvider>

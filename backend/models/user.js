@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const ObjectId = require('mongodb').ObjectId;
+const ObjectId = require("mongodb").ObjectId;
 
 // Schemas for Group Preference Information
 const groupPreferenceSchema = new mongoose.Schema({});
@@ -65,7 +65,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide email"],
   },
   nationality: String,
-  major: String,
+  major: [String],
   year: { type: String, enum: [1, 2, 3, 4, 5], default: 1 },
   password: {
     type: String,
@@ -76,6 +76,13 @@ const UserSchema = new mongoose.Schema({
     //   "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
     // ],
   },
+  chatRooms: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ChatRoom",
+      default: [],
+    },
+  ],
   // for group preference & matching
   groupPreferences: [groupPreferenceSchema],
   // // single array for matches - need to discuss (problem with deletion)
@@ -109,7 +116,7 @@ UserSchema.methods.comparePassword = async function (canditatePassword) {
   return isMatch;
 };
 
-const User = mongoose.model("user", UserSchema);
+const User = mongoose.model("User", UserSchema);
 
 // Export Models
 module.exports = {
