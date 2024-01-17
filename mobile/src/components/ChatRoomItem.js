@@ -10,6 +10,7 @@ import {
 import {useNavigation} from '@react-navigation/core';
 import {ROUTES} from '../navigator/constant';
 import moment from 'moment';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 export default function ChatRoomItem({chatRoom}) {
   // const [users, setUsers] = useState<User[]>([]); // all users in this chatroom
@@ -32,7 +33,7 @@ export default function ChatRoomItem({chatRoom}) {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+    }, 1000);
     // };
     // fetchUsers();
   }, []);
@@ -48,7 +49,10 @@ export default function ChatRoomItem({chatRoom}) {
   }, []);
 
   const onPress = () => {
-    navigation.navigate(ROUTES.CHATROOM, {id: chatRoom.chatRoomId});
+    navigation.navigate(ROUTES.CHATROOM, {
+      id: chatRoom.chatRoomId,
+      title: chatRoom.chatmateName,
+    });
   };
 
   if (isLoading) {
@@ -59,16 +63,11 @@ export default function ChatRoomItem({chatRoom}) {
 
   return (
     <Pressable onPress={onPress} style={styles.container}>
-      {chatRoom.senderProfilePic ? (
-        <Image
-          source={{uri: chatRoom.senderProfilePic || user?.imageUri}}
-          style={styles.image}
-        />
-      ) : (
-        <View style={styles.image}></View>
-      )}
+      <View style={styles.imageNotShown}>
+        <FontAwesomeIcon name="user-circle" size={50} />
+      </View>
 
-      {!lastMessage.isAllRead && <View style={styles.badgeContainer} />}
+      {!lastMessage?.isAllRead && <View style={styles.badgeContainer} />}
 
       <View style={styles.rightContainer}>
         <View style={styles.row}>
@@ -97,6 +96,13 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 30,
     marginRight: 10,
+  },
+  imageNotShown: {
+    height: 50,
+    width: 50,
+    borderRadius: 30,
+    marginRight: 10,
+    backgroundColor: '#DDDDDD',
   },
   badgeContainer: {
     backgroundColor: 'red',

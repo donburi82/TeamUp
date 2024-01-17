@@ -66,7 +66,7 @@ export default function HomeRouting() {
           }}
         />
         <BottomStack.Screen
-          name={ROUTES.CHAT}
+          name={ROUTES.CHATHOME}
           component={ChatStackNavigator}
           options={{
             headerShown: false,

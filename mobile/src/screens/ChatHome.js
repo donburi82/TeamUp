@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux';
 import {View, StyleSheet, FlatList} from 'react-native';
 import {Auth, DataStore} from 'aws-amplify';
 import {ChatRoom, ChatRoomUser} from '../src/models';
+import {useGetChatRoomInfoQuery} from '../utils/query/customHook';
 import ChatRoomItem from '../components/ChatRoomItem';
 
 export default function TabOneScreen() {
@@ -75,8 +76,11 @@ export default function TabOneScreen() {
       },
     },
   ]);
+  const {data, isLoading} = useGetChatRoomInfoQuery();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setChatRooms(data);
+  }, [data]);
 
   return (
     <View style={styles.page}>

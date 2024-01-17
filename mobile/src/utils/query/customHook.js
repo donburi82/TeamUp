@@ -397,3 +397,48 @@ export const useAddExtracurricularMutation = () => {
     },
   });
 };
+
+export const useGetChatRoomInfoQuery = () => {
+  const url = requestURL.chatroomInfo;
+  const reqFunc = async () => {
+    const res = await request(url, {}, {method: 'get'}, true);
+    return res?.chatRooms;
+  };
+  return useQuery(['chatroomInfo'], reqFunc, {
+    onSuccess: data => {
+      // console.log('Extracurricular', data);
+    },
+  });
+};
+
+export const useSendMessageMutation = chatRoomId => {
+  const url = 'chat/message/' + chatRoomId;
+  console.log('chatroom id is', chatRoomId);
+  const reqFunc = async ({message, type}) => {
+    console.log(message, type);
+    const res = await request(url, {
+      message,
+      type,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      showUpdateToast();
+    },
+  });
+};
+
+export const useGetMessageInfoQuery = chatRoomId => {
+  const url = 'chat/message/' + chatRoomId;
+  const reqFunc = async () => {
+    const res = await request(url, {}, {method: 'get'}, true);
+    return res?.messages;
+  };
+
+  return useQuery(['messageInfo'], reqFunc, {
+    onSuccess: data => {
+      // console.log('Extracurricular', data);
+    },
+  });
+};

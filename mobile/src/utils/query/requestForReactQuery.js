@@ -24,6 +24,7 @@ const requestURL = {
   courseproject: 'preference/courseproject',
   coursestudy: 'preference/coursestudy',
   extracurricular: 'preference/extracurricular',
+  chatroomInfo: 'chat/chatRoom',
 };
 
 async function request(url, datum, options, isGetRequest) {
