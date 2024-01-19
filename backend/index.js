@@ -62,13 +62,11 @@ io.use((socket, next) => {
       { $set: { socketId: socket.id } },
       { new: true }
     );
-
     const user = await User.findById(userId);
     for (chatroomId in user.chatRooms) {
       const chatroom = user.chatRooms[chatroomId].toString();
       socket.join(`notification-${chatroom}`);
     }
-
     if (updatedUser) {
       console.log("SocketId updated successfully");
     } else {
@@ -79,21 +77,15 @@ io.use((socket, next) => {
   }
 
   socket.on("joinChatRoom", async (payload) => {
-    console.log(`${socket.userId} join chatroom ${payload.chatRoomId} \n`);
-    console.log("before join:", io.sockets.adapter.rooms);
     socket.join(payload.chatRoomId);
-    console.log("after join:", io.sockets.adapter.rooms);
   });
   socket.on("leaveChatRoom", async (payload) => {
-    console.log(`${socket.userId} leave chatroom ${payload.chatRoomId} \n`);
-    console.log("before leave:", io.sockets.adapter.rooms);
     socket.leave(payload.chatRoomId);
-    console.log("after leave:", io.sockets.adapter.rooms);
   });
   // payload:{message, type, chatRoomId}
-  socket.on("message", async (payload) => {
+  socket.on("sendMessage", async (payload) => {
     const senderId = socket.userId;
-    console.log("message payload", payload, "\n");
+    // console.log("message payload", payload, "\n");
     // console.log(`${socket.userId} joined:`, io.sockets.adapter.rooms, "\n");
     try {
       await sendMessage(
