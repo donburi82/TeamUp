@@ -2,7 +2,13 @@ import axios from 'axios';
 import {store} from '../reduxStore';
 import {err} from 'react-native-svg/lib/typescript/xml';
 import {showErrorToast} from '../showToast';
-const BASE_URL = 'http://10.0.2.2:3000/';
+import {Platform} from 'react-native';
+
+// iOS-specific code
+const BASE_URL =
+  Platform.OS === 'ios' ? 'http://localhost:3000/' : 'http://10.0.2.2:3000/';
+
+// Android-specific code
 
 const axiosServices = axios.create({
   baseURL: BASE_URL,
