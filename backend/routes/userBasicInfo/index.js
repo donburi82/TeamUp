@@ -5,6 +5,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { isStrongPassword } = require("../../helpers/userBasicInfo.js");
+const bcrypt = require("bcryptjs");
 
 let verificationCodes = new Map();
 
@@ -195,7 +196,10 @@ router.route("/password").patch(async (req, res) => {
         return res
           .status(400)
           .send({ status: "fail", msg: "password is not strong enough" });
-      user.password = cur;
+
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+
       await user.save();
       res.status(200).json({ status: "success" });
     } else {
