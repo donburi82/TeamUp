@@ -15,7 +15,8 @@ export default function SettingStackNavigator() {
         // Customize your header here
         headerTitleAlign: 'center',
         headerStyle: {
-          backgroundColor: 'rgba(63, 43, 190, 0.22)',
+          backgroundColor:
+            Platform.OS == 'ios' ? '#f0f0f0' : rgba(63, 43, 190, 0.22),
         },
         headerShadowVisible: false,
         headerTitleStyle: {

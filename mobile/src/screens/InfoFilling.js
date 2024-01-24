@@ -85,8 +85,8 @@ export default function InfoFilling() {
       mediaType: 'photo',
       includeBase64: false,
       quality: 0.6,
-      maxHeight: 1000,
-      maxWidth: 1000,
+      maxHeight: 500,
+      maxWidth: 500,
     };
 
     launchImageLibrary(options).then(async response => {
@@ -245,7 +245,6 @@ export default function InfoFilling() {
                     uploadImagePromise,
                     registerPromise,
                   ]);
-                  // dispatch(update());
                 } catch (e) {
                   console.log('sign up failed');
                 }

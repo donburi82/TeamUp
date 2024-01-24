@@ -9,7 +9,7 @@ export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
     console.log('I am sending request', email);
-    const res = await request(url, {email});
+    const res = await request(url, {email: email.replace(/\s/g, '')});
     return res;
   };
   return useMutation(reqFunc, {});
@@ -19,7 +19,12 @@ export const useSendVerificationEmailForgetMutation = () => {
   const url = requestURL.password;
   const reqFunc = async email => {
     console.log('I am sending request of auth/password ', email);
-    const res = await request(url, {email}, {method: 'get'}, true);
+    const res = await request(
+      url,
+      {email: email.replace(/\s/g, '')},
+      {method: 'get'},
+      true,
+    );
     return res;
   };
   return useMutation(reqFunc, {});
@@ -30,10 +35,13 @@ export const useVerifyCodeMutation = () => {
   const reqFunc = async ({verificationCode, email}) => {
     console.log(
       'I am sending request of auth/verify ',
-      email,
+
       verificationCode,
     );
-    const res = await request(url, {email, verificationCode});
+    const res = await request(url, {
+      email: email.replace(/\s/g, ''),
+      verificationCode,
+    });
     return res;
   };
   return useMutation(reqFunc, {});
@@ -48,7 +56,7 @@ export const useVerifyCodeForgetMutation = () => {
     );
     const res = await request(
       url,
-      {email, verificationCode, password},
+      {email: email.replace(/\s/g, ''), verificationCode, password},
       {method: 'patch'},
     );
     return res;
@@ -75,8 +83,9 @@ export const useRegisterEmailMutation = () => {
   }) => {
     console.log('I am sending request register', email, password);
     const res = await request(url, {
-      email,
-      password,
+      email: email.replace(/\s/g, ''),
+      password: password.replace(/\s/g, ''),
+
       name,
       isFullTime,
       gender,
@@ -97,7 +106,11 @@ export const useLoginMutation = () => {
   const url = requestURL.login;
   const reqFunc = async ({email, password}) => {
     console.log('I am sending request login', email, password);
-    const res = await request(url, {email, password});
+    const res = await request(url, {
+      email: email.replace(/\s/g, ''),
+      password: password.replace(/\s/g, ''),
+    });
+
     return res;
   };
   return useMutation(reqFunc, {

@@ -71,7 +71,7 @@ async function request(url, datum, options, isGetRequest) {
     } else {
       // 如果没有 response，抛出通用错误
       showErrorToast();
-      throw new Error('Request failed');
+      throw new Error(`Request failed! ${url}`);
     }
   }
 }

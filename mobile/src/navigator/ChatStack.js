@@ -5,6 +5,7 @@ import Settings from '../screens/Settings';
 import ChatRoom from '../screens/ChatRoom';
 import {View, Text} from 'react-native';
 import {useRoute} from '@react-navigation/native';
+import {Platform} from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 const ChatStack = createNativeStackNavigator();
 
@@ -15,7 +16,8 @@ export default function ChatStackNavigator() {
         // Customize your header here
         headerTitleAlign: 'center',
         headerStyle: {
-          backgroundColor: 'rgba(63, 43, 190, 0.22)',
+          backgroundColor:
+            Platform.OS == 'ios' ? '#f0f0f0' : rgba(63, 43, 190, 0.22),
         },
         headerShadowVisible: false,
         headerTitleStyle: {
