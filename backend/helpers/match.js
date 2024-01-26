@@ -66,13 +66,14 @@ async function getCourseProjectProfiles(userId) {
                     _id: { $ne: userId },
                     "groupPreferences.__t": "CourseProject",
                     "groupPreferences.courseCode": pref.courseCode,
+                    "groupPreferences.semester": pref.semester,
                 }).lean();
 
                 if (poolProfiles) {
                     for (var profile of poolProfiles) {
                         console.log(profile._id);
                         profile.groupPreferences.forEach(profilePref => {
-                            if (profilePref.__t.toString()==="CourseProject" && pref.courseCode.toString()===profilePref.courseCode.toString()) {
+                            if (profilePref.__t.toString()==="CourseProject" && pref.courseCode.toString()===profilePref.courseCode.toString() && pref.semester.toString()===profilePref.semester.toString()) {
                                 let score = computeSimilarityScore(pref, profilePref);
                                 recommendations.push({ userId: profile._id, score: score });
                             }

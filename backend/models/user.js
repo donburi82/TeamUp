@@ -12,6 +12,7 @@ const GroupPreference = mongoose.model(
 
 const courseProjectSchema = new mongoose.Schema({
   courseCode: String,
+  semester: String,
   projectInterest: String,
   skillset: [String],
   targetGrade: {
@@ -24,6 +25,7 @@ const courseProjectSchema = new mongoose.Schema({
 
 const courseStudySchema = new mongoose.Schema({
   courseCode: String,
+  semester: String,
   targetGrade: {
     type: String,
     enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"],
