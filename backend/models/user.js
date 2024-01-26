@@ -3,6 +3,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const ObjectId = require("mongodb").ObjectId;
 
+// Word Count Validator
+const wordCountValidator = [
+  function(s) {
+    return s.split(/\s+/).filter.length <= 20;
+  }
+];
+
 // Schemas for Group Preference Information
 const groupPreferenceSchema = new mongoose.Schema({});
 const GroupPreference = mongoose.model(
@@ -11,34 +18,36 @@ const GroupPreference = mongoose.model(
 );
 
 const courseProjectSchema = new mongoose.Schema({
-  courseCode: String,
-  semester: String,
-  projectInterest: String,
-  skillset: [String],
+  courseCode: { type: String, required: true },
+  semester: { type: String, required: true },
+  projectInterest: { type: String, required: true, validate: wordCountValidator },
+  skillset: { type: [String], required: true },
   targetGrade: {
     type: String,
+    required: true,
     enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"],
     default: "A+",
   },
-  experience: String,
+  experience: { type: String, required: true, validate: wordCountValidator },
 });
 
 const courseStudySchema = new mongoose.Schema({
-  courseCode: String,
-  semester: String,
+  courseCode: { type: String, required: true },
+  semester: { type: String, required: true },
   targetGrade: {
     type: String,
+    required: true,
     enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"],
     default: "A+",
   },
-  preferredLanguage: String,
+  preferredLanguage: { type: String, required: true },
 });
 
 const extracurricularSchema = new mongoose.Schema({
-  projectInterest: String,
-  skillset: [String],
-  experience: String,
-  preferredLanguage: String,
+  projectInterest: { type: String, required: true, validate: wordCountValidator },
+  skillset: { type: [String], required: true },
+  experience: { type: String, required: true, validate: wordCountValidator },
+  preferredLanguage: { type: String, required: true },
 });
 
 const CourseProject = GroupPreference.discriminator(
