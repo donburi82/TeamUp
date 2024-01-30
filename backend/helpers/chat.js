@@ -1,6 +1,17 @@
 const { MessageStatus, Message, ChatRoom } = require("../models/chat");
 const { User } = require("../models/user.js");
 const mongoose = require("mongoose");
+require("dotenv").config();
+const { v4: uuidv4 } = require("uuid");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+
+const s3Client = new S3Client({
+  region: "ap-southeast-1",
+  credentials: {
+    accessKeyId: process.env.accessKeyId,
+    secretAccessKey: process.env.secretAccessKey,
+  },
+});
 
 const createChatRoom = async (members, groupId = null) => {
   try {
@@ -148,7 +159,29 @@ const sendMessage = async (message, type, chatRoomId, senderId) => {
         messageStatus: messageStatuses,
       });
     } else if (type === "image") {
-      const buffer = Buffer.from(message.image, "base64");
+      // convert base64 to buffer
+      const buffer = Buffer.from(message, "base64");
+      const type = await fileType.fromBuffer(buffer);
+      if (!type) {
+        throw new Error("Could not determine image type");
+      }
+      const key = `${Date.now().toString()}-${uuidv4()}`;
+      const params = {
+        Bucket: "awsteamupbucket",
+        Key: `chat/${key}`,
+        Body: buffer,
+        ContentType: type.mime,
+      };
+
+      try {
+        const response = await s3Client.send(new PutObjectCommand(params));
+        console.log(
+          `Image uploaded successfully. Location: ${response.Location}`
+        );
+      } catch (error) {
+        throw new Error(`Error uploading image: ${error}`);
+      }
+
       newMessage = new Message({
         messageFrom: senderId,
         sentDate: Date.now(),
@@ -197,48 +230,74 @@ const markMessagesAsRead = async (userId, chatRoomId) => {
   }
 };
 
-const getMessagesFromChatRoom = async (chatRoomId) => {
-  try {
-    const chatRoom = await ChatRoom.findById(chatRoomId).populate({
-      path: "messages",
-      populate: {
-        path: "messageFrom",
-        model: "User",
-        select: "name _id profilePic",
-      },
-    });
-
-    if (!chatRoom) {
-      throw new Error("Chat room not found");
+const getMessagesFromChatRoom = async (chatRoomId, lastMessageId) => {
+  let chatRoom;
+  if (!lastMessageId) {
+    try {
+      chatRoom = await ChatRoom.findById(chatRoomId)
+        .sort({ sentDate: 1 })
+        .populate({
+          path: "messages",
+          populate: {
+            path: "messageFrom",
+            model: "User",
+            select: "name _id profilePic",
+          },
+        });
+      if (!chatRoom) {
+        throw new Error("Chat room not found");
+      }
+    } catch (error) {
+      throw new Error(
+        `Failed to get messages from chat room: ${error.message}`
+      );
     }
+  } else {
+    try {
+      const lastMessage = await Message.findById(lastMessageId);
+      console.log(chatRoomId);
+      chatRoom = await ChatRoom.findById(chatRoomId)
+        .sort({ sentDate: 1 })
+        .populate({
+          path: "messages",
+          populate: {
+            path: "messageFrom",
+            model: "User",
+            select: "name _id profilePic",
+          },
+        });
 
-    const messages = [];
-
-    for (const message of chatRoom.messages) {
-      // const messageStatuses = await MessageStatus.find({
-      //   _id: { $in: message.messageStatus },
-      // });
-      // console.log(message);
-      const isAllRead = message.messageStatus.every(
-        (status) => status.read_date !== null
+      chatRoom.messages = chatRoom.messages.filter(
+        (message) => message.sentDate >= lastMessage.sentDate
       );
 
-      messages.push({
-        messageId: message._id,
-        senderId: message.messageFrom._id,
-        profilePic: message.messageFrom.profilePic,
-        senderName: message.messageFrom.name,
-        sentDate: message.sentDate,
-        messageType: message.messageType,
-        messageData: message.messageData,
-        isAllRead: isAllRead,
-      });
+      console.log(chatRoom);
+    } catch (error) {
+      throw new Error(
+        `Failed to get messages from chat room: ${error.message}`
+      );
     }
-
-    return messages;
-  } catch (error) {
-    throw new Error(`Failed to get messages from chat room: ${error.message}`);
   }
+  let messages = [];
+
+  for (const message of chatRoom.messages) {
+    const isAllRead = message.messageStatus.every(
+      (status) => status.read_date !== null
+    );
+
+    messages.push({
+      messageId: message._id,
+      senderId: message.messageFrom._id,
+      profilePic: message.messageFrom.profilePic,
+      senderName: message.messageFrom.name,
+      sentDate: message.sentDate,
+      messageType: message.messageType,
+      messageData: message.messageData,
+      isAllRead: isAllRead,
+    });
+  }
+
+  return messages;
 };
 
 const getChatRoomsForUser = async (userId) => {
