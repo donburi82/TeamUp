@@ -96,12 +96,12 @@ const UserSchema = new mongoose.Schema({
   ],
   // for group preference & matching
   groupPreferences: [groupPreferenceSchema],
-  // // single array for matches - need to discuss (problem with deletion)
-  // needRematch: { type: Boolean, default: true },
-  // matches: [ObjectId],
-  // temporary solution - one for each category
-  courseProjectRematch: { type: Boolean, default: true },
+  // single array for matches - problem with deletion
   courseProjectMatches: [ObjectId],
+  courseStudyMatches: [ObjectId],
+  extracurricularMatches: [ObjectId],
+  // for groups
+  groups: [ObjectId],
   // for chat
   socketId: String,
 });
