@@ -16,6 +16,7 @@ const userBasicInfoRoute = require("./routes/userBasicInfo/index.js");
 const chatAuth = require("./routes/chat/index.js");
 const adminRoute = require("./routes/admin/index.js");
 const usersRoute = require("./routes/users/index.js");
+const groupsRoute = require("./routes/groups/index.js");
 const auth = require("./middleware/auth/index.js");
 const adminAuth = require("./middleware/admin/index.js");
 
@@ -38,6 +39,7 @@ app.use("/preference", groupPreference);
 app.use("/admin", auth, adminAuth, adminRoute);
 app.use("/chat", auth, chatAuth);
 app.use("/users", usersRoute);
+app.use("/groups", groupsRoute);
 
 io.use((socket, next) => {
   if (socket.handshake.headers.authorization) {
