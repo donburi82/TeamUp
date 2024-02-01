@@ -23,7 +23,7 @@ export default function LoginScreen({navigation}) {
   const handleLogin = async () => {
     try {
       await sendLogin.mutateAsync({email, password});
-      navigation.navigate(ROUTES.HOME);
+      // navigation.navigate(ROUTES.SETTINGS);
     } catch (err) {
       console.log(err);
     }
@@ -92,7 +92,13 @@ export default function LoginScreen({navigation}) {
               <ButtonText>Sign up here</ButtonText>
             </Button>
           </HStack>
-          <Button variant="link">
+          <Button
+            variant="link"
+            onPress={() =>
+              navigation.navigate(ROUTES.EMAILVERIFICATION, {
+                type: 'retrievePassword',
+              })
+            }>
             <ButtonText color="black">Forgot password?</ButtonText>
           </Button>
         </VStack>

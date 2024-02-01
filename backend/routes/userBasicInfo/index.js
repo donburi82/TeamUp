@@ -73,7 +73,9 @@ router.route("/getInfo").get(async (req, res) => {
 // req.body{name: string}
 router.route("/updateInfo").patch(async (req, res) => {
   const userId = req.user.userId;
+  // console.log(userId);
   const info = req.body;
+  console.log(info?.major);
   try {
     await User.updateOne(
       { _id: userId },
@@ -91,6 +93,33 @@ router.route("/updateInfo").patch(async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ status: "error", error });
+  }
+});
+
+// req.body{pre: string, cur: string}
+router.route("/updatePassword").patch(async (req, res) => {
+  const { pre, cur } = req.body;
+  const userId = req.user.userId;
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (user == null) {
+      return res.status(400).send({ status: "fail", msg: "user don't exist" });
+    }
+    if (await user.comparePassword(pre)) {
+      if (!isStrongPassword(cur))
+        return res
+          .status(400)
+          .send({ status: "fail", msg: "password is not strong enough" });
+      user.password = cur;
+      await user.save();
+      res.status(200).json({ status: "success" });
+    } else {
+      console.log(pre, cur);
+      res.status(401).json({ status: "fail", msg: "incorrect credentials" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ msg: "fail", error });
   }
 });
 
@@ -167,7 +196,8 @@ router.get("/profilePic/:id", async (req, res) => {
 });
 
 router.get("/profilePic", async (req, res) => {
-  const userId = req.user.userid;
+  const userId = req.user.userId;
+  console.log(userId);
   try {
     const user = await User.findById(userId);
     if (!user) {

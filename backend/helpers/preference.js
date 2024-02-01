@@ -21,7 +21,7 @@ async function getGroupPreferences(userId, groupType) {
     }
 }
 
-async function createCourseProjectPreference(userId, courseCode, projectInterest, skillset, targetGrade, experience) {
+async function createCourseProjectPreference(userId, courseCode, semester, projectInterest, skillset, targetGrade, experience) {
     try {
         const user = await User.findOne({ _id: new ObjectId(userId) });
         if (!user) {
@@ -30,6 +30,7 @@ async function createCourseProjectPreference(userId, courseCode, projectInterest
 
         const courseProjectPreference = await CourseProject({
             courseCode: courseCode,
+            semester: semester,
             projectInterest: projectInterest,
             skillset: skillset,
             targetGrade: targetGrade,
@@ -44,7 +45,7 @@ async function createCourseProjectPreference(userId, courseCode, projectInterest
     }
 }
 
-async function createCourseStudyPreference(userId, courseCode, targetGrade, preferredLanguage) {
+async function createCourseStudyPreference(userId, courseCode, semester, targetGrade, preferredLanguage) {
     try {
         const user = await User.findOne({ _id: new ObjectId(userId) });
         if (!user) {
@@ -53,6 +54,7 @@ async function createCourseStudyPreference(userId, courseCode, targetGrade, pref
 
         const courseStudyPreference = await CourseStudy({
             courseCode: courseCode,
+            semester: semester,
             targetGrade: targetGrade,
             preferredLanguage: preferredLanguage,
         });

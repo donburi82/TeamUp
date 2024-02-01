@@ -6,7 +6,8 @@ const globalSlice = createSlice({
   initialState: {
     userInfo: {
       isAuthed: false,
-      updated: false,
+
+      welcomed: false,
     },
   },
 
@@ -22,17 +23,33 @@ const globalSlice = createSlice({
       state.userInfo = {
         ...state.userInfo,
         isAuthed: false,
+
+        welcomed: false,
       };
     },
-    update: state => {
+
+    updateInfo: (state, action) => {
       state.userInfo = {
         ...state.userInfo,
-        updated: true,
+        ...action.payload,
+      };
+    },
+    welcome: state => {
+      state.userInfo = {
+        ...state.userInfo,
+        welcomed: true,
+      };
+    },
+    updateImageUri: (state, action) => {
+      state.userInfo = {
+        ...state.userInfo,
+        imageUri: action.payload.imageUri,
       };
     },
   },
 });
 
-export const {login, logOut, update} = globalSlice.actions;
+export const {login, logOut, update, welcome, updateImageUri, updateInfo} =
+  globalSlice.actions;
 
 export default globalSlice.reducer;

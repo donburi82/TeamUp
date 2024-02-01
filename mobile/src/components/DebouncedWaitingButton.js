@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {Button, ButtonText, ButtonSpinner} from '@gluestack-ui/themed';
 export default function DebouncedWaitingButton(props) {
   let options = {...props};
-  let {onPress: handle, text} = options;
+  let {onPress: handle, text, fontSize} = options;
   delete options.onPress;
   let [loading, setLoading] = useState(false);
   const clickHandle = async () => {
@@ -20,11 +20,11 @@ export default function DebouncedWaitingButton(props) {
   return loading ? (
     <Button {...options} isDisabled={true} opacity={0.4}>
       <ButtonSpinner mr="$1" />
-      <ButtonText fontSize="$xl">{text}</ButtonText>
+      <ButtonText fontSize={fontSize || '$xl'}>{text}</ButtonText>
     </Button>
   ) : (
     <Button {...options}>
-      <ButtonText fontSize="$xl">{text}</ButtonText>
+      <ButtonText fontSize={fontSize || '$xl'}>{text}</ButtonText>
     </Button>
   );
 }

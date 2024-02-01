@@ -3,8 +3,11 @@ import React from 'react';
 import {ButtonText, Button, InputField} from '@gluestack-ui/themed';
 import {useDispatch} from 'react-redux';
 import {SelectList} from 'react-native-dropdown-select-list';
-import {logOut, update} from '../utils/reduxStore/reducer';
-import {useUpdateInfoMutation} from '../utils/query/customHook';
+import {useRoute} from '@react-navigation/native';
+import {
+  useUpdateInfoMutation,
+  useRegisterEmailMutation,
+} from '../utils/query/customHook';
 import {request, requestURL} from '../utils/query/requestForReactQuery';
 import {StyleSheet} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -26,8 +29,10 @@ import {
 
 export default function InfoFilling() {
   const dispatch = useDispatch();
-  const updateInfo = useUpdateInfoMutation();
-
+  const registerHook = useRegisterEmailMutation();
+  const route = useRoute();
+  // console.log(route);
+  const {email, password} = route?.params;
   const dataGender = [
     {key: '1', value: 'male'},
     {key: '2', value: 'female'},
@@ -64,7 +69,7 @@ export default function InfoFilling() {
   const [formData, setFormData] = React.useState(null);
   const [firstname, setFirstName] = React.useState('');
   const [lastname, setLastName] = React.useState('');
-  const [gender, setGender] = React.useState(dataGender[0].value);
+  const [gender, setGender] = React.useState('M');
   const [origin, setOrigin] = React.useState(dataOrigin[0].value);
   const [isFullTime, setFullTime] = React.useState(true);
   const [major, setMajor] = React.useState(dataMajor[0].value);
@@ -95,15 +100,6 @@ export default function InfoFilling() {
         setSelectedImage(imageUri);
         const base64Image = await RNFS.readFile(imageUri, 'base64');
         setFormData(base64Image);
-        // let newformData = new FormData();
-        // newformData.append('image', {
-        //   uri: response.uri,
-        //   // name: 'image.jpg', // 可以根据需要设置文件名
-        //   name: imageUri.split('/').pop(),
-        //   // type: response.type, // 使用 react-native-image-picker 提供的类型
-        //   type: mime.getType(imageUri),
-        // });
-        // setFormData(newformData);
       }
     });
   };
@@ -168,7 +164,7 @@ export default function InfoFilling() {
             <VStack>
               <Text style={styles.attributeName}>Gender</Text>
               <SelectList
-                setSelected={val => setGender(val)}
+                setSelected={val => setGender(val === 'male' ? 'M' : 'F')}
                 placeholder={dataGender[0].value}
                 boxStyles={{borderWidth: 0, ...styles.inputSmallBox}}
                 search={false}
@@ -222,21 +218,15 @@ export default function InfoFilling() {
               save="value"
             />
 
-            {/* const [firstname, setFirstName] = React.useState('');
-  const [lastname, setLastName] = React.useState('');
-  const [gender, setGender] = React.useState(dataGender[0].value);
-  const [origin, setOrigin] = React.useState(dataOrigin[0].value);
-  const [isFullTime, setFullTime] = React.useState(true);
-  const [major, setMajor] = React.useState(dataMajor[0].value);
-  const [year, setYear] = React.useState(dataYear[0].value);
-  const [imageUri, setSelectedImage] = React.useState(''); */}
             <DebouncedWaitingButton
               mt={30}
               mb={20}
               disabled={!firstname || !lastname || !imageUri}
               opacity={!firstname || !lastname || !imageUri ? 0.4 : 1}
               onPress={async () => {
-                const updateIndoPromise = updateInfo.mutateAsync({
+                const registerPromise = registerHook.mutateAsync({
+                  email,
+                  password,
                   name: firstname + ' ' + lastname,
                   isFullTime,
                   gender,
@@ -250,17 +240,15 @@ export default function InfoFilling() {
                   {image: formData, type: mime.getType(imageUri)},
                   {method: 'patch'},
                 );
-                // console.log('here', uploadImagePromise);
-                Promise.all([uploadImagePromise, updateIndoPromise]).then(
-                  () => {
-                    console.log('update info and pictures successful');
-
-                    dispatch(update());
-                  },
-                  err => {
-                    console.log(err);
-                  },
-                );
+                try {
+                  const result = await Promise.all([
+                    uploadImagePromise,
+                    registerPromise,
+                  ]);
+                  // dispatch(update());
+                } catch (e) {
+                  console.log('sign up failed');
+                }
               }}
               text="Sign Up"
             />

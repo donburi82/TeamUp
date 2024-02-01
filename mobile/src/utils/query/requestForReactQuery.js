@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {store} from '../reduxStore';
 import {err} from 'react-native-svg/lib/typescript/xml';
-
+import {showErrorToast} from '../showToast';
 const BASE_URL = 'http://10.0.2.2:3000/';
 
 const axiosServices = axios.create({
@@ -15,29 +15,40 @@ const requestURL = {
   verifyCode: 'auth/verify',
   register: 'auth/register',
   login: 'auth/login',
+  password: 'auth/password',
   updateInfo: 'userBasicInfo/updateInfo',
   profilePic: 'userBasicInfo/profilePic',
+  updatePassword: 'userBasicInfo/password',
+  getInfo: 'userBasicInfo/getInfo',
+  preference: 'preference',
+  courseproject: 'preference/courseproject',
+  coursestudy: 'preference/coursestudy',
+  extracurricular: 'preference/extracurricular',
 };
 
-async function request(url, datum, options) {
+async function request(url, datum, options, isGetRequest) {
   const global = store.getState();
 
   const {token} = global.userInfo;
-  // console.log(url, datum, options, header, stringify);
+  // console.log('sending request', url, datum);
   try {
-    const res = await axiosServices({
+    let axiosOptions = {
       url,
-      // data: stringify ? JSON.stringify(datum) : datum,
-      data: JSON.stringify(datum),
+
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
-        // 'Content-Type': 'multipart/form-data',
       },
 
       ...options,
-    });
-    console.log('status code is', res.status);
+    };
+    if (isGetRequest) axiosOptions.params = datum;
+    else {
+      axiosOptions.data = JSON.stringify(datum);
+    }
+
+    const res = await axiosServices(axiosOptions);
+
     if (!res.status.toString().startsWith('2')) {
       console.log('状态码不对啊哥', res.status);
       throw new Error(`${res.data.msg} (${res.status})`);
@@ -46,12 +57,13 @@ async function request(url, datum, options) {
   } catch (error) {
     if (error.response && error.response.data) {
       // 如果有服务器返回的错误消息，就把它作为错误对象的消息
+
       const serverMessage =
         error.response.data.msg || 'Server responded with an error';
       throw new Error(serverMessage);
     } else {
       // 如果没有 response，抛出通用错误
-      console.log(error);
+      showErrorToast();
       throw new Error('Request failed');
     }
   }
