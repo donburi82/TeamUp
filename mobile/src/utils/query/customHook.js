@@ -114,7 +114,9 @@ export const useLoginMutation = () => {
     return res;
   };
   return useMutation(reqFunc, {
-    onSuccess: ({token}) => {
+    onSuccess: res => {
+      console.log(res);
+      const {token} = res;
       dispatch(login({token}));
     },
   });
@@ -216,6 +218,22 @@ export const useGetUserInfoQuery = () => {
       // console.log('get back data is ', data);
       if (data?.userInfo) {
         dispatch(updateInfo(data?.userInfo));
+      }
+    },
+  });
+};
+export const useGetUserIdQuery = () => {
+  const dispatch = useDispatch();
+  const url = requestURL.getUserId;
+  const reqFunc = async () => {
+    const res = await request(url, null, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      // console.log('get back data is ', data);
+      if (data?.userId) {
+        dispatch(updateInfo(data?.userId));
       }
     },
   });

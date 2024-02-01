@@ -93,9 +93,9 @@ export default function SettingBar({
       const options = {
         mediaType: 'photo',
         includeBase64: false,
-        quality: 0.6,
-        maxHeight: 1000,
-        maxWidth: 1000,
+        quality: 0.4,
+        maxHeight: 200,
+        maxWidth: 200,
       };
 
       launchImageLibrary(options).then(async response => {

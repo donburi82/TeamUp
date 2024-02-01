@@ -84,9 +84,9 @@ export default function InfoFilling() {
     const options = {
       mediaType: 'photo',
       includeBase64: false,
-      quality: 0.6,
-      maxHeight: 500,
-      maxWidth: 500,
+      quality: 0.4,
+      maxHeight: 200,
+      maxWidth: 200,
     };
 
     launchImageLibrary(options).then(async response => {

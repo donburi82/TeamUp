@@ -5,6 +5,10 @@ import {showErrorToast} from '../showToast';
 import {Platform} from 'react-native';
 
 // iOS-specific code
+// const BASE_URL =
+//   Platform.OS === 'ios'
+//     ? 'http://192.168.10.102:3000/'
+//     : 'http://10.0.2.2:3000/';
 const BASE_URL =
   Platform.OS === 'ios' ? 'http://localhost:3000/' : 'http://10.0.2.2:3000/';
 
@@ -25,6 +29,7 @@ const requestURL = {
   updateInfo: 'userBasicInfo/updateInfo',
   profilePic: 'userBasicInfo/profilePic',
   updatePassword: 'userBasicInfo/password',
+  getUserId: 'userBasicInfo/getUserId',
   getInfo: 'userBasicInfo/getInfo',
   preference: 'preference',
   courseproject: 'preference/courseproject',
@@ -37,7 +42,7 @@ async function request(url, datum, options, isGetRequest) {
   const global = store.getState();
 
   const {token} = global.userInfo;
-  // console.log('sending request', url, datum);
+
   try {
     let axiosOptions = {
       url,
@@ -55,7 +60,7 @@ async function request(url, datum, options, isGetRequest) {
     }
 
     const res = await axiosServices(axiosOptions);
-
+    console.log(res.data, `get from ${url}`);
     if (!res.status.toString().startsWith('2')) {
       console.log('状态码不对啊哥', res.status);
       throw new Error(`${res.data.msg} (${res.status})`);
@@ -71,7 +76,8 @@ async function request(url, datum, options, isGetRequest) {
     } else {
       // 如果没有 response，抛出通用错误
       showErrorToast();
-      throw new Error(`Request failed! ${url}`);
+      console.log(error);
+      throw new Error(`Request failed! ${url} ${error}`);
     }
   }
 }

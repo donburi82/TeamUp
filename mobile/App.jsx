@@ -23,10 +23,10 @@ import {useSelector} from 'react-redux';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      onError: error => alert(error.message),
+      onError: error => alert(error),
     },
     mutations: {
-      onError: error => alert(error.message),
+      onError: error => alert(error),
       // onError: error => alert('666'),
     },
   },
