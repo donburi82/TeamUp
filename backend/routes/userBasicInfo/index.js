@@ -95,7 +95,6 @@ router.route("/updateInfo").patch(async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 // req.body{pre: string, cur: string}
 router.route("/updatePassword").patch(async (req, res) => {
   const { pre, cur } = req.body;
@@ -123,8 +122,6 @@ router.route("/updatePassword").patch(async (req, res) => {
   }
 });
 
-=======
->>>>>>> bee67cba018679a60c7b1d91acddc7d9f3b9fd34
 // router.patch("/profilePic", upload.single("image"), async (req, res) => {
 //   if (!req.file) {
 //     return res.status(400).json({ status: "fail", msg: "No file uploaded." });

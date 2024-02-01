@@ -1,0 +1,32 @@
+config:
+  target: "http://localhost:3000"
+  socketio:
+    extraHeaders:
+      Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWI3YzNkNDkxMTFjNDE1Zjc4YjcxOGUiLCJpYXQiOjE3MDY1NDIzMDQsImV4cCI6MTcwOTEzNDMwNH0.9NZFAnJRxnSHimGtJyYfRbyXZu6p0tKCgVhUB_SOq2o"
+  phases:
+    - duration: 1
+      arrivalRate: 50
+  engines:
+    socketio-v3: {}
+
+scenarios:
+  - name: My sample scenario
+    engine: socketio-v3
+    flow:
+      # wait for the WebSocket upgrade (optional)
+      - emit:
+          channel: "connection"
+
+      - think: 120
+
+      # basic emit
+      - emit:
+          channel: "sendMessage"
+          data:
+            message: "hello world test message"
+            type: "text"
+            chatRoomId: "65b7c6679111c415f78b7198"
+
+      - think: 120
+
+      # do nothing for 30 seconds then disconnect
