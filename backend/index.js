@@ -91,7 +91,8 @@ io.use((socket, next) => {
         payload.message,
         payload.type,
         payload.chatRoomId,
-        senderId
+        senderId,
+        payload.fileName
       );
       const user = await User.findById(senderId);
       const res = {

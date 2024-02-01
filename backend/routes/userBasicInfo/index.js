@@ -44,6 +44,7 @@ router.route("/getInfo/:userId").get(async (req, res) => {
 
 router.route("/getInfo").get(async (req, res) => {
   const userId = req.user.userId;
+  console.log(userId);
   try {
     const userInfo = await User.findOne({ _id: userId });
     if (!userInfo) {
@@ -208,6 +209,26 @@ router.route("/password").patch(async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: "fail", error });
+  }
+});
+
+router.post("/registerationToken", async (req, res) => {
+  const userId = req.user.userId;
+  const { registrationToken } = req.body;
+
+  try {
+    await User.findByIdAndUpdate(userId, {
+      registrationToken: registrationToken,
+    });
+
+    if (!user) {
+      return res.status(404).json({ status: "fail", msg: "User not found" });
+    }
+
+    res.status(200).json({ status: "success" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: "fail", error });
   }
 });
 
