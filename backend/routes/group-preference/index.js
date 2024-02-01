@@ -28,6 +28,7 @@ router.post("/courseproject", async (req, res) => {
     await createCourseProjectPreference(
       req.body.userId,
       req.body.courseCode,
+      req.body.semester,
       req.body.projectInterest,
       req.body.skillset,
       req.body.targetGrade,
@@ -46,6 +47,7 @@ router.post("/coursestudy", async (req, res) => {
     await createCourseStudyPreference(
       req.body.userId,
       req.body.courseCode,
+      req.body.semester,
       req.body.targetGrade,
       req.body.preferredLanguage
     );
