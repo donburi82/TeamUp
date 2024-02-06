@@ -70,7 +70,7 @@ io.use((socket, next) => {
       socket.join(`notification-${chatroom}`);
     }
     if (updatedUser) {
-      console.log("SocketId updated successfully");
+      console.log("user connected");
     } else {
       console.log("User not found");
     }
@@ -84,17 +84,17 @@ io.use((socket, next) => {
   socket.on("leaveChatRoom", async (payload) => {
     socket.leave(payload.chatRoomId);
   });
-  // payload:{message, type, chatRoomId}
   socket.on("sendMessage", async (payload) => {
-    const senderId = socket.userId;
-    // console.log("message payload", payload, "\n");
-    // console.log(`${socket.userId} joined:`, io.sockets.adapter.rooms, "\n");
     try {
+      console.log(`new message sent ${payload}`);
+      const senderId = socket.userId;
+
       await sendMessage(
         payload.message,
         payload.type,
         payload.chatRoomId,
-        senderId
+        senderId,
+        payload.fileName
       );
       const user = await User.findById(senderId);
       const res = {
@@ -110,6 +110,10 @@ io.use((socket, next) => {
     }
   });
 
+  socket.on("testing", (payload) => {
+    console.log("testing");
+  });
+
   socket.on("disconnect", async () => {
     try {
       const updatedUser = await User.findOneAndUpdate(
@@ -119,7 +123,7 @@ io.use((socket, next) => {
       );
 
       if (updatedUser) {
-        console.log("SocketId updated successfully:");
+        console.log("user disconnected");
       } else {
         console.log("User not found");
       }

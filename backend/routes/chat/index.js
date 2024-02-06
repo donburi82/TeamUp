@@ -16,9 +16,15 @@ module.exports = router;
 router
   .route("/message/:chatRoomId")
   .get(async (req, res) => {
+    const lastMessageId = req.query.lastMessageId;
+    const limit = req.query.limit;
     try {
       const { chatRoomId } = req.params;
-      const messages = await getMessagesFromChatRoom(chatRoomId);
+      const messages = await getMessagesFromChatRoom(
+        chatRoomId,
+        lastMessageId,
+        limit
+      );
       return res.status(200).send({ status: "success", messages });
     } catch (error) {
       return res.status(400).send({ status: "error", msg: error.message });

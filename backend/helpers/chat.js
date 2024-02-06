@@ -1,6 +1,24 @@
 const { MessageStatus, Message, ChatRoom } = require("../models/chat");
 const { User } = require("../models/user.js");
 const mongoose = require("mongoose");
+require("dotenv").config();
+const { v4: uuidv4 } = require("uuid");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const admin = require("firebase-admin");
+const { getMessaging } = require("firebase-admin/messaging");
+
+const serviceAccount = require("../serviceAccount.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+const s3Client = new S3Client({
+  region: "ap-southeast-1",
+  credentials: {
+    accessKeyId: process.env.accessKeyId,
+    secretAccessKey: process.env.secretAccessKey,
+  },
+});
 
 const createChatRoom = async (members, groupId = null) => {
   try {
@@ -64,6 +82,11 @@ const updateChatRoom = async (userId, chatRoomId, isJoin) => {
 
     if (isJoin) {
       if (memberIndex === -1) {
+        const user = await User.findById(userId);
+        // await getMessaging().subscribeToTopic(
+        //   user.registrationTokens,
+        //   chatRoomId
+        // );
         room.members.push(userIdObj);
         await room.save();
 
@@ -82,6 +105,10 @@ const updateChatRoom = async (userId, chatRoomId, isJoin) => {
         } else {
           await room.save();
         }
+        // await getMessaging().unsubscribeFromTopic(
+        //   user.registrationTokens,
+        //   chatRoomId
+        // );
         // Remove the chat room reference from the user's chatRooms array
         await User.findByIdAndUpdate(userId, {
           $pull: { chatRooms: chatRoomId },
@@ -122,10 +149,11 @@ const deleteChatRoom = async (chatRoomId) => {
   }
 };
 
-const sendMessage = async (message, type, chatRoomId, senderId) => {
+const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
+  let chatRoom;
   try {
     console.log("chatroomId", chatRoomId);
-    const chatRoom = await ChatRoom.findById(chatRoomId).populate("members");
+    chatRoom = await ChatRoom.findById(chatRoomId).populate("members");
 
     if (!chatRoom) {
       throw new Error("Chat room not found");
@@ -147,13 +175,52 @@ const sendMessage = async (message, type, chatRoomId, senderId) => {
         messageData: message,
         messageStatus: messageStatuses,
       });
-    } else if (type === "image") {
-      const buffer = Buffer.from(message.image, "base64");
+    } else if (type === "image" || type === "video") {
+      if (messageSizeInBytes > sizeLimitInBytes) {
+        throw new Error("Message size exceeds the limit of 5MB");
+      }
+
+      const buffer = Buffer.from(message, "base64");
+      const key = `${uuidv4()}-${fileName}`;
+      const params = {
+        Bucket: "awsteamupbucket",
+        Key: `chat/${key}`,
+        Body: buffer,
+      };
+      try {
+        const response = await s3Client.send(new PutObjectCommand(params));
+        console.log(`Image uploaded successfully. Location: ${response}`);
+      } catch (error) {
+        throw new Error(`Error uploading image: ${error}`);
+      }
+
       newMessage = new Message({
         messageFrom: senderId,
         sentDate: Date.now(),
         messageType: type,
-        messageData: buffer,
+        messageData: key,
+        messageStatus: messageStatuses,
+      });
+    } else if (type === "audio") {
+      const buffer = Buffer.from(message, "base64");
+      const key = `${uuidv4()}.mp3`;
+      const params = {
+        Bucket: "awsteamupbucket",
+        Key: `chat/${key}`,
+        Body: buffer,
+      };
+      try {
+        const response = await s3Client.send(new PutObjectCommand(params));
+        console.log(`Image uploaded successfully. Location: ${response}`);
+      } catch (error) {
+        throw new Error(`Error uploading image: ${error}`);
+      }
+
+      newMessage = new Message({
+        messageFrom: senderId,
+        sentDate: Date.now(),
+        messageType: type,
+        messageData: key,
         messageStatus: messageStatuses,
       });
     }
@@ -163,6 +230,36 @@ const sendMessage = async (message, type, chatRoomId, senderId) => {
     chatRoom.messages.push(newMessage);
     chatRoom.lastTS = newMessage.sentDate;
     await chatRoom.save();
+
+    // handle push notification
+    // const recipients = chatRoom.members.filter(
+    //   (member) => member._id.toString() !== senderId
+    // );
+    // const registrationTokens = recipients.map(
+    //   (member) => member.registrationToken
+    // );
+
+    // const senderName = `${
+    //   chatRoom.members.find((member) => member._id.toString() === senderId).name
+    // }`;
+
+    // if (chatRoom.isGroup) {
+    //   const payload = {
+    //     notification: {
+    //       title: "New Group message",
+    //       body: `${senderName}: ${message}`,
+    //     },
+    //   };
+    //   await admin.messaging().sendToDevice(registrationTokens, payload);
+    // } else {
+    //   const payload = {
+    //     notification: {
+    //       title: `New message from ${senderName}`,
+    //       body: `${message}`,
+    //     },
+    //   };
+    //   await admin.messaging().sendToDevice(registrationTokens, payload);
+    // }
   } catch (error) {
     throw new Error(`Message cannot be sent: ${error.message}`);
   }
@@ -197,48 +294,74 @@ const markMessagesAsRead = async (userId, chatRoomId) => {
   }
 };
 
-const getMessagesFromChatRoom = async (chatRoomId) => {
-  try {
-    const chatRoom = await ChatRoom.findById(chatRoomId).populate({
-      path: "messages",
-      populate: {
-        path: "messageFrom",
-        model: "User",
-        select: "name _id profilePic",
-      },
-    });
-
-    if (!chatRoom) {
-      throw new Error("Chat room not found");
+const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
+  let chatRoom;
+  if (!lastMessageId) {
+    try {
+      chatRoom = await ChatRoom.findById(chatRoomId);
+      const messageIds = chatRoom.messages.slice(-limit);
+      chatRoom.messages = await Message.find({
+        _id: { $in: messageIds },
+      })
+        .sort({ sentDate: 1 })
+        .populate({
+          path: "messageFrom",
+          model: "User",
+          select: "name _id profilePic",
+        });
+      if (!chatRoom) {
+        throw new Error("Chat room not found");
+      }
+    } catch (error) {
+      throw new Error(
+        `Failed to get messages from chat room: ${error.message}`
+      );
     }
+  } else {
+    try {
+      const lastMessage = await Message.findById(lastMessageId);
+      console.log(chatRoomId);
+      chatRoom = await ChatRoom.findById(chatRoomId)
+        .sort({ sentDate: 1 })
+        .populate({
+          path: "messages",
+          populate: {
+            path: "messageFrom",
+            model: "User",
+            select: "name _id profilePic",
+          },
+        });
 
-    const messages = [];
-
-    for (const message of chatRoom.messages) {
-      // const messageStatuses = await MessageStatus.find({
-      //   _id: { $in: message.messageStatus },
-      // });
-      // console.log(message);
-      const isAllRead = message.messageStatus.every(
-        (status) => status.read_date !== null
+      chatRoom.messages = chatRoom.messages.filter(
+        (message) => message.sentDate >= lastMessage.sentDate
       );
 
-      messages.push({
-        messageId: message._id,
-        senderId: message.messageFrom._id,
-        profilePic: message.messageFrom.profilePic,
-        senderName: message.messageFrom.name,
-        sentDate: message.sentDate,
-        messageType: message.messageType,
-        messageData: message.messageData,
-        isAllRead: isAllRead,
-      });
+      console.log(chatRoom);
+    } catch (error) {
+      throw new Error(
+        `Failed to get messages from chat room: ${error.message}`
+      );
     }
-
-    return messages;
-  } catch (error) {
-    throw new Error(`Failed to get messages from chat room: ${error.message}`);
   }
+  let messages = [];
+  for (const message of chatRoom.messages) {
+    const isAllRead = message.messageStatus.every(
+      (status) => status.read_date !== null
+    );
+
+    messages.push({
+      messageId: message._id,
+      senderId: message.messageFrom._id,
+      profilePic: message.messageFrom.profilePic,
+      senderName: message.messageFrom.name,
+      sentDate: message.sentDate,
+      messageType: message.messageType,
+      messageData: message.messageData,
+      isAllRead: isAllRead,
+    });
+  }
+
+  return messages;
 };
 
 const getChatRoomsForUser = async (userId) => {

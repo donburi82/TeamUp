@@ -104,6 +104,7 @@ const UserSchema = new mongoose.Schema({
   groups: [ObjectId],
   // for chat
   socketId: String,
+  registrationToken: String,
 });
 
 // might need to refactor the methods to helpers
