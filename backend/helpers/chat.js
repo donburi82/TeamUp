@@ -176,6 +176,10 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageStatus: messageStatuses,
       });
     } else if (type === "image" || type === "video") {
+      if (messageSizeInBytes > sizeLimitInBytes) {
+        throw new Error("Message size exceeds the limit of 5MB");
+      }
+
       const buffer = Buffer.from(message, "base64");
       const key = `${uuidv4()}-${fileName}`;
       const params = {
@@ -290,19 +294,20 @@ const markMessagesAsRead = async (userId, chatRoomId) => {
   }
 };
 
-const getMessagesFromChatRoom = async (chatRoomId, lastMessageId) => {
+const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
   let chatRoom;
   if (!lastMessageId) {
     try {
-      chatRoom = await ChatRoom.findById(chatRoomId)
+      chatRoom = await ChatRoom.findById(chatRoomId);
+      const messageIds = chatRoom.messages.slice(-limit);
+      chatRoom.messages = await Message.find({
+        _id: { $in: messageIds },
+      })
         .sort({ sentDate: 1 })
         .populate({
-          path: "messages",
-          populate: {
-            path: "messageFrom",
-            model: "User",
-            select: "name _id profilePic",
-          },
+          path: "messageFrom",
+          model: "User",
+          select: "name _id profilePic",
         });
       if (!chatRoom) {
         throw new Error("Chat room not found");
@@ -339,7 +344,6 @@ const getMessagesFromChatRoom = async (chatRoomId, lastMessageId) => {
     }
   }
   let messages = [];
-
   for (const message of chatRoom.messages) {
     const isAllRead = message.messageStatus.every(
       (status) => status.read_date !== null
