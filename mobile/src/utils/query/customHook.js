@@ -208,6 +208,7 @@ export const useUpdateProfileMutation = () => {
 
 export const useGetUserInfoQuery = () => {
   const dispatch = useDispatch();
+
   const url = requestURL.getInfo;
   const reqFunc = async () => {
     const res = await request(url, null, {method: 'get'});
@@ -443,8 +444,8 @@ export const useGetChatRoomInfoQuery = () => {
 };
 
 export const useSendMessageMutation = chatRoomId => {
-  const url = 'chat/message/' + chatRoomId;
-  console.log('chatroom id is', chatRoomId);
+  const url = requestURL.getMessages + '/' + chatRoomId;
+  // console.log('chatroom id is', chatRoomId);
   const reqFunc = async ({message, type}) => {
     console.log(message, type);
     const res = await request(url, {
@@ -461,7 +462,7 @@ export const useSendMessageMutation = chatRoomId => {
 };
 
 export const useGetMessageInfoQuery = chatRoomId => {
-  const url = 'chat/message/' + chatRoomId;
+  const url = requestURL.getMessages + '/' + chatRoomId;
   const reqFunc = async () => {
     const res = await request(url, {}, {method: 'get'}, true);
     return res?.messages;

@@ -9,6 +9,7 @@ import {Platform} from 'react-native';
 //   Platform.OS === 'ios'
 //     ? 'http://192.168.10.102:3000/'
 //     : 'http://10.0.2.2:3000/';
+
 const BASE_URL =
   Platform.OS === 'ios' ? 'http://localhost:3000/' : 'http://10.0.2.2:3000/';
 
@@ -36,6 +37,7 @@ const requestURL = {
   coursestudy: 'preference/coursestudy',
   extracurricular: 'preference/extracurricular',
   chatroomInfo: 'chat/chatRoom',
+  getMessages: 'chat/message',
 };
 
 async function request(url, datum, options, isGetRequest) {
@@ -60,7 +62,7 @@ async function request(url, datum, options, isGetRequest) {
     }
 
     const res = await axiosServices(axiosOptions);
-    console.log(res.data, `get from ${url}`);
+    // console.log(res.data, `get from ${url}`);
     if (!res.status.toString().startsWith('2')) {
       console.log('状态码不对啊哥', res.status);
       throw new Error(`${res.data.msg} (${res.status})`);

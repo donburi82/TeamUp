@@ -42,12 +42,10 @@ function App() {
   const userInfo = useSelector(state => state.userInfo);
 
   const Child = useMemo(() => {
-    // return <HomeRouting />;
-
     if (userInfo.isAuthed) {
-      return <HomeRouting />;
+      return <HomeRouting key="home" />;
     }
-    return <AuthRouting />;
+    return <AuthRouting key="auth" />;
   }, [userInfo]);
 
   return (

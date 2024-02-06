@@ -15,7 +15,7 @@ const NativeStack = createNativeStackNavigator();
 const BottomStack = createBottomTabNavigator();
 export default function HomeRouting() {
   const colorStatusBar =
-    Platform.OS === 'ios' ? '#f0f0f0' : 'rgba(63, 43, 190, 0.26)';
+    Platform.OS === 'ios' ? '#f0f0f0' : 'rgba(63, 43, 190, 0.01)';
   const backgroundColor =
     Platform.OS === 'ios' ? '#f0f0f0' : 'rgba(63, 43, 190, 0.22)';
   return (
