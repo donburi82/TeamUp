@@ -37,6 +37,11 @@ async function createCourseProjectPreference(userId, courseCode, semester, proje
             experience: experience,
         });
 
+        const validationError = courseProjectPreference.validateSync();
+        if (validationError) {
+            throw validationError;
+        }
+
         user.groupPreferences.push(courseProjectPreference);
 
         return await user.save();
@@ -59,6 +64,11 @@ async function createCourseStudyPreference(userId, courseCode, semester, targetG
             preferredLanguage: preferredLanguage,
         });
 
+        const validationError = courseStudyPreference.validateSync();
+        if (validationError) {
+            throw validationError;
+        }
+
         user.groupPreferences.push(courseStudyPreference);
 
         return await user.save();
@@ -74,12 +84,17 @@ async function createExtracurricularPreference(userId, projectInterest, skillset
             throw new Error("User not found");
         }
 
-        const extracurricularPreference = await Extracurricular({
+        const extracurricularPreference = new Extracurricular({
             projectInterest: projectInterest,
             skillset: skillset,
             experience: experience,
             preferredLanguage: preferredLanguage,
         });
+
+        const validationError = extracurricularPreference.validateSync();
+        if (validationError) {
+            throw validationError;
+        }
 
         user.groupPreferences.push(extracurricularPreference);
 

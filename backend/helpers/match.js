@@ -32,19 +32,19 @@ function computeCourseProjectSimilarity(userPref, matchPref) {
     let score = 0;
 
     // projectinterest
-    score += stringSimilarity(userPref.projectInterest, matchPref.projectInterest);
+    score += stringSimilarity(userPref.projectInterest, matchPref.projectInterest)*2.67;
     console.log(score);
 
     // targetgrade
-    score += gradeSimilarity(userPref.targetGrade, matchPref.targetGrade);
+    score += gradeSimilarity(userPref.targetGrade, matchPref.targetGrade)*2.38;
     console.log(score);
 
     // experience
-    score += stringSimilarity(userPref.experience, matchPref.experience);
+    score += stringSimilarity(userPref.experience, matchPref.experience)*2.20;
     console.log(score);
 
     // skillset
-    score += skillsetSimilarity(new Set(userPref.skillset), new Set(matchPref.skillset));
+    score += skillsetSimilarity(new Set(userPref.skillset), new Set(matchPref.skillset))*2.75;
     console.log(score);
 
     return score;
@@ -54,11 +54,11 @@ function computeCourseStudySimilarity(userPref, matchPref) {
     let score = 0;
 
     // targetgrade
-    score += gradeSimilarity(userPref.targetGrade, matchPref.targetGrade);
+    score += gradeSimilarity(userPref.targetGrade, matchPref.targetGrade)*5.55;
     console.log(score);
 
     // preferredLanguage
-    score += (userPref.preferredLanguage.toString()===matchPref.preferredLanguage.toString());
+    score += (userPref.preferredLanguage.toString()===matchPref.preferredLanguage.toString())*4.45;
     console.log(score);
 
     return score;
@@ -68,19 +68,19 @@ function computeExtracurricularSimilarity(userPref, matchPref) {
     let score = 0;
 
     // projectinterest
-    score += stringSimilarity(userPref.projectInterest, matchPref.projectInterest);
+    score += stringSimilarity(userPref.projectInterest, matchPref.projectInterest)*2.70;
     console.log(score);
 
     // experience
-    score += stringSimilarity(userPref.experience, matchPref.experience);
+    score += stringSimilarity(userPref.experience, matchPref.experience)*2.29;
     console.log(score);
 
     // skillset
-    score += skillsetSimilarity(new Set(userPref.skillset), new Set(matchPref.skillset));
+    score += skillsetSimilarity(new Set(userPref.skillset), new Set(matchPref.skillset))*2.72;
     console.log(score);
 
     // preferredLanguage
-    score += (userPref.preferredLanguage.toString()===matchPref.preferredLanguage.toString());
+    score += (userPref.preferredLanguage.toString()===matchPref.preferredLanguage.toString())*2.29;
     console.log(score);
 
     return score;
@@ -93,6 +93,7 @@ async function getCourseProjectProfiles(userId) {
             throw new Error("User not found");
         }
         const preferences = user.groupPreferences.toObject().filter(preference => preference.__t.toString()==="CourseProject");
+        
         let recommendations = [];
 
         // cache recommendations locally for faster retrieval unless user refreshes
@@ -104,24 +105,28 @@ async function getCourseProjectProfiles(userId) {
                 "groupPreferences.semester": pref.semester,
             }).lean();
 
-            if (poolProfiles) {
-                for (var profile of poolProfiles) {
-                    profile.groupPreferences.forEach(profilePref => {
-                        if (profilePref.__t.toString()==="CourseProject" && pref.courseCode.toString()===profilePref.courseCode.toString() && pref.semester.toString()===profilePref.semester.toString()) {
-                            let score = computeCourseProjectSimilarity(pref, profilePref);
-                            recommendations.push({ userId: profile._id, score: score });
+            poolProfiles.forEach(profile => {
+                profile.groupPreferences.forEach(profilePref => {
+                    if (profilePref.__t.toString()==="CourseProject"
+                            && pref.courseCode.toString()===profilePref.courseCode.toString()
+                            && pref.semester.toString()===profilePref.semester.toString()) {
+                        console.log(profilePref);
+                        let score = computeCourseProjectSimilarity(pref, profilePref);
+                        console.log(score);
+                        if (recommendations[profile._id]) { // aggregate score
+                            recommendations[profile._id].score += score;
+                        } else { // add new score
+                            recommendations[profile._id] = { userId: profile._id.toString(), score: score };
                         }
-                    });
-                }
-            }
+                    }
+                });
+            });
         }
-        console.log("Recommendations:", recommendations);
+        console.log("CP Recommendations:", recommendations);
 
-        // sort recommendations based on the score and remove duplicate userID's if any
-        const sortedRecommendations = recommendations
-            .sort((a, b) => b.score - a.score)
-            .map(rec => rec.userId.toString());
-        const finalRecommendations = Array.from(new Set(sortedRecommendations));
+        // sort recommendations based on the score
+        let sortedRecommendations = Object.values(recommendations).sort((a, b) => b.score - a.score);
+        let finalRecommendations = sortedRecommendations.map(rec => rec.userId);
 
         // update DB
         user.courseProjectMatches = finalRecommendations;
@@ -140,6 +145,7 @@ async function getCourseStudyProfiles(userId) {
             throw new Error("User not found");
         }
         const preferences = user.groupPreferences.toObject().filter(preference => preference.__t.toString()==="CourseStudy");
+        
         let recommendations = [];
 
         // cache recommendations locally for faster retrieval unless user refreshes
@@ -151,24 +157,28 @@ async function getCourseStudyProfiles(userId) {
                 "groupPreferences.semester": pref.semester,
             }).lean();
 
-            if (poolProfiles) {
-                for (var profile of poolProfiles) {
-                    profile.groupPreferences.forEach(profilePref => {
-                        if (profilePref.__t.toString()==="CourseStudy" && pref.courseCode.toString()===profilePref.courseCode.toString() && pref.semester.toString()===profilePref.semester.toString()) {
-                            let score = computeCourseStudySimilarity(pref, profilePref);
-                            recommendations.push({ userId: profile._id, score: score });
+            poolProfiles.forEach(profile => {
+                profile.groupPreferences.forEach(profilePref => {
+                    if (profilePref.__t.toString()==="CourseStudy"
+                            && pref.courseCode.toString()===profilePref.courseCode.toString()
+                            && pref.semester.toString()===profilePref.semester.toString()) {
+                        console.log(profilePref);
+                        let score = computeCourseStudySimilarity(pref, profilePref);
+                        console.log(score);
+                        if (recommendations[profile._id]) { // aggregate score
+                            recommendations[profile._id].score += score;
+                        } else { // add new score
+                            recommendations[profile._id] = { userId: profile._id.toString(), score: score };
                         }
-                    });
-                }
-            }
+                    }
+                });
+            });
         }
-        console.log("Recommendations:", recommendations);
+        console.log("CS Recommendations:", recommendations);
 
-        // sort recommendations based on the score and remove duplicate userID's if any
-        const sortedRecommendations = recommendations
-            .sort((a, b) => b.score - a.score)
-            .map(rec => rec.userId.toString());
-        const finalRecommendations = Array.from(new Set(sortedRecommendations));
+        // sort recommendations based on the score
+        let sortedRecommendations = Object.values(recommendations).sort((a, b) => b.score - a.score);
+        let finalRecommendations = sortedRecommendations.map(rec => rec.userId);
 
         // update DB
         user.courseStudyMatches = finalRecommendations;
@@ -187,33 +197,35 @@ async function getExtracurricularProfiles(userId) {
             throw new Error("User not found");
         }
         const preferences = user.groupPreferences.toObject().filter(preference => preference.__t.toString()==="Extracurricular");
+        
         let recommendations = [];
+        const poolProfiles = await User.find({
+            _id: { $ne: userId },
+            "groupPreferences.__t": "Extracurricular",
+        }).lean();
 
         // cache recommendations locally for faster retrieval unless user refreshes
         for (var pref of preferences) {
-            const poolProfiles = await User.find({
-                _id: { $ne: userId },
-                "groupPreferences.__t": "Extracurricular",
-            }).lean();
-
-            if (poolProfiles) {
-                for (var profile of poolProfiles) {
-                    profile.groupPreferences.forEach(profilePref => {
-                        if (profilePref.__t.toString()==="Extracurricular" && stringSimilarity(pref.projectInterest, profilePref.projectInterest)>0.5) {
-                            let score = computeExtracurricularSimilarity(pref, profilePref);
-                            recommendations.push({ userId: profile._id, score: score });
+            poolProfiles.forEach(profile => {
+                profile.groupPreferences.forEach(profilePref => {
+                    if (profilePref.__t.toString()==="Extracurricular") {
+                        console.log(profilePref);
+                        let score = computeExtracurricularSimilarity(pref, profilePref);
+                        console.log(score);
+                        if (recommendations[profile._id]) { // aggregate score
+                            recommendations[profile._id].score += score;
+                        } else { // add new score
+                            recommendations[profile._id] = { userId: profile._id.toString(), score: score };
                         }
-                    });
-                }
-            }
+                    }
+                });
+            });
         }
-        console.log("Recommendations:", recommendations);
+        console.log("E Recommendations:", recommendations);
 
-        // sort recommendations based on the score and remove duplicate userID's if any
-        const sortedRecommendations = recommendations
-            .sort((a, b) => b.score - a.score)
-            .map(rec => rec.userId.toString());
-        const finalRecommendations = Array.from(new Set(sortedRecommendations));
+        // sort recommendations based on the score
+        let sortedRecommendations = Object.values(recommendations).sort((a, b) => b.score - a.score);
+        let finalRecommendations = sortedRecommendations.map(rec => rec.userId);
 
         // update DB
         user.extracurricularMatches = finalRecommendations;
