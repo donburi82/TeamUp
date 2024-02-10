@@ -5,8 +5,13 @@ const ObjectId = require("mongodb").ObjectId;
 
 // Word Count Validator
 const wordCountValidator = [
-  function(s) {
-    return s.split(/\s+/).filter.length <= 20;
+  {
+    validator: function(s) {
+      const words = s.split(/\s+/).filter(Boolean);
+      console.log(words.length);
+      return words.length <= 20;
+    },
+    message: "The field cannot contain more than 20 words.",
   }
 ];
 
@@ -104,6 +109,7 @@ const UserSchema = new mongoose.Schema({
   groups: [ObjectId],
   // for chat
   socketId: String,
+  registrationToken: String,
 });
 
 // might need to refactor the methods to helpers
