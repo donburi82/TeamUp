@@ -461,10 +461,10 @@ export const useSendMessageMutation = chatRoomId => {
   });
 };
 
-export const useGetMessageInfoQuery = chatRoomId => {
+export const useGetMessageInfoQuery = (chatRoomId, limit) => {
   const url = requestURL.getMessages + '/' + chatRoomId;
   const reqFunc = async () => {
-    const res = await request(url, {}, {method: 'get'}, true);
+    const res = await request(url, {limit}, {method: 'get'}, true);
     return res?.messages;
   };
 

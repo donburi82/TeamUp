@@ -10,6 +10,7 @@ import {
 import {useRoute, useNavigation} from '@react-navigation/core';
 import {useGetMessageInfoQuery} from '../utils/query/customHook';
 import Message from '../components/Message';
+import MessageBubble from '../components/MessageBubble/MessageBubble';
 import MessageInput from '../components/MessageInput';
 
 export default function ChatRoomScreen() {
@@ -17,7 +18,7 @@ export default function ChatRoomScreen() {
   const id = route.params?.id;
   const chatMateName = route.params?.title;
   const flatListRef = useRef();
-  const {data: messagesData, isLoading} = useGetMessageInfoQuery(id);
+  const {data: messagesData, isLoading} = useGetMessageInfoQuery(id, 20);
 
   const [messages, setMessages] = useState(null);
   const [messageReplyTo, setMessageReplyTo] = useState(null);
@@ -31,14 +32,16 @@ export default function ChatRoomScreen() {
     <SafeAreaView style={styles.page}>
       <FlatList
         ref={flatListRef}
-        style={{
-          backgroundColor: 'red',
-        }}
+        style={
+          {
+            // backgroundColor: 'red',
+          }
+        }
         onContentSizeChange={() => {
-          flatListRef.current.scrollToEnd();
+          flatListRef.current.scrollToEnd({animated: false});
         }}
         data={messages}
-        renderItem={({item}) => <Message message={item} />}
+        renderItem={({item}) => <MessageBubble message={item} />}
       />
       <MessageInput
         id={id} //this is chatroom id

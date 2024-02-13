@@ -82,6 +82,8 @@ const MessageInput = ({id}) => {
             />
           </Pressable>
           <TextInput
+            editable
+            multiline
             style={styles.input}
             value={message}
             onChangeText={setMessage}
