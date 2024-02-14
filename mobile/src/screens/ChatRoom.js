@@ -6,42 +6,63 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/core';
 import {useGetMessageInfoQuery} from '../utils/query/customHook';
 import Message from '../components/Message';
 import MessageBubble from '../components/MessageBubble/MessageBubble';
 import MessageInput from '../components/MessageInput';
+const screenHeight = Dimensions.get('window').height;
+// Assume 50px height for header/footer/input field, adjust based on your UI
+const otherComponentsHeight = 50;
 
 export default function ChatRoomScreen() {
   const route = useRoute();
   const id = route.params?.id;
+
   const chatMateName = route.params?.title;
   const flatListRef = useRef();
+  console.log('chatroom id is', id);
   const {data: messagesData, isLoading} = useGetMessageInfoQuery(id, 20);
 
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [messageReplyTo, setMessageReplyTo] = useState(null);
-  const [contentHeight, setContentHeight] = useState(0);
-  const [layoutHeight, setLayoutHeight] = useState(0);
+
+  const [calculatedPaddingHeight, setCalculatedPaddingHeight] = useState(0);
 
   useEffect(() => {
-    setMessages(messagesData);
+    if (messagesData) setMessages(messagesData);
   }, [messagesData]);
+  useEffect(() => {
+    const totalMessagesHeight = messages ? messages?.length * 90 : 0; // Estimate this value
+    const availableSpace =
+      screenHeight - totalMessagesHeight - otherComponentsHeight;
+
+    const newCalculatedPaddingHeight = availableSpace > 0 ? availableSpace : 0;
+    // Only update state if the value has actually changed
+    if (calculatedPaddingHeight !== newCalculatedPaddingHeight) {
+      setCalculatedPaddingHeight(newCalculatedPaddingHeight);
+    }
+  }, [messages]);
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
   return (
     <SafeAreaView style={styles.page}>
       <FlatList
         ref={flatListRef}
-        style={
-          {
-            // backgroundColor: 'red',
-          }
-        }
-        onContentSizeChange={() => {
-          flatListRef.current.scrollToEnd({animated: false});
-        }}
-        data={messages}
+        inverted
+        data={[...messages].reverse()}
         renderItem={({item}) => <MessageBubble message={item} />}
+        estimatedItemSize={40}
+        initialNumToRender={20}
+        ListHeaderComponent={() => (
+          <View
+            style={{
+              height: calculatedPaddingHeight,
+            }}></View>
+        )}
       />
       <MessageInput
         id={id} //this is chatroom id

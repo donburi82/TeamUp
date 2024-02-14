@@ -17,8 +17,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSendMessageMutation} from '../utils/query/customHook';
-// import * as ImagePicker from "expo-image-picker";
-// import { v4 as uuidv4 } from "uuid";
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import RNFS from 'react-native-fs';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import {v4 as uuidv4} from 'uuid';
 // import { Audio, AVPlaybackStatus } from "expo-av";
 // import AudioPlayer from "../AudioPlayer";
 // import MessageComponent from "../Message";
@@ -29,7 +31,7 @@ const MessageInput = ({id}) => {
 
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [recording, setRecording] = useState(null);
+  const [recording, setRecording] = useState(false);
   const [soundURI, setSoundURI] = useState(null);
 
   const navigation = useNavigation();
@@ -47,7 +49,15 @@ const MessageInput = ({id}) => {
   };
 
   const sendAudio = () => {};
-  const sendImage = () => {};
+  const sendImage = async () => {
+    try {
+      await addMessage.mutateAsync({message, type: 'image'});
+
+      resetFields();
+    } catch (err) {
+      console.log('error happened when sending message', err);
+    }
+  };
   const resetFields = () => {
     setMessage('');
 
@@ -65,12 +75,139 @@ const MessageInput = ({id}) => {
       console.log('error happened when sending message', err);
     }
   };
+  // useEffect(() => {
+  //   (async () => {
+  //     if (Platform.OS !== 'web') {
+  //       const libraryResponse =
+  //         await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //       const photoResponse = await ImagePicker.requestCameraPermissionsAsync();
+  //       // await Audio.requestPermissionsAsync();
+
+  //       if (
+  //         libraryResponse.status !== 'granted' ||
+  //         photoResponse.status !== 'granted'
+  //       ) {
+  //         alert('Sorry, we need camera roll permissions to make this work!');
+  //       }
+  //     }
+  //   })();
+  // }, []);
+
+  const openImagePicker = () => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: false,
+      quality: 0.4,
+      maxHeight: 200,
+      maxWidth: 200,
+    };
+
+    launchImageLibrary(options).then(async response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('Image picker error: ', response.error);
+      } else {
+        let imageUri = response.uri || response.assets?.[0]?.uri;
+
+        const base64Image = await RNFS.readFile(imageUri, 'base64');
+        setImage(imageUri);
+        setFormData(base64Image);
+      }
+    });
+  };
+
+  const takePhoto = async () => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: false,
+      quality: 0.4,
+      maxHeight: 200,
+      maxWidth: 200,
+    };
+
+    launchCamera(options).then(async response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('Image picker error: ', response.error);
+      } else {
+        let imageUri = response.uri || response.assets?.[0]?.uri;
+
+        const base64Image = await RNFS.readFile(imageUri, 'base64');
+        setImage(imageUri);
+        setFormData(base64Image);
+      }
+    });
+  };
+
+  const progressCallback = progress => {
+    setProgress(progress.loaded / progress.total);
+  };
+  const audioRecorderPlayer = new AudioRecorderPlayer();
+
+  const startRecording = async () => {
+    const result = await audioRecorderPlayer.startRecorder();
+    audioRecorderPlayer.addRecordBackListener(e => {
+      console.log('recording', e);
+      return;
+    });
+    console.log(result);
+  };
+
+  const stopRecording = async () => {
+    const result = await audioRecorderPlayer.stopRecorder();
+    audioRecorderPlayer.removeRecordBackListener();
+    return result; // This result will be the path to the recorded file
+  };
+
+  const readFile = async filePath => {
+    try {
+      const base64Audio = await RNFS.readFile(filePath, 'base64');
+      return base64Audio;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
       style={[styles.root]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={100}>
+      {image && (
+        <View style={styles.sendImageContainer}>
+          <Image
+            source={{uri: image}}
+            style={{width: 100, height: 100, borderRadius: 10}}
+          />
+
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'flex-start',
+              alignSelf: 'flex-end',
+            }}>
+            <View
+              style={{
+                height: 5,
+                borderRadius: 5,
+                backgroundColor: '#3777f0',
+                width: `${progress * 100}%`,
+              }}
+            />
+          </View>
+
+          <Pressable onPress={() => setImage(null)}>
+            <AntDesign
+              name="close"
+              size={24}
+              color="black"
+              style={{margin: 5}}
+            />
+          </Pressable>
+        </View>
+      )}
       <View style={styles.row}>
         <View style={styles.inputContainer}>
           <Pressable onPressIn={null} onPressOut={null}>
@@ -90,7 +227,7 @@ const MessageInput = ({id}) => {
             placeholder="Send message..."
           />
 
-          <Pressable onPress={() => {}}>
+          <Pressable onPress={openImagePicker}>
             <Feather
               name="image"
               size={24}
@@ -99,7 +236,7 @@ const MessageInput = ({id}) => {
             />
           </Pressable>
 
-          <Pressable onPress={() => {}}>
+          <Pressable onPress={takePhoto}>
             <Feather
               name="camera"
               size={24}

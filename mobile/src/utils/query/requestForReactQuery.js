@@ -12,6 +12,10 @@ import {Platform} from 'react-native';
 
 const BASE_URL =
   Platform.OS === 'ios' ? 'http://localhost:3000/' : 'http://10.0.2.2:3000/';
+// const BASE_URL =
+//   Platform.OS === 'ios'
+//     ? 'http://localhost:3000/'
+//     : 'http://38.54.36.244:3000/';
 
 // Android-specific code
 

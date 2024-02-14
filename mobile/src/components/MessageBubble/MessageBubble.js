@@ -65,10 +65,8 @@ const styles = StyleSheet.create({
     width: 0,
     borderLeftWidth: 10,
     borderLeftColor: 'transparent',
-    // borderLeftColor: 'red',
 
     borderTopColor: '#ddd',
-    // borderTopColor: 'red',
 
     borderTopWidth: 10,
     alignSelf: 'flex-start',
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-    width: '100%',
+    width: '95%',
     marginHorizontal: 10,
   },
   timeAndReadContainer: {
