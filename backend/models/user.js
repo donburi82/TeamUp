@@ -5,9 +5,9 @@ const ObjectId = require("mongodb").ObjectId;
 
 // Word Count Validator
 const wordCountValidator = [
-  function(s) {
+  function (s) {
     return s.split(/\s+/).filter.length <= 20;
-  }
+  },
 ];
 
 // Schemas for Group Preference Information
@@ -20,7 +20,11 @@ const GroupPreference = mongoose.model(
 const courseProjectSchema = new mongoose.Schema({
   courseCode: { type: String, required: true },
   semester: { type: String, required: true },
-  projectInterest: { type: String, required: true, validate: wordCountValidator },
+  projectInterest: {
+    type: String,
+    required: true,
+    validate: wordCountValidator,
+  },
   skillset: { type: [String], required: true },
   targetGrade: {
     type: String,
@@ -44,7 +48,11 @@ const courseStudySchema = new mongoose.Schema({
 });
 
 const extracurricularSchema = new mongoose.Schema({
-  projectInterest: { type: String, required: true, validate: wordCountValidator },
+  projectInterest: {
+    type: String,
+    required: true,
+    validate: wordCountValidator,
+  },
   skillset: { type: [String], required: true },
   experience: { type: String, required: true, validate: wordCountValidator },
   preferredLanguage: { type: String, required: true },
@@ -81,16 +89,22 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide password"],
-    // temporarily removed
-    // match: [
-    //   /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
-    //   "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
-    // ],
+    match: [
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
+      "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
+    ],
   },
   chatRooms: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ChatRoom",
+      default: [],
+    },
+  ],
+  friends: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       default: [],
     },
   ],

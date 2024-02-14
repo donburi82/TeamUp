@@ -50,6 +50,16 @@ const createChatRoom = async (members, groupId = null) => {
         members: memberObjectIds,
         isGroup: false,
       });
+
+      const [userId1, userId2] = members;
+      await User.updateOne(
+        { _id: userId1 },
+        { $addToSet: { friends: userId2 } }
+      );
+      await User.updateOne(
+        { _id: userId2 },
+        { $addToSet: { friends: userId1 } }
+      );
     }
 
     // Add the chat room's ID to the users' chatRooms arrays
@@ -176,9 +186,9 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageStatus: messageStatuses,
       });
     } else if (type === "image" || type === "video") {
-      if (messageSizeInBytes > sizeLimitInBytes) {
-        throw new Error("Message size exceeds the limit of 5MB");
-      }
+      // if (messageSizeInBytes > sizeLimitInBytes) {
+      //   throw new Error("Message size exceeds the limit of 5MB");
+      // }
 
       const buffer = Buffer.from(message, "base64");
       const key = `${uuidv4()}-${fileName}`;
