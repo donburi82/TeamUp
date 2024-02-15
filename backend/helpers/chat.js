@@ -234,13 +234,30 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageStatus: messageStatuses,
       });
     }
+    newMessage = await newMessage.save();
 
-    await newMessage.save();
+    newMessage = await newMessage.populate({
+      path: "messageFrom",
+      model: "User",
+      select: "name _id profilePic",
+    });
 
     chatRoom.messages.push(newMessage);
     chatRoom.lastTS = newMessage.sentDate;
     await chatRoom.save();
 
+    return {
+      messageId: newMessage._id,
+      senderId: newMessage.messageFrom._id,
+      profilePic: newMessage.messageFrom.profilePic,
+      senderName: newMessage.messageFrom.name,
+      sentDate: newMessage.sentDate,
+      messageType: newMessage.messageType,
+      messageData: newMessage.messageData,
+      isAllRead: newMessage.messageStatus.every(
+        (status) => status.read_date !== null
+      ),
+    };
     // handle push notification
     // const recipients = chatRoom.members.filter(
     //   (member) => member._id.toString() !== senderId

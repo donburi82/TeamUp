@@ -92,22 +92,20 @@ io.use((socket, next) => {
   socket.on("sendMessage", async (payload) => {
     try {
       const senderId = socket.userId;
-      await sendMessage(
+      const newMessage = await sendMessage(
         payload.message,
         payload.type,
         payload.chatRoomId,
         senderId,
         payload.fileName
       );
-      const user = await User.findById(senderId);
-      const res = {
-        name: user.name,
-        message: payload.message,
-        type: payload.type,
-      };
-      socket.to(payload.chatRoomId).emit("updateMessage", res);
+      socket.to(payload.chatRoomId).emit("updateMessage", newMessage);
+      socket.emit("updateMessage", newMessage);
       const eventName = `notification-${payload.chatRoomId}`;
-      socket.to(eventName).except(payload.chatRoomId).emit("notification", res);
+      socket
+        .to(eventName)
+        .except(payload.chatRoomId)
+        .emit("notification", newMessage);
     } catch (error) {
       console.log(error);
     }
