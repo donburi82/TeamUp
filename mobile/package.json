@@ -17,6 +17,7 @@
     "@gluestack-ui/themed": "^0.1.51",
     "@gorhom/bottom-sheet": "^4.5.1",
     "@react-native-async-storage/async-storage": "^1.19.3",
+    "@react-native-firebase/messaging": "^18.8.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.14",

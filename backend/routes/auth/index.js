@@ -86,24 +86,24 @@ router.route("/verify").post(async (req, res) => {
 });
 
 router.route("/register").post(async (req, res) => {
-  if (!verified.has(req.body.email)) {
-    return res.status(400).send({ status: "fail", msg: "email not verified" });
-  }
+  // if (!verified.has(req.body.email)) {
+  //   return res.status(400).send({ status: "fail", msg: "email not verified" });
+  // }
 
-  if (
-    !req.body.email ||
-    !req.body.password ||
-    !req.body.name ||
-    !req.body.isFullTime ||
-    !req.body.gender ||
-    !req.body.nationality ||
-    !req.body.major ||
-    !req.body.year
-  ) {
-    return res
-      .status(400)
-      .send({ status: "fail", msg: "incomplete information" });
-  }
+  // if (
+  //   !req.body.email ||
+  //   !req.body.password ||
+  //   !req.body.name ||
+  //   !req.body.isFullTime ||
+  //   !req.body.gender ||
+  //   !req.body.nationality ||
+  //   !req.body.major ||
+  //   !req.body.year
+  // ) {
+  //   return res
+  //     .status(400)
+  //     .send({ status: "fail", msg: "incomplete information" });
+  // }
   if (!isStrongPassword(req.body.password)) {
     return res.status(400).send({ status: "fail", msg: "weak password" });
   }
@@ -145,13 +145,11 @@ router.route("/login").post(async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    console.log("hello");
     if (!user) {
       return res
         .status(401)
         .json({ status: "fail", msg: "incorrect credentials" });
     }
-    console.log("world");
     // const isPasswordCorrect = await user.comparePassword(password);
     // if (!isPasswordCorrect) {
     //   return res
