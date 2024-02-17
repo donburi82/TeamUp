@@ -21,14 +21,15 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {v4 as uuidv4} from 'uuid';
+import {store} from '../utils/reduxStore';
 // import { Audio, AVPlaybackStatus } from "expo-av";
 // import AudioPlayer from "../AudioPlayer";
 // import MessageComponent from "../Message";
 // import { ChatRoomUser } from "../../src/models";
 
-const MessageInput = ({id}) => {
+const MessageInput = ({id, socket}) => {
   const [message, setMessage] = useState('');
-
+  const senderId = store.getState(state => state?.userInfo?.userId);
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
   const [recording, setRecording] = useState(false);
@@ -68,7 +69,15 @@ const MessageInput = ({id}) => {
 
   const sendMessage = async () => {
     try {
-      await addMessage.mutateAsync({message, type: 'text'});
+      // await addMessage.mutateAsync({message, type: 'text'});
+
+      socket.emit('sendMessage', {
+        chatRoomId: id,
+        type: 'text',
+        message,
+        senderId,
+        fileName: null,
+      });
 
       resetFields();
     } catch (err) {

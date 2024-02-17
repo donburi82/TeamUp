@@ -5,8 +5,18 @@ import {Auth, DataStore} from 'aws-amplify';
 import {ChatRoom, ChatRoomUser} from '../src/models';
 import {useGetChatRoomInfoQuery} from '../utils/query/customHook';
 import ChatRoomItem from '../components/ChatRoomItem';
+import io from 'socket.io-client';
+import {store} from '../utils/reduxStore';
 
 export default function TabOneScreen() {
+  const global = store.getState();
+
+  const {token} = global.userInfo;
+  const socket = io('http://10.0.2.2:3000/', {
+    extraHeaders: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   const imageUri = useSelector(state => state?.userInfo?.imageUri);
   const [chatRooms, setChatRooms] = useState([]);
   const {data, isLoading} = useGetChatRoomInfoQuery();
@@ -19,7 +29,9 @@ export default function TabOneScreen() {
     <View style={styles.page}>
       <FlatList
         data={chatRooms}
-        renderItem={({item}) => <ChatRoomItem chatRoom={item} />}
+        renderItem={({item}) => (
+          <ChatRoomItem chatRoom={item} socket={socket} />
+        )}
         showsVerticalScrollIndicator={false}
       />
     </View>

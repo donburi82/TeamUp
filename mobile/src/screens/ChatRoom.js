@@ -20,10 +20,11 @@ const otherComponentsHeight = 50;
 export default function ChatRoomScreen() {
   const route = useRoute();
   const id = route.params?.id;
+  const socket = route.params?.socket;
 
   const chatMateName = route.params?.title;
   const flatListRef = useRef();
-  console.log('chatroom id is', id);
+  console.log('chatroom id is', id, 're-rendering');
   const {data: messagesData, isLoading} = useGetMessageInfoQuery(id, 20);
 
   const [messages, setMessages] = useState([]);
@@ -35,6 +36,7 @@ export default function ChatRoomScreen() {
     if (messagesData) setMessages(messagesData);
   }, [messagesData]);
   useEffect(() => {
+    console.log('executed');
     const totalMessagesHeight = messages ? messages?.length * 90 : 0; // Estimate this value
     const availableSpace =
       screenHeight - totalMessagesHeight - otherComponentsHeight;
@@ -45,6 +47,24 @@ export default function ChatRoomScreen() {
       setCalculatedPaddingHeight(newCalculatedPaddingHeight);
     }
   }, [messages]);
+
+  useEffect(() => {
+    socket.on('updateMessage', data => {
+      console.log('start listening');
+      console.log('updateMessage', data);
+      setMessages(messages => [...messages, data]);
+    });
+    socket.emit('joinChatRoom', {
+      chatRoomId: id,
+    });
+
+    return () => {
+      socket.emit('leaveChatRoom', {
+        chatRoomId: id,
+      });
+      socket.off('updateMessage');
+    };
+  }, [id, socket]);
   if (isLoading) {
     return <ActivityIndicator />;
   }
@@ -68,6 +88,7 @@ export default function ChatRoomScreen() {
         id={id} //this is chatroom id
         messageReplyTo={messageReplyTo}
         removeMessageReplyTo={() => setMessageReplyTo(null)}
+        socket={socket}
       />
     </SafeAreaView>
   );

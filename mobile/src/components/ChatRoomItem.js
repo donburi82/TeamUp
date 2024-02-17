@@ -12,7 +12,7 @@ import {ROUTES} from '../navigator/constant';
 import moment from 'moment';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-export default function ChatRoomItem({chatRoom}) {
+export default function ChatRoomItem({chatRoom, socket}) {
   // const [users, setUsers] = useState<User[]>([]); // all users in this chatroom
   const [user, setUser] = useState(null); // the display user
   const [lastMessage, setLastMessage] = useState();
@@ -52,6 +52,7 @@ export default function ChatRoomItem({chatRoom}) {
     navigation.navigate(ROUTES.CHATROOM, {
       id: chatRoom.chatRoomId,
       title: chatRoom.chatmateName,
+      socket,
     });
   };
 
