@@ -75,8 +75,6 @@ const MessageInput = ({id, socket}) => {
         chatRoomId: id,
         type: 'text',
         message,
-        senderId,
-        fileName: null,
       });
 
       resetFields();
