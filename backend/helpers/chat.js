@@ -258,6 +258,9 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         (status) => status.read_date !== null
       ),
     };
+
+    console.log(obj);
+
     return obj;
     // handle push notification
     // const recipients = chatRoom.members.filter(
