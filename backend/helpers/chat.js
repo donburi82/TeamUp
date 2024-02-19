@@ -246,9 +246,9 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
     chatRoom.lastTS = newMessage.sentDate;
     await chatRoom.save();
 
-    return {
-      messageId: newMessage._id,
-      senderId: newMessage.messageFrom._id,
+    const obj = {
+      messageId: newMessage._id.toString(),
+      senderId: newMessage.messageFrom._id.toString(),
       profilePic: newMessage.messageFrom.profilePic,
       senderName: newMessage.messageFrom.name,
       sentDate: newMessage.sentDate,
@@ -258,6 +258,10 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         (status) => status.read_date !== null
       ),
     };
+
+    console.log(obj);
+
+    return obj;
     // handle push notification
     // const recipients = chatRoom.members.filter(
     //   (member) => member._id.toString() !== senderId
