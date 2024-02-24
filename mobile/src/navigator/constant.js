@@ -12,4 +12,5 @@ export const ROUTES = {
   CHANGEYEAR: 'Year Of Study',
   BASICINFO: 'Basic Information',
   PREFERENCE: 'PREFERENCE',
+  OTHERUSERINFO: 'Information',
 };

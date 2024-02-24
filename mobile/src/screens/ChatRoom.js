@@ -50,8 +50,6 @@ export default function ChatRoomScreen() {
 
   useEffect(() => {
     socket.on('updateMessage', data => {
-      console.log('start listening');
-      console.log('updateMessage', data);
       setMessages(messages => [...messages, data]);
     });
     socket.emit('joinChatRoom', {

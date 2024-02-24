@@ -16,35 +16,14 @@ export default function ChatRoomItem({chatRoom, socket}) {
   // const [users, setUsers] = useState<User[]>([]); // all users in this chatroom
   const [user, setUser] = useState(null); // the display user
   const [lastMessage, setLastMessage] = useState();
-  const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    // const fetchUsers = async () => {
-    //   const fetchedUsers = (await DataStore.query(ChatRoomUser))
-    //     .filter((chatRoomUser) => chatRoomUser.chatroom.id === chatRoom.id)
-    //     .map((chatRoomUser) => chatRoomUser.user);
-    //   // setUsers(fetchedUsers);
-    //   const authUser = await Auth.currentAuthenticatedUser();
-    //   setUser(
-    //     fetchedUsers.find((user) => user.id !== authUser.attributes.sub) || null
-    //   );
+    if (!chatRoom?.lastMessage) {
+      return;
+    }
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    // };
-    // fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    // if (!chatRoom.chatRoomLastMessageId) {
-    //   return;
-    // }
-    // DataStore.query(Message, chatRoom.chatRoomLastMessageId).then(
-    //   setLastMessage
-    // );
     setLastMessage(chatRoom?.lastMessage);
   }, []);
 
@@ -55,10 +34,6 @@ export default function ChatRoomItem({chatRoom, socket}) {
       socket,
     });
   };
-
-  if (isLoading) {
-    return <ActivityIndicator />;
-  }
 
   const time = moment(chatRoom?.lastTS).from(moment());
 
@@ -78,7 +53,9 @@ export default function ChatRoomItem({chatRoom, socket}) {
           <Text style={styles.text}>{time}</Text>
         </View>
         <Text numberOfLines={1} style={styles.text}>
-          {lastMessage?.messageData}
+          {lastMessage?.messageType === 'text' && lastMessage?.messageData}
+          {lastMessage?.messageType !== 'text' &&
+            '[message not supported displaying]'}
         </Text>
       </View>
     </Pressable>

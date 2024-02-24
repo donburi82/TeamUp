@@ -3,6 +3,7 @@ import {ROUTES} from './constant';
 import ChatHome from '../screens/ChatHome';
 import Settings from '../screens/Settings';
 import ChatRoom from '../screens/ChatRoom';
+import OtherUserInfo from '../screens/OtherUserInfo';
 import {View, Text} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import {Platform} from 'react-native';
@@ -36,6 +37,7 @@ export default function ChatStackNavigator() {
           ),
         })}
       />
+      <ChatStack.Screen name={ROUTES.OTHERUSERINFO} component={OtherUserInfo} />
     </ChatStack.Navigator>
   );
 }

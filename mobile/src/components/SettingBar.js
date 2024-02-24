@@ -25,6 +25,7 @@ export default function SettingBar({
   children,
   preferenceId,
   preferenceType,
+  disableEdit,
 }) {
   const navigation = useNavigation();
   const updateProfile = useUpdateProfileMutation();
@@ -112,7 +113,7 @@ export default function SettingBar({
         }
       });
     };
-    return (
+    return !disableEdit ? (
       <TouchableOpacity
         style={styles.barContainer}
         onPress={() => {
@@ -134,6 +135,13 @@ export default function SettingBar({
           </View>
         </View>
       </TouchableOpacity>
+    ) : (
+      <View style={styles.barContainer}>
+        <View style={styles.innerContainer}>
+          <Text style={styles.textStyle}>{text}</Text>
+          <View style={styles.rightPart}>{children}</View>
+        </View>
+      </View>
     );
   }
 
@@ -157,7 +165,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#ffffff',
     width: '100%',
-    height: 60,
+    minHeight: 60,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -188,6 +196,5 @@ const styles = StyleSheet.create({
     fontSize: 30,
     flex: 1,
     alignItems: 'center',
-    // backgroundColor: 'red',
   },
 });

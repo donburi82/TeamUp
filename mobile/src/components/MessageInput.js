@@ -21,6 +21,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {v4 as uuidv4} from 'uuid';
+import mime from 'mime';
 import {store} from '../utils/reduxStore';
 // import { Audio, AVPlaybackStatus } from "expo-av";
 // import AudioPlayer from "../AudioPlayer";
@@ -34,7 +35,7 @@ const MessageInput = ({id, socket}) => {
   const [progress, setProgress] = useState(0);
   const [recording, setRecording] = useState(false);
   const [soundURI, setSoundURI] = useState(null);
-
+  const [formData, setFormData] = useState(null);
   const navigation = useNavigation();
   const addMessage = useSendMessageMutation(id);
   const onPress = () => {
@@ -52,7 +53,13 @@ const MessageInput = ({id, socket}) => {
   const sendAudio = () => {};
   const sendImage = async () => {
     try {
-      await addMessage.mutateAsync({message, type: 'image'});
+      console.log(mime.getType(image).split('/')[1], formData);
+      socket.emit('sendMessage', {
+        chatRoomId: id,
+        type: 'image',
+        message: formData,
+        fileName: mime.getType(image).split('/')[1],
+      });
 
       resetFields();
     } catch (err) {
@@ -65,6 +72,7 @@ const MessageInput = ({id, socket}) => {
     setImage(null);
     setProgress(0);
     setSoundURI(null);
+    setFormData(null);
   };
 
   const sendMessage = async () => {
@@ -104,9 +112,9 @@ const MessageInput = ({id, socket}) => {
     const options = {
       mediaType: 'photo',
       includeBase64: false,
-      quality: 0.4,
-      maxHeight: 200,
-      maxWidth: 200,
+      quality: 0.8,
+      maxHeight: 400,
+      maxWidth: 400,
     };
 
     launchImageLibrary(options).then(async response => {
