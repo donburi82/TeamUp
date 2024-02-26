@@ -4,25 +4,41 @@ import {ButtonText, Button} from '@gluestack-ui/themed';
 import {
   useGetProfilePicQuery,
   useGetUserInfoQuery,
+  useGetUserIdQuery,
 } from '../utils/query/customHook';
 import {useDispatch} from 'react-redux';
 import InfoModal from '../components/InfoModal';
 import {logOut} from '../utils/reduxStore/reducer';
 
+import {request} from '../utils/query/requestForReactQuery';
+
 export default function Home() {
-  const dispatch = useDispatch();
   const {data, isLoading, error} = useGetProfilePicQuery();
+
   const _ = useGetUserInfoQuery();
 
-  const logout = () => {
-    dispatch(logOut());
+  const sendRequest = () => {
+    fetch('https://api.contrib.ust.dev/healthz').then(
+      data => {
+        console.log(data);
+      },
+      err => {
+        console.log('error', err);
+      },
+    );
+  };
+  const sendRequestPost = () => {
+    request('auth/dummyPost');
   };
   return (
     <>
       <InfoModal />
       <Text>this is a empty home</Text>
-      <Button onPress={logout}>
-        <ButtonText>log out</ButtonText>
+      <Button onPress={sendRequest}>
+        <ButtonText>send Request get</ButtonText>
+      </Button>
+      <Button onPress={sendRequestPost}>
+        <ButtonText>send Request post</ButtonText>
       </Button>
     </>
   );

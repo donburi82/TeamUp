@@ -23,10 +23,10 @@ import {useSelector} from 'react-redux';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      onError: error => alert(error.message),
+      onError: error => alert(error),
     },
     mutations: {
-      onError: error => alert(error.message),
+      onError: error => alert(error),
       // onError: error => alert('666'),
     },
   },
@@ -42,12 +42,10 @@ function App() {
   const userInfo = useSelector(state => state.userInfo);
 
   const Child = useMemo(() => {
-    // return <HomeRouting />;
-
     if (userInfo.isAuthed) {
-      return <HomeRouting />;
+      return <HomeRouting key="home" />;
     }
-    return <AuthRouting />;
+    return <AuthRouting key="auth" />;
   }, [userInfo]);
 
   return (

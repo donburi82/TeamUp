@@ -21,7 +21,6 @@ const globalSlice = createSlice({
     },
     logOut: state => {
       state.userInfo = {
-        ...state.userInfo,
         isAuthed: false,
 
         welcomed: false,

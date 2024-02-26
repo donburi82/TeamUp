@@ -9,7 +9,7 @@ export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
     console.log('I am sending request', email);
-    const res = await request(url, {email});
+    const res = await request(url, {email: email.replace(/\s/g, '')});
     return res;
   };
   return useMutation(reqFunc, {});
@@ -19,7 +19,12 @@ export const useSendVerificationEmailForgetMutation = () => {
   const url = requestURL.password;
   const reqFunc = async email => {
     console.log('I am sending request of auth/password ', email);
-    const res = await request(url, {email}, {method: 'get'}, true);
+    const res = await request(
+      url,
+      {email: email.replace(/\s/g, '')},
+      {method: 'get'},
+      true,
+    );
     return res;
   };
   return useMutation(reqFunc, {});
@@ -30,10 +35,13 @@ export const useVerifyCodeMutation = () => {
   const reqFunc = async ({verificationCode, email}) => {
     console.log(
       'I am sending request of auth/verify ',
-      email,
+
       verificationCode,
     );
-    const res = await request(url, {email, verificationCode});
+    const res = await request(url, {
+      email: email.replace(/\s/g, ''),
+      verificationCode,
+    });
     return res;
   };
   return useMutation(reqFunc, {});
@@ -48,7 +56,7 @@ export const useVerifyCodeForgetMutation = () => {
     );
     const res = await request(
       url,
-      {email, verificationCode, password},
+      {email: email.replace(/\s/g, ''), verificationCode, password},
       {method: 'patch'},
     );
     return res;
@@ -75,8 +83,9 @@ export const useRegisterEmailMutation = () => {
   }) => {
     console.log('I am sending request register', email, password);
     const res = await request(url, {
-      email,
-      password,
+      email: email.replace(/\s/g, ''),
+      password: password.replace(/\s/g, ''),
+
       name,
       isFullTime,
       gender,
@@ -97,11 +106,17 @@ export const useLoginMutation = () => {
   const url = requestURL.login;
   const reqFunc = async ({email, password}) => {
     console.log('I am sending request login', email, password);
-    const res = await request(url, {email, password});
+    const res = await request(url, {
+      email: email.replace(/\s/g, ''),
+      password: password.replace(/\s/g, ''),
+    });
+
     return res;
   };
   return useMutation(reqFunc, {
-    onSuccess: ({token}) => {
+    onSuccess: res => {
+      console.log(res);
+      const {token} = res;
       dispatch(login({token}));
     },
   });
@@ -193,6 +208,7 @@ export const useUpdateProfileMutation = () => {
 
 export const useGetUserInfoQuery = () => {
   const dispatch = useDispatch();
+
   const url = requestURL.getInfo;
   const reqFunc = async () => {
     const res = await request(url, null, {method: 'get'});
@@ -203,6 +219,22 @@ export const useGetUserInfoQuery = () => {
       // console.log('get back data is ', data);
       if (data?.userInfo) {
         dispatch(updateInfo(data?.userInfo));
+      }
+    },
+  });
+};
+export const useGetUserIdQuery = () => {
+  const dispatch = useDispatch();
+  const url = requestURL.getUserId;
+  const reqFunc = async () => {
+    const res = await request(url, null, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      // console.log('get back data is ', data);
+      if (data?.userId) {
+        dispatch(updateInfo(data?.userId));
       }
     },
   });
@@ -394,6 +426,51 @@ export const useAddExtracurricularMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(['Extracurricular']);
       showUpdateToast();
+    },
+  });
+};
+
+export const useGetChatRoomInfoQuery = () => {
+  const url = requestURL.chatroomInfo;
+  const reqFunc = async () => {
+    const res = await request(url, {}, {method: 'get'}, true);
+    return res?.chatRooms;
+  };
+  return useQuery(['chatroomInfo'], reqFunc, {
+    onSuccess: data => {
+      // console.log('Extracurricular', data);
+    },
+  });
+};
+
+export const useSendMessageMutation = chatRoomId => {
+  const url = requestURL.getMessages + '/' + chatRoomId;
+  // console.log('chatroom id is', chatRoomId);
+  const reqFunc = async ({message, type}) => {
+    console.log(message, type);
+    const res = await request(url, {
+      message,
+      type,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      showUpdateToast();
+    },
+  });
+};
+
+export const useGetMessageInfoQuery = (chatRoomId, limit) => {
+  const url = requestURL.getMessages + '/' + chatRoomId;
+  const reqFunc = async () => {
+    const res = await request(url, {limit}, {method: 'get'}, true);
+    return res?.messages;
+  };
+
+  return useQuery(['messageInfo'], reqFunc, {
+    onSuccess: data => {
+      // console.log('Extracurricular', data);
     },
   });
 };

@@ -5,10 +5,12 @@ export const ROUTES = {
   HOME: 'Users',
   INFOFILLING: 'INFOFILLING',
   GROUPS: 'Groups',
-  CHAT: 'Chat',
+  CHATHOME: 'Chat',
+  CHATROOM: 'Chatroom',
   SETTINGS: 'Settings',
   CHANGEMAJOR: 'Major',
   CHANGEYEAR: 'Year Of Study',
   BASICINFO: 'Basic Information',
   PREFERENCE: 'PREFERENCE',
+  OTHERUSERINFO: 'Information',
 };

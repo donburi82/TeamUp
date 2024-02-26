@@ -1,16 +1,18 @@
 require("dotenv").config();
 const fs = require("fs");
-const https = require("https");
+const http = require("http");
+// const https = require("https");
 const socketIo = require("socket.io");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
-const options = {
-  key: fs.readFileSync("./cert/server.key"),
-  cert: fs.readFileSync("./cert/server.cert"),
-};
-const server = https.createServer(options, app);
+// const options = {
+//   key: fs.readFileSync("./cert/server.key"),
+//   cert: fs.readFileSync("./cert/server.cert"),
+// };
+const server = http.createServer(app);
+// const server = https.createServer(options, app);
 const io = socketIo(server);
 
 const { User } = require("./models/user.js");
@@ -92,6 +94,7 @@ io.use((socket, next) => {
   socket.on("sendMessage", async (payload) => {
     try {
       const senderId = socket.userId;
+      console.log("senderId is", senderId);
       const newMessage = await sendMessage(
         payload.message,
         payload.type,
@@ -99,6 +102,7 @@ io.use((socket, next) => {
         senderId,
         payload.fileName
       );
+      console.log("send new Message", newMessage);
       socket.to(payload.chatRoomId).emit("updateMessage", newMessage);
       socket.emit("updateMessage", newMessage);
       const eventName = `notification-${payload.chatRoomId}`;
