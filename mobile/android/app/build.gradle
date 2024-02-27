@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services' // push notification
 apply plugin: "com.facebook.react"
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 /**
@@ -118,6 +119,13 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    //add for push notification
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
 }
+
+
+
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
