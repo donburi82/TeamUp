@@ -185,13 +185,13 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageData: message,
         messageStatus: messageStatuses,
       });
-    } else if (type === "image" || type === "video") {
+    } else if (type === "image") {
       // if (messageSizeInBytes > sizeLimitInBytes) {
       //   throw new Error("Message size exceeds the limit of 5MB");
       // }
 
-      const buffer = Buffer.from(message, "base64");
-      const key = `${uuidv4()}-${fileName}`;
+      const key = `${uuidv4()}.${fileName}`;
+      console.log(key);
       const params = {
         Bucket: "awsteamupbucket",
         Key: `chat/${key}`,

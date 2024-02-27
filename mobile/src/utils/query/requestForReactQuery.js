@@ -36,6 +36,7 @@ const requestURL = {
   updatePassword: 'userBasicInfo/password',
   getUserId: 'userBasicInfo/getUserId',
   getInfo: 'userBasicInfo/getInfo',
+  updateRegToken: 'userBasicInfo/registerationToken',
   preference: 'preference',
   courseproject: 'preference/courseproject',
   coursestudy: 'preference/coursestudy',

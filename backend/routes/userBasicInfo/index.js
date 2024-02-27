@@ -247,14 +247,13 @@ router.post("/registerationToken", async (req, res) => {
   const { registrationToken } = req.body;
 
   try {
-    await User.findByIdAndUpdate(userId, {
+    const user = await User.findByIdAndUpdate(userId, {
       registrationToken: registrationToken,
     });
 
     if (!user) {
       return res.status(404).json({ status: "fail", msg: "User not found" });
     }
-
     res.status(200).json({ status: "success" });
   } catch (error) {
     console.log(error);
