@@ -138,6 +138,18 @@ io.use((socket, next) => {
   });
 });
 
+app.get("/riverTestUsers", (req, res) => {
+  const data = [];
+  for (let i = 0; i < 100; i++) {
+    data.push({
+      name: "Jason",
+      major: "CPEG",
+      gender: "M",
+      lookingFor: ["COMP3111", "COMP4211"],
+    });
+  }
+  res.status(200).send({ data });
+});
 const port = process.env.PORT || 3000;
 
 server.listen(port, () => {

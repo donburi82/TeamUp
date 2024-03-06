@@ -7,9 +7,11 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/core';
 import {useGetMessageInfoQuery} from '../utils/query/customHook';
+import {request} from '../utils/query/requestForReactQuery';
 import Message from '../components/Message';
 import MessageBubble from '../components/MessageBubble/MessageBubble';
 import MessageInput from '../components/MessageInput';
@@ -23,20 +25,44 @@ export default function ChatRoomScreen() {
   const socket = route.params?.socket;
 
   const chatMateName = route.params?.title;
+  const [fetchTrigger, setFetchTrigger] = useState(true);
   const flatListRef = useRef();
-  console.log('chatroom id is', id, 're-rendering');
-  const {data: messagesData, isLoading} = useGetMessageInfoQuery(id, 20);
-
   const [messages, setMessages] = useState([]);
+  const [allLoaded, setAllLoaded] = useState(false); // 控制加载更多指示器的显示
+  const {data: messagesData, isLoading} = useGetMessageInfoQuery(
+    id,
+    20,
+    messages[0]?.messageId,
+    {
+      enabled: fetchTrigger && !allLoaded, // 初始执行查询
+      // onSettled: () => setFetchTrigger(false), // 查询结束后重置触发状态
+
+      onSuccess: data => {
+        console.log('data', data);
+        if (data.length === 0) {
+          setAllLoaded(true);
+          setFetchTrigger(false);
+          return;
+        } else {
+          setMessages([...data, ...messages]);
+          setFetchTrigger(false);
+        }
+      },
+      onError: error => {
+        setFetchTrigger(false);
+        console.log(error);
+      },
+    },
+  );
+
   const [messageReplyTo, setMessageReplyTo] = useState(null);
 
   const [calculatedPaddingHeight, setCalculatedPaddingHeight] = useState(0);
 
+  // useEffect(() => {
+  //   if (messagesData) setMessages(messagesData);
+  // }, [messagesData]);
   useEffect(() => {
-    if (messagesData) setMessages(messagesData);
-  }, [messagesData]);
-  useEffect(() => {
-    console.log('executed');
     const totalMessagesHeight = messages ? messages?.length * 90 : 0; // Estimate this value
     const availableSpace =
       screenHeight - totalMessagesHeight - otherComponentsHeight;
@@ -66,6 +92,14 @@ export default function ChatRoomScreen() {
   if (isLoading) {
     return <ActivityIndicator />;
   }
+
+  const renderRefreshControl = () =>
+    fetchTrigger ? (
+      <View style={{alignItems: 'center', padding: 20}}>
+        <ActivityIndicator />
+      </View>
+    ) : null;
+
   return (
     <SafeAreaView style={styles.page}>
       <FlatList
@@ -74,7 +108,17 @@ export default function ChatRoomScreen() {
         data={[...messages].reverse()}
         renderItem={({item}) => <MessageBubble message={item} />}
         estimatedItemSize={40}
+        keyExtractor={item => item.messageId.toString()}
+        // onScroll={handleScroll}
+        scrollEventThrottle={800}
         initialNumToRender={20}
+        ListFooterComponent={renderRefreshControl}
+        onEndReached={({distanceFromEnd}) => {
+          console.log(allLoaded, distanceFromEnd, 'on end reached');
+          if (allLoaded) return;
+          setFetchTrigger(true);
+          console.log('on end reached', distanceFromEnd); // 根据距离判断是否触发刷新
+        }}
         ListHeaderComponent={() => (
           <View
             style={{
