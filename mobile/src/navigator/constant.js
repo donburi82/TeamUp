@@ -5,7 +5,7 @@ export const ROUTES = {
   HOME: 'Users',
   INFOFILLING: 'INFOFILLING',
   GROUPS: 'Groups',
-  CHATHOME: 'Chat',
+  CHATHOME: 'ChatHome',
   CHATROOM: 'Chatroom',
   SETTINGS: 'Settings',
   CHANGEMAJOR: 'Major',
@@ -13,4 +13,5 @@ export const ROUTES = {
   BASICINFO: 'Basic Information',
   PREFERENCE: 'PREFERENCE',
   OTHERUSERINFO: 'Information',
+  ChatStackNavigator: 'Chat',
 };

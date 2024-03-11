@@ -4,6 +4,7 @@ import {
   View,
   StyleSheet,
   FlatList,
+  SectionList,
   SafeAreaView,
   ActivityIndicator,
   Dimensions,
@@ -18,7 +19,44 @@ import MessageInput from '../components/MessageInput';
 const screenHeight = Dimensions.get('window').height;
 // Assume 50px height for header/footer/input field, adjust based on your UI
 const otherComponentsHeight = 50;
+const groupMessagesByDate = messages => {
+  const groupedMessages = {};
+  const addTimeMessageArray = [];
+  messages.forEach((message, index) => {
+    // Format the message date as a string (e.g., "January 1, 2022")
+    const dateString = new Date(message?.sentDate).toLocaleDateString();
+    const prevMessageDate =
+      index > 0
+        ? new Date(messages[index - 1]?.sentDate).toLocaleDateString()
+        : null;
+    if (prevMessageDate !== dateString && prevMessageDate !== null)
+      addTimeMessageArray.push({type: 'time', date: prevMessageDate});
 
+    addTimeMessageArray.push(message);
+    if (index === messages.length - 1)
+      addTimeMessageArray.push({type: 'time', date: dateString});
+  });
+
+  // messages.reduce((acc, message) => {
+  //   const dateString = new Date(message?.sentDate).toLocaleDateString();
+  //   if (!groupedMessages[dateString]) {
+  //     groupedMessages[dateString] = true;
+  //     addTimeMessageArray.push({type: 'time', date: dateString});
+  //   }
+  //   addTimeMessageArray.push(message);
+  //   return dateString;
+  // });
+
+  return addTimeMessageArray;
+};
+
+const renderSectionHeader = ({section: {date}}) => (
+  <View style={{backgroundColor: '#eee', padding: 8}}>
+    {' '}
+    {/* Customize as needed */}
+    <Text>{date}</Text>
+  </View>
+);
 export default function ChatRoomScreen() {
   const route = useRoute();
   const id = route.params?.id;
@@ -32,7 +70,7 @@ export default function ChatRoomScreen() {
   const {data: messagesData, isLoading} = useGetMessageInfoQuery(
     id,
     20,
-    messages[0]?.messageId,
+    messages[0]?.messageId, // since the first one must be the date frame I inserted
     {
       enabled: fetchTrigger && !allLoaded, // 初始执行查询
       // onSettled: () => setFetchTrigger(false), // 查询结束后重置触发状态
@@ -44,6 +82,12 @@ export default function ChatRoomScreen() {
           setFetchTrigger(false);
           return;
         } else {
+          // const arrayWithDateframe = groupMessagesByDate([
+          //   ...data,
+          //   ...messages,
+          // ]);
+          // setMessages([...arrayWithDateframe]);
+
           setMessages([...data, ...messages]);
           setFetchTrigger(false);
         }
@@ -105,10 +149,17 @@ export default function ChatRoomScreen() {
       <FlatList
         ref={flatListRef}
         inverted
-        data={[...messages].reverse()}
-        renderItem={({item}) => <MessageBubble message={item} />}
+        // data={[...messages].reverse()}
+        data={groupMessagesByDate([...messages].reverse())}
+        renderItem={({item}) =>
+          item?.type === 'time' ? (
+            <Text>{item?.date}</Text>
+          ) : (
+            <MessageBubble message={item} />
+          )
+        }
         estimatedItemSize={40}
-        keyExtractor={item => item.messageId.toString()}
+        keyExtractor={item => item?.messageId?.toString() || item?.date}
         // onScroll={handleScroll}
         scrollEventThrottle={800}
         initialNumToRender={20}
@@ -128,8 +179,6 @@ export default function ChatRoomScreen() {
       />
       <MessageInput
         id={id} //this is chatroom id
-        messageReplyTo={messageReplyTo}
-        removeMessageReplyTo={() => setMessageReplyTo(null)}
         socket={socket}
       />
     </SafeAreaView>

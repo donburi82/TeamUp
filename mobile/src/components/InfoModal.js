@@ -1,13 +1,16 @@
 import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
+
 import {useSelector, useDispatch} from 'react-redux';
 import {welcome} from '../utils/reduxStore/reducer';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 export default function InfoModal() {
   const {welcomed} = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(welcomed !== true);
   const dispatch = useDispatch();
-
+  useEffect(() => {
+    setModalVisible(welcomed !== true);
+  }, [welcomed]);
   return (
     <Modal
       animationType="slide"

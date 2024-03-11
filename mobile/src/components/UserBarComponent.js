@@ -1,14 +1,26 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import Icon from '../utils/Icon.png';
+import {ROUTES} from '../navigator/constant';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-export default function UserBarComponent({usersList}) {
+export default function UserBarComponent({usersList, navigation}) {
   let name = 'Jason';
   let major = 'CPEG';
   let gender = 'M';
   let lookForList = ['COMP3111', 'COMP4211'];
+  // const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        // console.log(navigation);
+        // navigation.push(ROUTES.OTHERUSERINFO);
+        navigation.navigate(ROUTES.ChatStackNavigator, {
+          screen: ROUTES.OTHERUSERINFO,
+          initial: false,
+        });
+      }}>
       <Image source={Icon} style={styles.image} />
       <View style={styles.rightInfo}>
         <View style={styles.topLine}>
@@ -39,7 +51,7 @@ export default function UserBarComponent({usersList}) {
           ',',
         )} `}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
