@@ -102,7 +102,6 @@ io.use((socket, next) => {
         senderId,
         payload.fileName
       );
-      console.log("send new Message", newMessage);
       socket.to(payload.chatRoomId).emit("updateMessage", newMessage);
       socket.emit("updateMessage", newMessage);
       const eventName = `notification-${payload.chatRoomId}`;

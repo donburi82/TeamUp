@@ -87,21 +87,18 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log('hello testing');
     const requestAndHandleToken = async () => {
       const granted = await requestPermission();
 
       if (granted === true) {
         try {
           const token = await messaging().getToken();
-          console.log('this is token', token, '\n');
           await updateToken(token);
 
           const unsubscribe = messaging().onTokenRefresh(async newToken => {
             await updateToken(newToken);
           });
 
-          // Return the cleanup function
           return () => unsubscribe();
         } catch (error) {
           console.error('Failed to get token or update token: ', error);

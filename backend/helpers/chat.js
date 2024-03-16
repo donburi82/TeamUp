@@ -186,11 +186,8 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageStatus: messageStatuses,
       });
     } else if (type === "image") {
-      // if (messageSizeInBytes > sizeLimitInBytes) {
-      //   throw new Error("Message size exceeds the limit of 5MB");
-      // }
-
-      const key = `${uuidv4()}.${fileName}`;
+      const buffer = Buffer.from(message, "base64");
+      const key = `${uuidv4()}-${fileName}`;
       console.log(key);
       const params = {
         Bucket: "awsteamupbucket",
@@ -259,38 +256,47 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
       ),
     };
 
-    console.log(obj);
+    // handle push notification
+    const recipients = chatRoom.members.filter(
+      (member) => member._id.toString() !== senderId
+    );
+    const registrationTokens = recipients.map(
+      (member) => member.registrationToken
+    );
+    console.log(registrationTokens);
+
+    const senderName = newMessage.messageFrom.name;
+
+    const notification = {
+      title: chatRoom.isGroup
+        ? `New Group message`
+        : `New message from ${senderName}`,
+      body:
+        type == "image"
+          ? "an image"
+          : chatRoom.isGroup
+          ? `${senderName}: ${message}`
+          : message,
+    };
+    if (type == "image") {
+      notification.imageUrl = `${process.env.bucketUrl}/chat/${newMessage.messageData}`;
+    }
+
+    const pushMessage = {
+      notification,
+      android: {
+        priority: "high",
+        notification: {
+          channelId: "test-channel",
+        },
+      },
+      tokens: registrationTokens,
+    };
+
+    const response = await admin.messaging().sendMulticast(pushMessage);
+    console.log("push response", response);
 
     return obj;
-    // handle push notification
-    // const recipients = chatRoom.members.filter(
-    //   (member) => member._id.toString() !== senderId
-    // );
-    // const registrationTokens = recipients.map(
-    //   (member) => member.registrationToken
-    // );
-
-    // const senderName = `${
-    //   chatRoom.members.find((member) => member._id.toString() === senderId).name
-    // }`;
-
-    // if (chatRoom.isGroup) {
-    //   const payload = {
-    //     notification: {
-    //       title: "New Group message",
-    //       body: `${senderName}: ${message}`,
-    //     },
-    //   };
-    //   await admin.messaging().sendToDevice(registrationTokens, payload);
-    // } else {
-    //   const payload = {
-    //     notification: {
-    //       title: `New message from ${senderName}`,
-    //       body: `${message}`,
-    //     },
-    //   };
-    //   await admin.messaging().sendToDevice(registrationTokens, payload);
-    // }
   } catch (error) {
     throw new Error(`Message cannot be sent: ${error.message}`);
   }
