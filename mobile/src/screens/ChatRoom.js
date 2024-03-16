@@ -24,10 +24,24 @@ const groupMessagesByDate = messages => {
   const addTimeMessageArray = [];
   messages.forEach((message, index) => {
     // Format the message date as a string (e.g., "January 1, 2022")
-    const dateString = new Date(message?.sentDate).toLocaleDateString();
+    const dateString = new Date(message?.sentDate).toLocaleDateString(
+      undefined,
+      {
+        day: 'numeric',
+        month: 'long',
+        // year: 'numeric',
+      },
+    );
     const prevMessageDate =
       index > 0
-        ? new Date(messages[index - 1]?.sentDate).toLocaleDateString()
+        ? new Date(messages[index - 1]?.sentDate).toLocaleDateString(
+            undefined,
+            {
+              day: 'numeric',
+              month: 'long',
+              // year: 'numeric',
+            },
+          )
         : null;
     if (prevMessageDate !== dateString && prevMessageDate !== null)
       addTimeMessageArray.push({type: 'time', date: prevMessageDate});
@@ -50,11 +64,24 @@ const groupMessagesByDate = messages => {
   return addTimeMessageArray;
 };
 
-const renderSectionHeader = ({section: {date}}) => (
-  <View style={{backgroundColor: '#eee', padding: 8}}>
-    {' '}
+const RenderSectionHeader = ({date}) => (
+  <View
+    style={{
+      backgroundColor: '#eee',
+      padding: 4,
+      height: 30,
+
+      alignSelf: 'center',
+
+      borderRadius: 20,
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      // position: 'absolute',
+      marginVertical: 10,
+    }}>
     {/* Customize as needed */}
-    <Text>{date}</Text>
+    <Text style={{fontSize: 12, fontWeight: '600'}}>{date}</Text>
   </View>
 );
 export default function ChatRoomScreen() {
@@ -153,7 +180,7 @@ export default function ChatRoomScreen() {
         data={groupMessagesByDate([...messages].reverse())}
         renderItem={({item}) =>
           item?.type === 'time' ? (
-            <Text>{item?.date}</Text>
+            <RenderSectionHeader date={item?.date} />
           ) : (
             <MessageBubble message={item} />
           )
