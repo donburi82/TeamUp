@@ -7,12 +7,13 @@ import OtherUserInfo from '../screens/OtherUserInfo';
 import {View, Text} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import {Platform} from 'react-native';
+import GroupHome from '../screens/GroupHome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-const ChatStack = createNativeStackNavigator();
+const GroupStack = createNativeStackNavigator();
 
-export default function ChatStackNavigator() {
+export default function GroupStackNavigator() {
   return (
-    <ChatStack.Navigator
+    <GroupStack.Navigator
       screenOptions={{
         // Customize your header here
         headerTitleAlign: 'center',
@@ -25,26 +26,14 @@ export default function ChatStackNavigator() {
           // styles for the title
         },
       }}>
-      <ChatStack.Screen
-        name={ROUTES.CHATHOME}
-        component={ChatHome}
+      <GroupStack.Screen
+        name={ROUTES.GROUPSMAINPAGE}
+        component={GroupHome}
         options={{
-          title: 'Chat',
+          title: 'Groups',
         }}
       />
-      <ChatStack.Screen
-        name={ROUTES.CHATROOM}
-        component={ChatRoom}
-        options={({route}) => ({
-          headerTitle: () => <ChatRoomHeader id={route.params?.title} />,
-
-          headerRight: () => (
-            <EntypoIcon name="dots-three-horizontal" size={30} color="black" />
-          ),
-        })}
-      />
-      <ChatStack.Screen name={ROUTES.OTHERUSERINFO} component={OtherUserInfo} />
-    </ChatStack.Navigator>
+    </GroupStack.Navigator>
   );
 }
 
