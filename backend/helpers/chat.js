@@ -370,7 +370,7 @@ const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
         });
 
       chatRoom.messages = chatRoom.messages.filter(
-        (message) => message.sentDate >= lastMessage.sentDate
+        (message) => message.sentDate < lastMessage.sentDate
       );
 
       console.log(chatRoom);

@@ -461,16 +461,24 @@ export const useSendMessageMutation = chatRoomId => {
   });
 };
 
-export const useGetMessageInfoQuery = (chatRoomId, limit) => {
+export const useGetMessageInfoQuery = (
+  chatRoomId,
+  limit,
+  lastMessageId,
+  options,
+) => {
   const url = requestURL.getMessages + '/' + chatRoomId;
+  console.log('chatroom id is', chatRoomId, limit, lastMessageId);
   const reqFunc = async () => {
-    const res = await request(url, {limit}, {method: 'get'}, true);
+    const res = await request(
+      url,
+      {limit, lastMessageId},
+      {method: 'get'},
+      true,
+    );
+
     return res?.messages;
   };
 
-  return useQuery(['messageInfo'], reqFunc, {
-    onSuccess: data => {
-      // console.log('Extracurricular', data);
-    },
-  });
+  return useQuery(['messageInfo'], reqFunc, options);
 };

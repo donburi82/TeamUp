@@ -1,16 +1,24 @@
-import {View, Text, ScrollView, PermissionsAndroid} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  PermissionsAndroid,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {ButtonText, Button} from '@gluestack-ui/themed';
-
+import Feather from 'react-native-vector-icons/Feather';
 import {
   useGetProfilePicQuery,
   useGetUserInfoQuery,
   useGetUserIdQuery,
 } from '../utils/query/customHook';
+import {unwelcome} from '../utils/reduxStore/reducer';
 import {useDispatch} from 'react-redux';
 import InfoModal from '../components/InfoModal';
 import UserBarComponent from '../components/UserBarComponent';
-import {logOut} from '../utils/reduxStore/reducer';
+import {ROUTES} from '../navigator/constant';
 import {store} from '../utils/reduxStore';
 import {
   request,
@@ -69,9 +77,16 @@ const updateToken = async regToken => {
   }
 };
 
-export default function Home() {
+export default function Home({navigation}) {
   const {data, isLoading, error} = useGetProfilePicQuery();
-
+  const dispatch = useDispatch();
+  const category = ['Course Project', 'Course Study', 'ExtraCurricular'];
+  const [activeButton, setActiveButton] = useState(0);
+  const getButtonStyle = buttonId => {
+    return buttonId === activeButton
+      ? 'rgba(63,43,190,0.80)'
+      : 'rgba(63,43,190,0.50)';
+  };
   const _ = useGetUserInfoQuery();
   const [usersList, setUsersList] = useState([]);
   const splitArray = arr => {
@@ -85,18 +100,6 @@ export default function Home() {
     const dataArray = await request('/riverTestUsers', {}, {method: 'get'});
     let splitDataArray = splitArray(dataArray?.data);
     console.log(splitDataArray.length);
-    // while (splitedArray.length) {
-    //   const processBatch = () => {
-    //     console.log(splitedArray.length);
-    //     if (splitedArray.length) {
-    //       let thisBatch = splitedArray.shift();
-    //       setUsersList(prevUsersList => [...prevUsersList, ...thisBatch]);
-    //       requestAnimationFrame(processBatch);
-    //     }
-    //   };
-    // }
-    // processBatch();
-    // setUsersList(dataArray?.data || []);  // 1000条数据出现卡顿
 
     let timer; // Declare timer outside so it can be cleared on cleanup
     const processBatch = () => {
@@ -140,20 +143,71 @@ export default function Home() {
     requestAndHandleToken();
   }, []);
 
-
   useEffect(() => {
     sendRequest();
   }, []);
 
   return (
-    <ScrollView
-      // style={{alignItems: 'center'}}
-      contentContainerStyle={{alignItems: 'center'}}>
-      <InfoModal />
+    <>
+      <View style={styles.containerBar}>
+        {category.map((item, index) => {
+          return (
+            <Button
+              key={index}
+              bg={getButtonStyle(index)}
+              style={styles.button}
+              onPress={() => {
+                setActiveButton(index);
+              }}>
+              <ButtonText style={styles.buttonText}>{item}</ButtonText>
+            </Button>
+          );
+        })}
+        <Pressable
+          onPress={() => {
+            dispatch(unwelcome());
+          }}
+          style={{
+            marginLeft: 'auto',
+            marginRight: 10,
+          }}>
+          <Feather name="info" size={24} color="#595959" />
+        </Pressable>
+      </View>
 
-      {usersList.map((item, index) => (
-        <UserBarComponent usersList={item} key={index} />
-      ))}
-    </ScrollView>
+      <ScrollView
+        // style={{alignItems: 'center'}}
+
+        contentContainerStyle={{alignItems: 'center'}}>
+        <InfoModal />
+
+        {usersList.map((item, index) => (
+          <UserBarComponent
+            usersList={item}
+            key={index}
+            navigation={navigation}
+          />
+        ))}
+      </ScrollView>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  containerBar: {
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    height: 40,
+    backgroundColor: 'white',
+    width: '100%',
+    alignItems: 'center',
+  },
+  button: {
+    marginHorizontal: 5,
+    height: 30,
+    borderRadius: 50,
+  },
+  buttonText: {
+    fontSize: 10,
+  },
+});

@@ -18,6 +18,7 @@ router
   .get(async (req, res) => {
     const lastMessageId = req.query.lastMessageId;
     const limit = req.query.limit;
+    console.log(limit, lastMessageId);
     try {
       const { chatRoomId } = req.params;
       const messages = await getMessagesFromChatRoom(

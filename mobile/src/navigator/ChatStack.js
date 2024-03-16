@@ -1,7 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {ROUTES} from './constant';
 import ChatHome from '../screens/ChatHome';
-import Settings from '../screens/Settings';
+
 import ChatRoom from '../screens/ChatRoom';
 import OtherUserInfo from '../screens/OtherUserInfo';
 import {View, Text} from 'react-native';
@@ -25,7 +25,13 @@ export default function ChatStackNavigator() {
           // styles for the title
         },
       }}>
-      <ChatStack.Screen name={ROUTES.CHATHOME} component={ChatHome} />
+      <ChatStack.Screen
+        name={ROUTES.CHATHOME}
+        component={ChatHome}
+        options={{
+          title: 'Chat',
+        }}
+      />
       <ChatStack.Screen
         name={ROUTES.CHATROOM}
         component={ChatRoom}
