@@ -1,13 +1,20 @@
-import {View, Text, ScrollView, StyleSheet, Pressable} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
 import {ButtonText, Button} from '@gluestack-ui/themed';
-
+import AntIcon from 'react-native-vector-icons/AntDesign';
 import {
   useGetProfilePicQuery,
   useGetUserInfoQuery,
   useGetUserIdQuery,
 } from '../utils/query/customHook';
-
+import BottomSheetGroup from '../components/BottomSheetGroup';
 import {useDispatch} from 'react-redux';
 
 import {ROUTES} from '../navigator/constant';
@@ -24,6 +31,7 @@ import {
 export default function GroupHome({navigation}) {
   const category = ['Your Groups', 'Explore'];
   const [activeButton, setActiveButton] = useState(0);
+  const bottomSheetRef = useRef(null);
   const getButtonStyle = buttonId => {
     return buttonId === activeButton
       ? 'rgba(63,43,190,0.80)'
@@ -84,10 +92,23 @@ export default function GroupHome({navigation}) {
         // style={{alignItems: 'center'}}
 
         contentContainerStyle={{alignItems: 'center'}}>
-        {[1, 2, 3, 4].map((item, index) => (
+        {[1, 2, 3, 4, 4, 4, 4, 4].map((item, index) => (
           <GroupBarComponent key={index} navigation={navigation} />
         ))}
       </ScrollView>
+      <TouchableOpacity
+        style={styles.fixedButton}
+        onPress={() => {
+          bottomSheetRef?.current?.expand();
+        }}>
+        <AntIcon
+          name="pluscircle"
+          size={40}
+          color="rgba(63,43,190,0.50)"
+          style={styles.plusIcon}
+        />
+      </TouchableOpacity>
+      <BottomSheetGroup navigation={navigation} reference={bottomSheetRef} />
     </>
   );
 }
@@ -108,5 +129,17 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 10,
+  },
+  fixedButton: {
+    position: 'absolute', // This positions the button over the content
+    right: 10, // Distance from the right edge of the screen
+    bottom: 10, // Distance from the bottom edge of the screen
+    // backgroundColor: 'blue', // Button background color
+    // padding: 10, // Button padding
+    // borderRadius: 20, // Rounded corners for the button
+  },
+  plusIcon: {
+    margin: 20,
+    alignSelf: 'flex-end',
   },
 });
