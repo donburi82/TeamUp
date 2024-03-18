@@ -2,14 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    getGroups, createGroup, deleteGroup, finalizeGroup,
+    getMyGroups, getAvailableGroups, createGroup, deleteGroup,
+    finalizeGroup, leaveGroup,
     addMembers, removeMembers,
 } = require("../../helpers/group");
 
 router.get("/", async (req, res) => {
     try {
         const { userId, mode } = req.query;
-        const groups = await getGroups(userId, mode);
+        let groups;
+        if (mode=="my") {
+            groups = getMyGroups(userId);
+        } else if (mode=="available") {
+            groups = getAvailableGroups(userId);
+        }
         console.log(groups);
         return res.status(200).json({ success: true, data: groups });
     } catch (error) {
@@ -49,6 +55,17 @@ router.post("/finalize", async (req, res) => {
     try {
         const { userId, groupId } = req.query;
         await finalizeGroup(userId, groupId);
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        console.log(error);
+        return res.status(401).json({ success: false });
+    }
+});
+
+router.post("/leave", async (req, res) => {
+    try {
+        const { userId, groupId } = req.query;
+        await leaveGroup(userId, groupId);
         return res.status(200).json({ success: true });
     } catch (error) {
         console.log(error);

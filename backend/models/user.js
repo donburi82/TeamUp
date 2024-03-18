@@ -107,6 +107,7 @@ const UserSchema = new mongoose.Schema({
   extracurricularMatches: [ObjectId],
   // for groups
   groups: [ObjectId],
+  groupMatches: [ObjectId],
   // for chat
   socketId: String,
   registrationToken: String,
