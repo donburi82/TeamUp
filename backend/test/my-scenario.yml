@@ -5,7 +5,7 @@ config:
       Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWI3YzNkNDkxMTFjNDE1Zjc4YjcxOGUiLCJpYXQiOjE3MDY1NDIzMDQsImV4cCI6MTcwOTEzNDMwNH0.9NZFAnJRxnSHimGtJyYfRbyXZu6p0tKCgVhUB_SOq2o"
   phases:
     - duration: 3
-      arrivalRate: 50
+      arrivalRate: 100
   engines:
     socketio-v3: {}
 
@@ -17,16 +17,15 @@ scenarios:
       - emit:
           channel: "connection"
 
-      - think: 10
+      - think: 20
 
-      # basic emit
       - emit:
           channel: "sendMessage"
           data:
             message: "hello world test message"
             type: "text"
-            chatRoomId: "65b7c6709111c415f78b719e"
+            chatRoomId: "65b7c6769111c415f78b71a1"
 
-      - think: 10
+      - think: 20
 
       # do nothing for 30 seconds then disconnect

@@ -7,6 +7,17 @@ export const MajorData = [
   {key: '5', value: 'ELEC', selected: false},
   {key: '6', value: 'OCEA', selected: false},
 ];
+
+export const category = [
+  {key: '0', value: 'Course Study'},
+  {key: '1', value: 'Course Project'},
+  {key: '2', value: 'ExtraCurricular'},
+];
+export const projectPeriod = [
+  {key: '0', value: '4 months'},
+  {key: '1', value: '8 months'},
+  {key: '2', value: '1 year'},
+];
 export const CourseData = [
   {key: '0', value: 'LIFS2011'},
   {key: '1', value: 'COMP2011'},

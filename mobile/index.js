@@ -11,6 +11,26 @@ import {persistor, store} from './src/utils/reduxStore/index.js';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import Toast from 'react-native-toast-message';
 import {PersistGate} from 'redux-persist/integration/react';
+import messaging from '@react-native-firebase/messaging';
+import PushNotification from 'react-native-push-notification';
+
+PushNotification.createChannel(
+  {
+    channelId: 'test-channel',
+    channelName: 'Test Channel',
+    channelDescription: 'My apps test channel',
+    playSound: true,
+    soundName: 'default',
+    importance: 4,
+    vibrate: true,
+  },
+  created => console.log(`createChannel returned '${created}'`),
+);
+
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+});
+
 const WrapApp = () => (
   <>
     <Provider store={store}>

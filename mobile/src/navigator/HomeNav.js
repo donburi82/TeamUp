@@ -7,15 +7,22 @@ import Home from '../screens/Home';
 import InfoFilling from '../screens/InfoFilling';
 // import Settings from '../screens/Settings';
 import SettingStack from './SettingStack';
+import ChatStackNavigator from './ChatStack';
+import GroupStack from './GroupStackNavigator';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {StatusBar} from 'react-native';
+import {StatusBar, View} from 'react-native';
 const NativeStack = createNativeStackNavigator();
 const BottomStack = createBottomTabNavigator();
 export default function HomeRouting() {
+  const colorStatusBar =
+    Platform.OS === 'ios' ? '#f0f0f0' : 'rgba(63, 43, 190, 0.01)';
+  const backgroundColor =
+    Platform.OS === 'ios' ? '#f0f0f0' : 'rgba(63, 43, 190, 0.22)';
   return (
     <>
-      <StatusBar backgroundColor="rgba(63, 43, 190, 0.26)" />
+      <StatusBar translucent backgroundColor={colorStatusBar} />
+
       <BottomStack.Navigator
         screenOptions={{
           headerTitleAlign: 'center',
@@ -32,7 +39,7 @@ export default function HomeRouting() {
           component={Home}
           options={{
             headerStyle: {
-              backgroundColor: 'rgba(63, 43, 190, 0.22)',
+              backgroundColor,
             },
             headerTitle: 'Team Up now!',
             tabBarLabel: 'Users',
@@ -47,14 +54,15 @@ export default function HomeRouting() {
         />
         <BottomStack.Screen
           name={ROUTES.GROUPS}
-          component={Home}
+          component={GroupStack}
           options={{
             headerStyle: {
-              backgroundColor: 'rgba(63, 43, 190, 0.22)',
-              // backgroundColor: 'red',
+              backgroundColor,
             },
-            headerTitle: 'Team Up now!',
+            headerShown: false,
+
             tabBarLabel: 'Groups',
+
             tabBarIcon: ({focused, color, size}) => (
               <EntypoIcon
                 name="users"
@@ -65,15 +73,10 @@ export default function HomeRouting() {
           }}
         />
         <BottomStack.Screen
-          name={ROUTES.CHAT}
-          component={Home}
+          name={ROUTES.ChatStackNavigator}
+          component={ChatStackNavigator}
           options={{
-            headerStyle: {
-              backgroundColor: 'rgba(63, 43, 190, 0.22)',
-              // backgroundColor: 'red',
-            },
-            headerTitle: 'Team Up now!',
-            tabBarLabel: 'Chat',
+            headerShown: false,
             tabBarIcon: ({focused, color, size}) => (
               <EntypoIcon
                 name="chat"

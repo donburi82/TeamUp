@@ -9,7 +9,9 @@ import BasicInfoUser from '../components/BasicInfoUser';
 export default function BasicInfo() {
   const imageUri = useSelector(state => state?.userInfo?.imageUri);
   const year = useSelector(state => state?.userInfo?.year);
-  const major = useSelector(state => state?.userInfo?.major).join(',');
+  const major = useSelector(state => state?.userInfo?.major)
+    ? useSelector(state => state?.userInfo?.major).join(',')
+    : 'no major';
   const name = useSelector(state => state?.userInfo?.name);
   const gender = useSelector(state => state?.userInfo?.gender);
   const isFullTime = useSelector(state => state?.userInfo?.isFullTime);

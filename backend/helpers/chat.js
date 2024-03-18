@@ -50,6 +50,16 @@ const createChatRoom = async (members, groupId = null) => {
         members: memberObjectIds,
         isGroup: false,
       });
+
+      const [userId1, userId2] = members;
+      await User.updateOne(
+        { _id: userId1 },
+        { $addToSet: { friends: userId2 } }
+      );
+      await User.updateOne(
+        { _id: userId2 },
+        { $addToSet: { friends: userId1 } }
+      );
     }
 
     // Add the chat room's ID to the users' chatRooms arrays
@@ -175,13 +185,10 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageData: message,
         messageStatus: messageStatuses,
       });
-    } else if (type === "image" || type === "video") {
-      if (messageSizeInBytes > sizeLimitInBytes) {
-        throw new Error("Message size exceeds the limit of 5MB");
-      }
-
+    } else if (type === "image") {
       const buffer = Buffer.from(message, "base64");
       const key = `${uuidv4()}-${fileName}`;
+      console.log(key);
       const params = {
         Bucket: "awsteamupbucket",
         Key: `chat/${key}`,
@@ -224,42 +231,72 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageStatus: messageStatuses,
       });
     }
+    newMessage = await newMessage.save();
 
-    await newMessage.save();
+    newMessage = await newMessage.populate({
+      path: "messageFrom",
+      model: "User",
+      select: "name _id profilePic",
+    });
 
     chatRoom.messages.push(newMessage);
     chatRoom.lastTS = newMessage.sentDate;
     await chatRoom.save();
 
+    const obj = {
+      messageId: newMessage._id.toString(),
+      senderId: newMessage.messageFrom._id.toString(),
+      profilePic: newMessage.messageFrom.profilePic,
+      senderName: newMessage.messageFrom.name,
+      sentDate: newMessage.sentDate,
+      messageType: newMessage.messageType,
+      messageData: newMessage.messageData,
+      isAllRead: newMessage.messageStatus.every(
+        (status) => status.read_date !== null
+      ),
+    };
+
     // handle push notification
-    // const recipients = chatRoom.members.filter(
-    //   (member) => member._id.toString() !== senderId
-    // );
-    // const registrationTokens = recipients.map(
-    //   (member) => member.registrationToken
-    // );
+    const recipients = chatRoom.members.filter(
+      (member) => member._id.toString() !== senderId
+    );
+    const registrationTokens = recipients.map(
+      (member) => member.registrationToken
+    );
+    console.log(registrationTokens);
 
-    // const senderName = `${
-    //   chatRoom.members.find((member) => member._id.toString() === senderId).name
-    // }`;
+    const senderName = newMessage.messageFrom.name;
 
-    // if (chatRoom.isGroup) {
-    //   const payload = {
-    //     notification: {
-    //       title: "New Group message",
-    //       body: `${senderName}: ${message}`,
-    //     },
-    //   };
-    //   await admin.messaging().sendToDevice(registrationTokens, payload);
-    // } else {
-    //   const payload = {
-    //     notification: {
-    //       title: `New message from ${senderName}`,
-    //       body: `${message}`,
-    //     },
-    //   };
-    //   await admin.messaging().sendToDevice(registrationTokens, payload);
-    // }
+    const notification = {
+      title: chatRoom.isGroup
+        ? `New Group message`
+        : `New message from ${senderName}`,
+      body:
+        type == "image"
+          ? "an image"
+          : chatRoom.isGroup
+          ? `${senderName}: ${message}`
+          : message,
+    };
+    if (type == "image") {
+      notification.imageUrl = `${process.env.bucketUrl}/chat/${newMessage.messageData}`;
+    }
+
+    const pushMessage = {
+      notification,
+      android: {
+        priority: "high",
+        notification: {
+          channelId: "test-channel",
+        },
+      },
+      tokens: registrationTokens,
+    };
+
+    const response = await admin.messaging().sendMulticast(pushMessage);
+    console.log("push response", response);
+
+    return obj;
   } catch (error) {
     throw new Error(`Message cannot be sent: ${error.message}`);
   }
@@ -333,7 +370,7 @@ const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
         });
 
       chatRoom.messages = chatRoom.messages.filter(
-        (message) => message.sentDate >= lastMessage.sentDate
+        (message) => message.sentDate < lastMessage.sentDate
       );
 
       console.log(chatRoom);
