@@ -1,14 +1,14 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import Icon from '../utils/Icon.png';
+import Icon from '../utils/demo.png';
 import {ROUTES} from '../navigator/constant';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-export default function UserBarComponent({usersList, navigation}) {
-  let name = 'Jason';
-  let major = 'CPEG';
-  let gender = 'M';
-  let lookForList = ['COMP3111', 'COMP4211'];
+export default function UserBarComponent({navigation}) {
+  let name = 'COMP3111';
+  let type = 'Course Project';
+  let capacity = '2/3';
+
   // const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -16,40 +16,33 @@ export default function UserBarComponent({usersList, navigation}) {
       onPress={() => {
         // console.log(navigation);
         // navigation.push(ROUTES.OTHERUSERINFO);
-        navigation.navigate(ROUTES.ChatStackNavigator, {
-          screen: ROUTES.OTHERUSERINFO,
-          initial: false,
-        });
+        // navigation.navigate(ROUTES.ChatStackNavigator, {
+        //   screen: ROUTES.OTHERUSERINFO,
+        //   initial: false,
+        // });
       }}>
       <Image source={Icon} style={styles.image} resizeMode="cover" />
       <View style={styles.rightInfo}>
         <View style={styles.topLine}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.bigText}>
-            {usersList?.name}
+            {name}
           </Text>
-          {gender === 'M' ? (
-            <MaterialCommunityIcons
-              name="gender-male"
-              color="rgb(40,200,240)"
-              size={30}
-              style={{marginLeft: 40}}
-            />
-          ) : (
-            <MaterialCommunityIcons
-              name="gender-female"
-              color="pink"
-              size={30}
-              style={{marginLeft: 40}}
-            />
-          )}
         </View>
-        <Text style={{marginTop: 5, color: 'black'}}>{usersList?.major}</Text>
+
         <Text
-          style={styles.smallText}
-          numberOfLines={1}
-          ellipsizeMode="tail">{`Looking group mates for ${usersList?.lookForList?.join(
-          ',',
-        )} `}</Text>
+          style={{
+            color: 'white',
+            alignSelf: 'flex-start',
+            backgroundColor: 'rgba(63,43,190,0.50)',
+            paddingHorizontal: 5,
+            borderRadius: 10,
+          }}>
+          {type}
+        </Text>
+
+        <Text style={styles.smallText} numberOfLines={1}>
+          {capacity}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -79,7 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 10,
     marginHorizontal: 10,
   },
   rightInfo: {

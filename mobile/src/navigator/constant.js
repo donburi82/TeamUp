@@ -5,6 +5,7 @@ export const ROUTES = {
   HOME: 'Users',
   INFOFILLING: 'INFOFILLING',
   GROUPS: 'Groups',
+  GROUPSMAINPAGE: 'GroupsMainPage',
   CHATHOME: 'ChatHome',
   CHATROOM: 'Chatroom',
   SETTINGS: 'Settings',

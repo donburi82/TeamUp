@@ -8,6 +8,7 @@ import InfoFilling from '../screens/InfoFilling';
 // import Settings from '../screens/Settings';
 import SettingStack from './SettingStack';
 import ChatStackNavigator from './ChatStack';
+import GroupStack from './GroupStackNavigator';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {StatusBar, View} from 'react-native';
@@ -53,13 +54,15 @@ export default function HomeRouting() {
         />
         <BottomStack.Screen
           name={ROUTES.GROUPS}
-          component={Home}
+          component={GroupStack}
           options={{
             headerStyle: {
               backgroundColor,
             },
-            headerTitle: 'Team Up now!',
+            headerShown: false,
+
             tabBarLabel: 'Groups',
+
             tabBarIcon: ({focused, color, size}) => (
               <EntypoIcon
                 name="users"
