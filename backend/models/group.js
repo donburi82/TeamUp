@@ -12,7 +12,8 @@ const GroupSchema = new mongoose.Schema({
     project: { type: String, required: true },
     // projectPeriod
     quota: { type: Number, required: true },
-    members: [ObjectId], // exclude leaderID?
+    members: [ObjectId],
+    finalized: { type: Boolean, default: false },
 });
 
 const Group = mongoose.model("Group", GroupSchema);
