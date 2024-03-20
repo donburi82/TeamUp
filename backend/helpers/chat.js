@@ -279,7 +279,7 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
           : message,
     };
     if (type == "image") {
-      notification.imageUrl = `${process.env.bucketUrl}/chat/${newMessage.messageData}`;
+      notification.imageUrl = `${process.env.cloudfrontUrl}/chat/${newMessage.messageData}`;
     }
 
     const pushMessage = {
