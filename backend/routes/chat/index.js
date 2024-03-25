@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require("multer");
 const router = express.Router();
 const {
   createChatRoom,
@@ -9,9 +10,50 @@ const {
   getMessagesFromChatRoom,
   getChatRoomsForUser,
   getMessageStatus,
+  upload,
+  checkChatRoom,
 } = require("../../helpers/chat");
 
 module.exports = router;
+
+const uploadMiddleware = multer({ storage: multer.memoryStorage() });
+
+router
+  .route("/upload")
+  .post(uploadMiddleware.single("file"), async (req, res) => {
+    console.log("uploading file is called");
+    try {
+      const file = req.file;
+      console.log("file:", file.mimetype, file.size, file.originalname);
+      const key = await upload(file);
+      return res.status(200).send({ status: "success", key });
+    } catch (error) {
+      return res.status(400).send({ status: "error", msg: error.message });
+    }
+  });
+
+router.route("/exist").post(async (req, res) => {
+  const userId = req.user.userId;
+  const { leaderId } = req.body;
+  try {
+    const chatRoom = await checkChatRoom(userId, leaderId);
+
+    if (chatRoom) {
+      return res
+        .status(200)
+        .send({ status: "success", msg: "room exists", chatRoom });
+    } else {
+      const members = [userId, leaderId];
+
+      const room = await createChatRoom(members);
+      return res
+        .status(200)
+        .send({ status: "success", msg: "room created", chatRoom: room });
+    }
+  } catch (error) {
+    return res.status(400).send({ status: "error", msg: error.message });
+  }
+});
 
 router
   .route("/message/:chatRoomId")
