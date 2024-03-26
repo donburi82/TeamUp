@@ -245,25 +245,25 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageStatus: messageStatuses,
       });
     } else if (type === "audio") {
-      const buffer = Buffer.from(message, "base64");
-      const key = `${uuidv4()}.mp3`;
-      const params = {
-        Bucket: "awsteamupbucket",
-        Key: `chat/${key}`,
-        Body: buffer,
-      };
-      try {
-        const response = await s3Client.send(new PutObjectCommand(params));
-        console.log(`Image uploaded successfully. Location: ${response}`);
-      } catch (error) {
-        throw new Error(`Error uploading image: ${error}`);
-      }
+      // const buffer = Buffer.from(message, "base64");
+      // const key = `${uuidv4()}.mp3`;
+      // const params = {
+      //   Bucket: "awsteamupbucket",
+      //   Key: `chat/${key}`,
+      //   Body: buffer,
+      // };
+      // try {
+      //   const response = await s3Client.send(new PutObjectCommand(params));
+      //   console.log(`Image uploaded successfully. Location: ${response}`);
+      // } catch (error) {
+      //   throw new Error(`Error uploading image: ${error}`);
+      // }
 
       newMessage = new Message({
         messageFrom: senderId,
         sentDate: Date.now(),
         messageType: type,
-        messageData: key,
+        messageData: message,
         messageStatus: messageStatuses,
       });
     }
@@ -310,6 +310,8 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
       body:
         type == "image"
           ? "an image"
+          : type == "audio"
+          ? `an audio message from ${senderName}`
           : chatRoom.isGroup
           ? `${senderName}: ${message}`
           : message,
