@@ -20,6 +20,23 @@ const s3Client = new S3Client({
   },
 });
 
+const upload = async (file) => {
+  const key = `${uuidv4()}-${Date.now()}-${file.originalname}`;
+  const params = {
+    Bucket: "awsteamupbucket",
+    Key: `chat/${key}`,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+  try {
+    const response = await s3Client.send(new PutObjectCommand(params));
+    console.log(`media uploaded successfully. Location: ${response}`);
+    return key;
+  } catch (error) {
+    throw new Error(`Error uploading media: ${error}`);
+  }
+};
+
 const createChatRoom = async (members, groupId = null) => {
   try {
     // Validate members array
@@ -74,6 +91,25 @@ const createChatRoom = async (members, groupId = null) => {
     throw new Error(`ChatRoom creation failed: ${error.message}`);
   }
 };
+
+const checkChatRoom = async (userId, leaderId) => {
+  try {
+    const chatRoom = await ChatRoom.findOne({
+      isGroup: false,
+      members: { $all: [userId, leaderId] },
+    });
+
+    if (chatRoom) {
+      return chatRoom;
+    } else {
+      return "";
+    }
+  } catch (error) {
+    console.error(`Error checking chat room: ${error.message}`);
+    return "";
+  }
+};
+
 const updateChatRoom = async (userId, chatRoomId, isJoin) => {
   try {
     const room = await ChatRoom.findById(chatRoomId);
@@ -514,4 +550,6 @@ module.exports = {
   getMessagesFromChatRoom,
   getChatRoomsForUser,
   getMessageStatus,
+  upload,
+  checkChatRoom,
 };
