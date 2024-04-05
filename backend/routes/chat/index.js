@@ -24,7 +24,8 @@ router
     console.log("uploading file is called");
     try {
       const file = req.file;
-      console.log("file:", file.mimetype, file.size, file.originalname);
+
+      console.log("file:", file, file.mimetype, file.size, file.originalname);
       const key = await upload(file);
       return res.status(200).send({ status: "success", key });
     } catch (error) {
