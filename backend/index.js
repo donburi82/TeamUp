@@ -55,8 +55,8 @@ io.use((socket, next) => {
       return next(new Error("Authentication error"));
     }
     const token = authHeader.split(" ")[1];
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-      if (err) {
+    jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
+      if (error) {
         return next(new Error("Authentication error"));
       }
       socket.userId = decoded.userId;

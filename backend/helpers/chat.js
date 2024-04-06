@@ -20,6 +20,23 @@ const s3Client = new S3Client({
   },
 });
 
+const upload = async (file) => {
+  const key = `${uuidv4()}-${Date.now()}-${file.originalname}`;
+  const params = {
+    Bucket: "awsteamupbucket",
+    Key: `chat/${key}`,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+  try {
+    const response = await s3Client.send(new PutObjectCommand(params));
+    console.log(`media uploaded successfully. Location: ${response}`);
+    return key;
+  } catch (error) {
+    throw new Error(`Error uploading media: ${error}`);
+  }
+};
+
 const createChatRoom = async (members, groupId = null) => {
   try {
     // Validate members array
@@ -74,6 +91,25 @@ const createChatRoom = async (members, groupId = null) => {
     throw new Error(`ChatRoom creation failed: ${error.message}`);
   }
 };
+
+const checkChatRoom = async (userId, leaderId) => {
+  try {
+    const chatRoom = await ChatRoom.findOne({
+      isGroup: false,
+      members: { $all: [userId, leaderId] },
+    });
+
+    if (chatRoom) {
+      return chatRoom;
+    } else {
+      return "";
+    }
+  } catch (error) {
+    console.error(`Error checking chat room: ${error.message}`);
+    return "";
+  }
+};
+
 const updateChatRoom = async (userId, chatRoomId, isJoin) => {
   try {
     const room = await ChatRoom.findById(chatRoomId);
@@ -209,25 +245,25 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
         messageStatus: messageStatuses,
       });
     } else if (type === "audio") {
-      const buffer = Buffer.from(message, "base64");
-      const key = `${uuidv4()}.mp3`;
-      const params = {
-        Bucket: "awsteamupbucket",
-        Key: `chat/${key}`,
-        Body: buffer,
-      };
-      try {
-        const response = await s3Client.send(new PutObjectCommand(params));
-        console.log(`Image uploaded successfully. Location: ${response}`);
-      } catch (error) {
-        throw new Error(`Error uploading image: ${error}`);
-      }
+      // const buffer = Buffer.from(message, "base64");
+      // const key = `${uuidv4()}.mp3`;
+      // const params = {
+      //   Bucket: "awsteamupbucket",
+      //   Key: `chat/${key}`,
+      //   Body: buffer,
+      // };
+      // try {
+      //   const response = await s3Client.send(new PutObjectCommand(params));
+      //   console.log(`Image uploaded successfully. Location: ${response}`);
+      // } catch (error) {
+      //   throw new Error(`Error uploading image: ${error}`);
+      // }
 
       newMessage = new Message({
         messageFrom: senderId,
         sentDate: Date.now(),
         messageType: type,
-        messageData: key,
+        messageData: message,
         messageStatus: messageStatuses,
       });
     }
@@ -274,12 +310,14 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
       body:
         type == "image"
           ? "an image"
+          : type == "audio"
+          ? `an audio message from ${senderName}`
           : chatRoom.isGroup
           ? `${senderName}: ${message}`
           : message,
     };
     if (type == "image") {
-      notification.imageUrl = `${process.env.bucketUrl}/chat/${newMessage.messageData}`;
+      notification.imageUrl = `${process.env.cloudfrontUrl}/chat/${newMessage.messageData}`;
     }
 
     const pushMessage = {
@@ -514,4 +552,6 @@ module.exports = {
   getMessagesFromChatRoom,
   getChatRoomsForUser,
   getMessageStatus,
+  upload,
+  checkChatRoom,
 };

@@ -9,36 +9,23 @@ const bcrypt = require("bcryptjs");
 
 let verificationCodes = new Map();
 
-// req.body{ userId: string}
-router.route("/getUserId").get(async (req, res) => {
+router.route("/friends").get(async (req, res) => {
   const userId = req.user.userId;
-  return res.status(200).send({ status: "success", userId });
-});
 
-router.route("/getInfo/:userId").get(async (req, res) => {
-  const userId = req.params.userId;
   try {
-    const userInfo = await User.findOne({ _id: userId });
-    if (!userInfo) {
+    const user = await User.findById(userId).populate("friends");
+    if (!user) {
       return res
         .status(400)
-        .json({ status: "fail", msg: "user doesn't exist" });
+        .json({ status: "fail", msg: "User doesn't exist" });
     }
+
     res.status(200).json({
       status: "success",
-      userInfo: {
-        userId: userInfo._id,
-        email: userInfo.email,
-        name: userInfo?.name,
-        gender: userInfo?.gender,
-        isFullTime: userInfo?.isFullTime,
-        nationality: userInfo?.nationality,
-        major: userInfo?.major,
-        year: userInfo?.year,
-      },
+      friends: user.friends,
     });
   } catch (error) {
-    res.status(400).json({ status: "error", msg: error.message });
+    res.status(500).json({ status: "error", msg: error.message });
   }
 });
 

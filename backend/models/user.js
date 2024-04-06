@@ -5,16 +5,14 @@ const ObjectId = require("mongodb").ObjectId;
 
 // Word Count Validator
 const wordCountValidator = [
-
   {
-    validator: function(s) {
+    validator: function (s) {
       const words = s.split(/\s+/).filter(Boolean);
       console.log(words.length);
       return words.length <= 20;
     },
     message: "The field cannot contain more than 20 words.",
-  }
-
+  },
 ];
 
 // Schemas for Group Preference Information
@@ -96,10 +94,10 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide password"],
-    match: [
-      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
-      "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
-    ],
+    // match: [
+    //   /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
+    //   "Password should contain at least 8 character, one number, one lowercase and one uppercase letter",
+    // ],
   },
   chatRooms: [
     {

@@ -61,7 +61,7 @@ export default function MessageBubble({message}) {
       {messageType === 'image' && (
         <Image
           source={{
-            uri: `https://awsteamupbucket.s3.ap-southeast-1.amazonaws.com/chat/${messageData}`,
+            uri: `https://d15r4v2fzy8iu.cloudfront.net/chat/${messageData}`,
           }}
           style={{
             width: 260,

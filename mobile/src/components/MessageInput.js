@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,9 @@ import {
   Platform,
   Image,
   Alert,
+  PermissionsAndroid,
 } from 'react-native';
+import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import {useNavigation} from '@react-navigation/core';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,9 +22,11 @@ import {useSendMessageMutation} from '../utils/query/customHook';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import RNFetchBlob from 'rn-fetch-blob';
 import {v4 as uuidv4} from 'uuid';
 import mime from 'mime';
 import {store} from '../utils/reduxStore';
+import {BASE_URL} from '../utils/query/requestForReactQuery';
 // import { Audio, AVPlaybackStatus } from "expo-av";
 // import AudioPlayer from "../AudioPlayer";
 // import MessageComponent from "../Message";
@@ -34,10 +38,13 @@ const MessageInput = ({id, socket}) => {
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
   const [recording, setRecording] = useState(false);
+  const [audioPath, setAudioPath] = useState('');
   const [soundURI, setSoundURI] = useState(null);
   const [formData, setFormData] = useState(null);
+  const [permissions, setPermissions] = useState(false);
   const navigation = useNavigation();
   const addMessage = useSendMessageMutation(id);
+
   const onPress = () => {
     if (image) {
       sendImage();
@@ -50,7 +57,65 @@ const MessageInput = ({id, socket}) => {
     }
   };
 
-  const sendAudio = () => {};
+  const requestAudioPermission = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      ]);
+      if (
+        granted[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] ===
+        PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('You can use the microphone');
+        setPermissions(true);
+        return true;
+      } else {
+        console.log('Audio recording permission not granted');
+        return false;
+      }
+    } else if (Platform.OS === 'ios') {
+      const microphoneStatus = await check(PERMISSIONS.IOS.MICROPHONE);
+      if (microphoneStatus === RESULTS.GRANTED) {
+        console.log('You can use the microphone');
+        return true;
+      } else if (microphoneStatus === RESULTS.DENIED) {
+        const requestStatus = await request(PERMISSIONS.IOS.MICROPHONE);
+        if (requestStatus === RESULTS.GRANTED) {
+          console.log('You can use the microphone');
+          setPermissions(true);
+          return true;
+        } else {
+          console.log('Microphone permission denied');
+          return false;
+        }
+      } else {
+        console.log('Microphone permission denied');
+        return false;
+      }
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const getPermission = async () => {
+      await requestAudioPermission();
+    };
+
+    getPermission();
+  }, []);
+
+  const sendAudio = () => {
+    // try {
+    //   socket.emit('sendMessage', {
+    //     chatRoomId: id,
+    //     type: 'audio',
+    //     message: formData,
+    //     fileName: mime.getType(image).split('/')[1],
+    //   });
+    // } catch (error) {
+    //   console.log('error happened when sending message', err);
+    // }
+  };
   const sendImage = async () => {
     try {
       console.log(mime.getType(image).split('/')[1], formData);
@@ -159,22 +224,94 @@ const MessageInput = ({id, socket}) => {
   const progressCallback = progress => {
     setProgress(progress.loaded / progress.total);
   };
-  const audioRecorderPlayer = new AudioRecorderPlayer();
+  const audioRecorderPlayerRef = useRef(new AudioRecorderPlayer());
+
+  // const startRecording = async () => {
+  //   const result = await audioRecorderPlayer.startRecorder();
+  //   audioRecorderPlayer.addRecordBackListener(e => {
+  //     console.log('recording', e);
+  //     return;
+  //   });
+  //   console.log(result);
+  // };
 
   const startRecording = async () => {
-    const result = await audioRecorderPlayer.startRecorder();
-    audioRecorderPlayer.addRecordBackListener(e => {
-      console.log('recording', e);
+    if (!permissions) {
+      console.log('Audio recording permission not granted');
       return;
-    });
-    console.log(result);
+    }
+    try {
+      console.log('start recording');
+      // const fileExtension = Platform.OS === 'ios' ? 'm4a' : 'mp4';
+      const fileExtension = 'm4a';
+      const path = `${RNFetchBlob.fs.dirs.CacheDir}/audioFile.${fileExtension}`;
+      setAudioPath(path);
+      const audioFile = await audioRecorderPlayerRef.current.startRecorder(
+        path,
+      );
+      console.log('audioFile:', audioFile);
+      setRecording(true);
+    } catch (error) {
+      console.error('Failed to start recording', error);
+    }
   };
 
   const stopRecording = async () => {
-    const result = await audioRecorderPlayer.stopRecorder();
-    audioRecorderPlayer.removeRecordBackListener();
-    return result; // This result will be the path to the recorded file
+    const result = await audioRecorderPlayerRef.current.stopRecorder();
+    setRecording(false);
+    // const fileExtension = Platform.OS === 'ios' ? 'm4a' : 'mp4';
+    const fileExtension = 'm4a';
+    const global = store.getState();
+    const {token} = global.userInfo;
+
+    // const fileExists = await RNFS.exists(audioPath);
+    // console.log('File exists:', fileExists);
+    // const audiodata = await readFile(audioPath);
+    // console.log('audio data', audiodata);
+
+    RNFetchBlob.fetch(
+      'POST',
+      `${BASE_URL}chat/upload`,
+      {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token,
+      },
+      [
+        {
+          name: 'file',
+          filename: `audioFile.${fileExtension}`,
+          type: `audio/${fileExtension}`,
+          data: RNFetchBlob.wrap(audioPath),
+        },
+      ],
+    )
+      .then(resp => {
+        const data = JSON.parse(resp.data);
+        console.log('upload success audio');
+        if (data.status === 'success') {
+          console.log('emit message');
+          const key = data.key;
+          try {
+            socket.emit('sendMessage', {
+              chatRoomId: id,
+              type: 'audio',
+              message: key,
+            });
+          } catch (error) {
+            console.log('error happened when sending message', err);
+          }
+        }
+      })
+      .catch(err => {
+        console.log('upload error:', err);
+      });
   };
+
+  // const stopRecording = async () => {
+  //   const result = await audioRecorderPlayer.stopRecorder();
+  //   audioRecorderPlayer.removeRecordBackListener();
+  //   return result; // This result will be the path to the recorded file
+  // };
 
   const readFile = async filePath => {
     try {
@@ -225,7 +362,7 @@ const MessageInput = ({id, socket}) => {
       )}
       <View style={styles.row}>
         <View style={styles.inputContainer}>
-          <Pressable onPressIn={null} onPressOut={null}>
+          <Pressable onPressIn={startRecording} onPressOut={stopRecording}>
             <MaterialCommunityIcons
               name={recording ? 'microphone' : 'microphone-outline'}
               size={24}

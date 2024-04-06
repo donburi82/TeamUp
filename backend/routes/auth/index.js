@@ -3,10 +3,12 @@ const nodemailer = require("nodemailer");
 const { User } = require("../../models/user");
 const AdminInfo = require("../../models/adminInfo");
 const { isStrongPassword } = require("../../helpers/userBasicInfo");
+const { tokenVerify } = require("../../helpers/auth");
 
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 let verificationCodes = new Map();
 let passwordVerificationCodes = new Map();
@@ -150,12 +152,12 @@ router.route("/login").post(async (req, res) => {
         .status(401)
         .json({ status: "fail", msg: "incorrect credentials" });
     }
-    // const isPasswordCorrect = await user.comparePassword(password);
-    // if (!isPasswordCorrect) {
-    //   return res
-    //     .status(401)
-    //     .json({ status: "fail", msg: "incorrect credentials" });
-    // }
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect) {
+      return res
+        .status(401)
+        .json({ status: "fail", msg: "incorrect credentials" });
+    }
 
     const token = user.createJWT();
 
@@ -245,5 +247,21 @@ router
       return res.status(400).send({ status: "error", msg: error.msg });
     }
   });
+
+router.post("/accessToken", async (req, res) => {
+  const token = req.body.token;
+
+  const result = tokenVerify(token);
+  if (result.status === "fail") {
+    return res.status(401).json(result);
+  } else {
+    const newToken = jwt.sign(
+      { userId: result.userId, role: result.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+    return res.json({ token: newToken });
+  }
+});
 
 module.exports = router;
