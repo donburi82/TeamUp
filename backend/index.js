@@ -46,7 +46,7 @@ app.use("/preference", groupPreference);
 app.use("/admin", auth, adminAuth, adminRoute);
 app.use("/chat", auth, chatAuth);
 app.use("/users", usersRoute);
-app.use("/groups", groupsRoute);
+app.use("/groups", auth, groupsRoute);
 
 io.use((socket, next) => {
   if (socket.handshake.headers.authorization) {

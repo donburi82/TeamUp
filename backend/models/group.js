@@ -3,6 +3,7 @@ const ObjectId = require("mongodb").ObjectId;
 
 const GroupSchema = new mongoose.Schema({
     leaderID: { type: ObjectId, required: true },
+    name: { type: String, required: true },
     category: {
         type: String,
         required: true,

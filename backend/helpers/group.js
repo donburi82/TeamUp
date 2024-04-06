@@ -2,8 +2,28 @@ const ObjectId = require('mongodb').ObjectId;
 const { User } = require("../models/user");
 const { Group } = require("../models/group");
 const user = require('../models/user');
+const {
+    createChatRoom,
+    updateChatRoom,
+    deleteChatRoom,
+    sendMessage,
+    markMessagesAsRead,
+    getMessagesFromChatRoom,
+    getChatRoomsForUser,
+    getMessageStatus,
+} = require("./chat");
 
-
+async function getGroupInfo(groupId) {
+    try {
+        const group = await Group.findOne({ _id: new ObjectId(groupId) });
+        if (!group) {
+            throw new Error("Group not found");
+        }
+        return group;
+    } catch (error) {
+        throw error;
+    }
+}
 
 async function getAvailableGroups(userId) {
     try {
@@ -12,14 +32,17 @@ async function getAvailableGroups(userId) {
             throw new Error("User not found");
         }
 
-        // engine
         // get all groups that user does not belong to
         const groups = await Group.find({
             _id: { $nin: user.groups }
-        });
-        // then similarity scores
+        }).select('_id');
+        // similarity scores if have time
+        const groupIds = groups.map(group => group._id.toString());
 
-        return groups;
+        user.groupMatches = groupIds;
+        await user.save();
+        
+        return groupIds;
     } catch (error) {
         throw error;
     }
@@ -38,25 +61,63 @@ async function getMyGroups(userId) {
     }
 }
 
-async function createGroup(userId, category, project, quota) {
+async function createGroup(leaderId, name, category, project, quota, members) {
     try {
-        const user = await User.findOne({ _id: new ObjectId(userId) });
+        const user = await User.findOne({ _id: new ObjectId(leaderId) });
         if (!user) {
             throw new Error("User not found");
         }
         
+        const membersToAdd = Array.from(new Set([leaderId, ...members]));
+
         const group = await Group({
-            leaderID: userId,
+            leaderID: leaderId,
+            name: name,
             category: category,
             project: project,
             // projectPeriod
             quota: quota,
-            members: [userId],
+            members: membersToAdd,
         });
+        const savedGroup = await group.save();
 
-        user.groups.push(group._id);
-        await user.save();
-        
+        // Update groups list for every member
+        await User.updateMany(
+            { _id: { $in: membersToAdd } },
+            { $addToSet: { groups: savedGroup._id } }
+        );
+
+        // Create a chatroom
+        const room = await createChatRoom(membersToAdd, savedGroup._id);
+                
+        return room;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function updateGroup(userId, groupId, name, category, project, quota) {
+    try {
+        const group = await Group.findOne({ _id: new ObjectId(groupId) });
+        if (!group) {
+            throw new Error("Group not found");
+        }
+
+        // check whether it's the leader calling the endpoint
+        if (group.leaderID.toString()!==userId.toString()) {
+            throw new Error("Only the leader can update the group");
+        }
+
+        // check whether it has already been finalized or not
+        if (group.finalized===true) {
+            throw new Error("Group already finalized");
+        }
+
+        group.name = name;
+        group.category = category;
+        group.project = project;
+        group.quota = quota;
+
         return await group.save();
     } catch (error) {
         throw error;
@@ -222,7 +283,8 @@ async function removeMembers(userId, groupId, members) {
 }
 
 module.exports = {
-    getMyGroups, getAvailableGroups, createGroup, deleteGroup,
+    getGroupInfo,
+    getMyGroups, getAvailableGroups, createGroup, updateGroup, deleteGroup,
     finalizeGroup, leaveGroup,
     addMembers, removeMembers,
 };
