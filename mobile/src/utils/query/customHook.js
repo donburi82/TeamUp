@@ -196,7 +196,9 @@ export const useUpdateProfileMutation = () => {
   const queryClient = useQueryClient();
   const reqFunc = async (image, type) => {
     console.log('I am sending request useUpdateProfileMutation', image, type);
+
     const res = await request(url, {image, type}, {method: 'patch'});
+
     return res;
   };
   return useMutation(reqFunc, {

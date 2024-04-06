@@ -4,7 +4,8 @@ import {update} from '../utils/reduxStore/reducer';
 import {useDispatch, useSelector} from 'react-redux';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
-import InfoFilling from '../screens/InfoFilling';
+import {useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
 // import Settings from '../screens/Settings';
 import SettingStack from './SettingStack';
 import ChatStackNavigator from './ChatStack';
@@ -12,9 +13,17 @@ import GroupStack from './GroupStackNavigator';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {StatusBar, View} from 'react-native';
+
 const NativeStack = createNativeStackNavigator();
 const BottomStack = createBottomTabNavigator();
 export default function HomeRouting() {
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.reset({
+      index: 0,
+      routes: [{name: ROUTES.HOME}],
+    });
+  }, []);
   const colorStatusBar =
     Platform.OS === 'ios' ? '#f0f0f0' : 'rgba(63, 43, 190, 0.01)';
   const backgroundColor =

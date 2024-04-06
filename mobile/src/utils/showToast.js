@@ -25,3 +25,16 @@ export const showErrorToast = () => {
     autoHide: true,
   });
 };
+export const showExpireToast = () => {
+  Toast.show({
+    type: 'error',
+    position: 'top',
+    topOffset: 0,
+    text1: 'Token Expired',
+    visibilityTime: 1000,
+    text1Style: {
+      fontSize: 20,
+    },
+    autoHide: true,
+  });
+};

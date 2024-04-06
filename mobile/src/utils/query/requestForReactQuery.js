@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {store} from '../reduxStore';
 import {err} from 'react-native-svg/lib/typescript/xml';
-import {showErrorToast} from '../showToast';
+import {showErrorToast, showExpireToast} from '../showToast';
 import {Platform} from 'react-native';
-
+import {logOut} from '../reduxStore/reducer';
 // iOS-specific code
 // const BASE_URL =
 //   Platform.OS === 'ios'
@@ -74,6 +74,11 @@ async function request(url, datum, options, isGetRequest) {
     }
     return res.data;
   } catch (error) {
+    // console.log(error.response, 'eroor new');
+    if (error?.response?.status === 401) {
+      store.dispatch(logOut());
+      showExpireToast();
+    }
     if (error.response && error.response.data) {
       // 如果有服务器返回的错误消息，就把它作为错误对象的消息
 
