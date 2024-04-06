@@ -484,3 +484,43 @@ export const useGetMessageInfoQuery = (
 
   return useQuery(['messageInfo'], reqFunc, options);
 };
+
+export const useCourseprojectQuery = userid => {
+  let dataArray = [];
+  const url = requestURL.userscourseproject;
+  const reqFunc = async () => {
+    const res = await request(url, {userid}, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('get back data is ', data);
+    },
+  });
+};
+export const useCourseStudyQuery = userid => {
+  let dataArray = [];
+  const url = requestURL.userscoursestudy;
+  const reqFunc = async () => {
+    const res = await request(url, {userid}, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('get back data is ', data);
+    },
+  });
+};
+export const useExtracurricularQuery = userid => {
+  let dataArray = [];
+  const url = requestURL.usersextracurricular;
+  const reqFunc = async () => {
+    const res = await request(url, {userid}, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('get back data is ', data);
+    },
+  });
+};

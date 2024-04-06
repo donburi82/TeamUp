@@ -26,6 +26,9 @@ const axiosServices = axios.create({
 });
 
 const requestURL = {
+  userscourseproject: 'users/courseproject',
+  userscoursestudy: 'users/coursestudy',
+  usersextracurricular: 'users/extracurricular',
   sendVerificationEmail: 'auth/verification',
   verifyCode: 'auth/verify',
   register: 'auth/register',
@@ -65,7 +68,7 @@ async function request(url, datum, options, isGetRequest) {
     else {
       axiosOptions.data = JSON.stringify(datum);
     }
-
+    // if (isGetRequest) console.log(axiosOptions);
     const res = await axiosServices(axiosOptions);
     // console.log(res.data, `get from ${url}`);
     if (!res.status.toString().startsWith('2')) {

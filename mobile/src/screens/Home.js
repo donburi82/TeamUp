@@ -18,8 +18,10 @@ import {unwelcome} from '../utils/reduxStore/reducer';
 import {useDispatch} from 'react-redux';
 import InfoModal from '../components/InfoModal';
 import UserBarComponent from '../components/UserBarComponent';
+import {useSelector} from 'react-redux';
 import {ROUTES} from '../navigator/constant';
 import {store} from '../utils/reduxStore';
+
 import {
   request,
   requestURL,
@@ -82,6 +84,7 @@ export default function Home({navigation}) {
   const dispatch = useDispatch();
   const category = ['Course Project', 'Course Study', 'ExtraCurricular'];
   const [activeButton, setActiveButton] = useState(0);
+  const userId = useSelector(state => state?.userInfo?.userId);
   const getButtonStyle = buttonId => {
     return buttonId === activeButton
       ? 'rgba(63,43,190,0.80)'
@@ -90,6 +93,7 @@ export default function Home({navigation}) {
   const _ = useGetUserInfoQuery();
   const [usersList, setUsersList] = useState([]);
   const splitArray = arr => {
+    //handle large data returned
     const splitArray = [];
     for (let i = 0; i < arr?.length; i += 10) {
       splitArray.push(arr.slice(i, i + 10));
@@ -97,7 +101,34 @@ export default function Home({navigation}) {
     return splitArray;
   };
   const sendRequest = async () => {
-    const dataArray = await request('/riverTestUsers', {}, {method: 'get'});
+    const dataArray = [];
+
+    if (activeButton === 0) {
+      const {data: idArray} = await request(
+        'users/courseproject',
+        {userId},
+        {method: 'get'},
+        true,
+      );
+      console.log('id array is', idArray);
+    } else if (activeButton === 1) {
+      const result = await request(
+        'users/coursestudy',
+        {userId},
+        {method: 'get'},
+        true,
+      );
+      console.log('coursestudy id array is', result);
+    } else {
+      const {data: idArray} = await request(
+        'users/extracurricular',
+        {userId},
+        {method: 'get'},
+        true,
+      );
+      console.log('extracurricular id array is', idArray);
+    }
+
     let splitDataArray = splitArray(dataArray?.data);
     console.log(splitDataArray.length);
 
@@ -145,7 +176,7 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     sendRequest();
-  }, []);
+  }, [activeButton]);
 
   return (
     <>
