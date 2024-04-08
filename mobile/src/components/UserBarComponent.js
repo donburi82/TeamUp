@@ -6,10 +6,9 @@ import {ROUTES} from '../navigator/constant';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function UserBarComponent({usersList, navigation}) {
   let name = 'Jason';
-  let major = 'CPEG';
+  // let major = 'CPEG';
   let gender = 'M';
-  let lookForList = ['COMP3111', 'COMP4211'];
-  // const navigation = useNavigation();
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -19,6 +18,7 @@ export default function UserBarComponent({usersList, navigation}) {
         navigation.navigate(ROUTES.ChatStackNavigator, {
           screen: ROUTES.OTHERUSERINFO,
           initial: false,
+          params: {userId: usersList?._id},
         });
       }}>
       <Image source={Icon} style={styles.image} resizeMode="cover" />
@@ -43,13 +43,16 @@ export default function UserBarComponent({usersList, navigation}) {
             />
           )}
         </View>
-        <Text style={{marginTop: 5, color: 'black'}}>{usersList?.major}</Text>
+        <Text style={{marginTop: 5, color: 'black'}}>
+          {usersList?.major.length ? usersList?.major : 'CPEG'}
+        </Text>
         <Text
           style={styles.smallText}
           numberOfLines={1}
-          ellipsizeMode="tail">{`Looking group mates for ${usersList?.lookForList?.join(
-          ',',
-        )} `}</Text>
+          ellipsizeMode="tail">{`Looking group mates for ${
+          usersList?.groupPreferences[0]?.courseCode ||
+          usersList?.groupPreferences[0]?.projectInterest
+        } `}</Text>
       </View>
     </TouchableOpacity>
   );

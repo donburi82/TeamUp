@@ -101,35 +101,35 @@ export default function Home({navigation}) {
     return splitArray;
   };
   const sendRequest = async () => {
-    const dataArray = [];
+    let dataArray = [];
 
     if (activeButton === 0) {
-      const {data: idArray} = await request(
+      const {data} = await request(
         'users/courseproject',
         {userId},
         {method: 'get'},
         true,
       );
-      console.log('id array is', idArray);
+      dataArray = data;
     } else if (activeButton === 1) {
-      const result = await request(
+      const {data} = await request(
         'users/coursestudy',
         {userId},
         {method: 'get'},
         true,
       );
-      console.log('coursestudy id array is', result);
+      dataArray = data;
     } else {
-      const {data: idArray} = await request(
+      const {data} = await request(
         'users/extracurricular',
         {userId},
         {method: 'get'},
         true,
       );
-      console.log('extracurricular id array is', idArray);
+      dataArray = data;
     }
 
-    let splitDataArray = splitArray(dataArray?.data);
+    let splitDataArray = splitArray(dataArray);
     console.log(splitDataArray.length);
 
     let timer; // Declare timer outside so it can be cleared on cleanup

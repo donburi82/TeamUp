@@ -46,6 +46,7 @@ const requestURL = {
   extracurricular: 'preference/extracurricular',
   chatroomInfo: 'chat/chatRoom',
   getMessages: 'chat/message',
+  getGroups: 'groups',
 };
 
 async function request(url, datum, options, isGetRequest) {

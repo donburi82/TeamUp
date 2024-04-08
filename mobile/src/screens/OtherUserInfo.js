@@ -8,7 +8,8 @@ import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
 export default function OtherUserInfo({navigation}) {
   const route = useRoute();
   const isFromChatRoom = route?.params?.isFromChatRoom;
-
+  const userId = route?.params?.userId;
+  console.log('userid is ', userId);
   const sendMessage = () => {
     // 假设有一个函数来判断用户是从哪个页面来的
 

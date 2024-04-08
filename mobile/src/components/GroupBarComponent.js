@@ -4,7 +4,7 @@ import React from 'react';
 import Icon from '../utils/demo.png';
 import {ROUTES} from '../navigator/constant';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-export default function UserBarComponent({navigation}) {
+export default function GroupBarComponent({navigation, group, mode}) {
   let name = 'COMP3111';
   let type = 'Course Project';
   let capacity = '2/3';
@@ -25,7 +25,7 @@ export default function UserBarComponent({navigation}) {
       <View style={styles.rightInfo}>
         <View style={styles.topLine}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.bigText}>
-            {name}
+            {group?.project}
           </Text>
         </View>
 
@@ -37,11 +37,11 @@ export default function UserBarComponent({navigation}) {
             paddingHorizontal: 5,
             borderRadius: 10,
           }}>
-          {type}
+          {group?.category}
         </Text>
 
         <Text style={styles.smallText} numberOfLines={1}>
-          {capacity}
+          {`Quota: ${group?.quota}`}
         </Text>
       </View>
     </TouchableOpacity>
