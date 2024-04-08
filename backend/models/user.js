@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const ObjectId = require("mongodb").ObjectId;
 
 // Word Count Validator
 const wordCountValidator = [
@@ -116,12 +115,12 @@ const UserSchema = new mongoose.Schema({
   // for group preference & matching
   groupPreferences: [groupPreferenceSchema],
   // single array for matches - problem with deletion
-  courseProjectMatches: [ObjectId],
-  courseStudyMatches: [ObjectId],
-  extracurricularMatches: [ObjectId],
+  courseProjectMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  courseStudyMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  extracurricularMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   // for groups
-  groups: [ObjectId],
-  groupMatches: [ObjectId],
+  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
+  groupMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
   // for chat
   socketId: String,
   registrationToken: String,

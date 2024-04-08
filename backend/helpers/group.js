@@ -1,7 +1,6 @@
 const ObjectId = require('mongodb').ObjectId;
 const { User } = require("../models/user");
 const { Group } = require("../models/group");
-const user = require('../models/user');
 const {
     createChatRoom,
     updateChatRoom,
@@ -35,14 +34,14 @@ async function getAvailableGroups(userId) {
         // get all groups that user does not belong to
         const groups = await Group.find({
             _id: { $nin: user.groups }
-        }).select('_id');
+        });
         // similarity scores if have time
         const groupIds = groups.map(group => group._id.toString());
 
         user.groupMatches = groupIds;
         await user.save();
         
-        return groupIds;
+        return groups;
     } catch (error) {
         throw error;
     }
@@ -50,7 +49,7 @@ async function getAvailableGroups(userId) {
 
 async function getMyGroups(userId) {
     try {
-        const user = await User.findOne({ _id: new ObjectId(userId) });
+        const user = await User.findOne({ _id: new ObjectId(userId) }).populate('groups');
         if (!user) {
             throw new Error("User not found");
         }
