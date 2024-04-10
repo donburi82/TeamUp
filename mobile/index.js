@@ -13,7 +13,7 @@ import Toast from 'react-native-toast-message';
 import {PersistGate} from 'redux-persist/integration/react';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-
+import {NavigationContainer} from '@react-navigation/native';
 PushNotification.createChannel(
   {
     channelId: 'test-channel',
@@ -35,9 +35,11 @@ const WrapApp = () => (
   <>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <GestureHandlerRootView style={{flex: 1}}>
-          <App />
-        </GestureHandlerRootView>
+        <NavigationContainer>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <App />
+          </GestureHandlerRootView>
+        </NavigationContainer>
       </PersistGate>
     </Provider>
     <Toast />

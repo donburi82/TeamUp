@@ -57,6 +57,34 @@ router.route("/getInfo").get(async (req, res) => {
   }
 });
 
+router.route("/getInfo/:userId").get(async (req, res) => {
+  const userId = req.params.userId;
+  console.log(userId);
+  try {
+    const userInfo = await User.findOne({ _id: userId });
+    if (!userInfo) {
+      return res
+        .status(400)
+        .json({ status: "fail", msg: "user doesn't exist" });
+    }
+    res.status(200).json({
+      status: "success",
+      userInfo: {
+        userId: userInfo._id,
+        email: userInfo.email,
+        name: userInfo?.name,
+        gender: userInfo?.gender,
+        isFullTime: userInfo?.isFullTime,
+        nationality: userInfo?.nationality,
+        major: userInfo?.major,
+        year: userInfo?.year,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", msg: error.message });
+  }
+});
+
 // req.body{name: string}
 router.route("/updateInfo").patch(async (req, res) => {
   const userId = req.user.userId;
@@ -140,6 +168,7 @@ router.route("/updatePassword").patch(async (req, res) => {
 
 router.patch("/profilePic", async (req, res) => {
   const { image, type } = req.body;
+  console.log(type);
   const userId = req.user.userId;
   const buffer = Buffer.from(image, "base64");
 

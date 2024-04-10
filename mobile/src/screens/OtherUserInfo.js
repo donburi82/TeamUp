@@ -8,24 +8,8 @@ import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
 export default function OtherUserInfo({navigation}) {
   const route = useRoute();
   const isFromChatRoom = route?.params?.isFromChatRoom;
-  // useEffect(() => {
-  //   const backHandler = navigation.addListener('beforeRemove', e => {
-  //     e.preventDefault(); // 阻止默认行为
-  //     if (isFromChatRoom) {
-  //       // 如果是从聊天室页面进入的，返回聊天室
-  //       navigation.goBack();
-  //     } else {
-  //       // 如果是从用户列表等其他页面进入的，导航到聊天室页面
-  //       // 假设聊天室ID是chatRoomId
-  //       console.log(e);
-  //       // navigation.navigate(ROUTES.CHATHOME, {
-  //       //   screen: ROUTES.CHATROOM,
-  //       //   params: {chatRoomId: null},
-  //       // });
-  //     }
-  //   });
-  //   return () => backHandler.remove();
-  // }, []);
+  const userId = route?.params?.userId;
+  console.log('userid is ', userId);
   const sendMessage = () => {
     // 假设有一个函数来判断用户是从哪个页面来的
 

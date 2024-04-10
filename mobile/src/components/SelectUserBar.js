@@ -2,7 +2,6 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 
 export default function SelectUserBar({callback, name, avartar}) {
-  console.log('SelectUserBar', name, avartar, callback);
   const [isActive, setIsActive] = useState(false); // 初始状态为非激活
 
   // 处理点击事件，切换小绿点的激活状态

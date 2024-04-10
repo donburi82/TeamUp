@@ -15,4 +15,5 @@ export const ROUTES = {
   PREFERENCE: 'PREFERENCE',
   OTHERUSERINFO: 'Information',
   ChatStackNavigator: 'Chat',
+  GroupInfo: 'GroupInfo',
 };
