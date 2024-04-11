@@ -102,7 +102,7 @@ export default function Home({navigation}) {
   };
   const sendRequest = async () => {
     let dataArray = [];
-
+    console.log('userid is', userId);
     if (activeButton === 0) {
       const {data} = await request(
         'users/courseproject',
@@ -131,7 +131,7 @@ export default function Home({navigation}) {
 
     let splitDataArray = splitArray(dataArray);
     console.log(splitDataArray.length);
-
+    setUsersList([]);
     let timer; // Declare timer outside so it can be cleared on cleanup
     const processBatch = () => {
       if (splitDataArray.length) {

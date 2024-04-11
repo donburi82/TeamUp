@@ -2,6 +2,7 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import Icon from '../utils/Icon.png';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {ROUTES} from '../navigator/constant';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function UserBarComponent({usersList, navigation}) {
@@ -21,7 +22,16 @@ export default function UserBarComponent({usersList, navigation}) {
           params: {userId: usersList?._id},
         });
       }}>
-      <Image source={Icon} style={styles.image} resizeMode="cover" />
+      {usersList?.profilePic ? (
+        <Image
+          source={{uri: usersList?.profilePic}}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      ) : (
+        <FontAwesomeIcon name="user" size={40} style={styles.imageBroken} />
+      )}
+
       <View style={styles.rightInfo}>
         <View style={styles.topLine}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.bigText}>
@@ -80,6 +90,16 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: 'red',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginHorizontal: 10,
+  },
+  imageBroken: {
+    color: 'white',
+    backgroundColor: 'gray',
+    textAlign: 'center',
+    lineHeight: 60,
     width: 60,
     height: 60,
     borderRadius: 30,

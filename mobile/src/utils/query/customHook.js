@@ -218,7 +218,6 @@ export const useGetUserInfoQuery = () => {
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      // console.log('get back data is ', data);
       if (data?.userInfo) {
         dispatch(updateInfo(data?.userInfo));
       }
@@ -234,7 +233,6 @@ export const useGetUserIdQuery = () => {
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      // console.log('get back data is ', data);
       if (data?.userId) {
         dispatch(updateInfo(data?.userId));
       }
@@ -527,14 +525,12 @@ export const useExtracurricularQuery = userid => {
 
 export const useGetGroupsQuery = mode => {
   const url = requestURL.getGroups;
-  console.log('mode is ', mode);
+
   const reqFunc = async () => {
     const res = await request(url, {mode}, {method: 'get'}, true);
     return res;
   };
   return useQuery([url, mode], reqFunc, {
-    onSuccess: data => {
-      console.log('get back first groups is ', data[0]);
-    },
+    onSuccess: data => {},
   });
 };
