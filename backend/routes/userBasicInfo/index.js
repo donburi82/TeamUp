@@ -7,6 +7,8 @@ const fs = require("fs");
 const { isStrongPassword } = require("../../helpers/userBasicInfo.js");
 const bcrypt = require("bcryptjs");
 
+const { upload } = require("../../helpers/chat.js");
+
 let verificationCodes = new Map();
 
 router.route("/friends").get(async (req, res) => {
@@ -42,6 +44,7 @@ router.route("/getInfo").get(async (req, res) => {
     res.status(200).json({
       status: "success",
       userInfo: {
+        profilePic: `${process.env.cloudfrontUrl}/user/${userInfo.profilePic}`,
         userId: userInfo._id,
         email: userInfo.email,
         name: userInfo?.name,
@@ -70,6 +73,7 @@ router.route("/getInfo/:userId").get(async (req, res) => {
     res.status(200).json({
       status: "success",
       userInfo: {
+        profilePic: `${process.env.cloudfrontUrl}/user/${userInfo.profilePic}`,
         userId: userInfo._id,
         email: userInfo.email,
         name: userInfo?.name,
@@ -168,23 +172,28 @@ router.route("/updatePassword").patch(async (req, res) => {
 
 router.patch("/profilePic", async (req, res) => {
   const { image, type } = req.body;
-  console.log(type);
+  // console.log(type);
   const userId = req.user.userId;
   const buffer = Buffer.from(image, "base64");
 
-  if (Buffer.byteLength(buffer) > 256000000) {
-    return res
-      .status(400)
-      .json({ status: "fail", msg: "file size exceed limit" });
+  if (!type) {
+    type = "image/jpeg";
   }
+  const extension = type.split("/")[1];
+
+  const file = {
+    originalname: `${userId}.${extension}`,
+    buffer,
+    mimetype: type,
+  };
+
+  const key = await upload(file, "user");
+
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
       {
-        $set: {
-          "profilePic.data": buffer,
-          "profilePic.contentType": type,
-        },
+        profilePic: key,
       }
     );
 
@@ -203,8 +212,7 @@ router.get("/profilePic/:id", async (req, res) => {
     }
     res.status(200).send({
       status: "success",
-      data: user.profilePic.data,
-      contentType: user.profilePic.contentType,
+      data: `${process.env.cloudfrontUrl}/user/${user.profilePic}`,
     });
   } catch (error) {
     return res.status(500).json({ status: "error", msg: error.message });
@@ -221,8 +229,7 @@ router.get("/profilePic", async (req, res) => {
     }
     res.status(200).send({
       status: "success",
-      data: user.profilePic.data,
-      contentType: user.profilePic.contentType,
+      data: `${process.env.cloudfrontUrl}/user/${user.profilePic}`,
     });
   } catch (error) {
     return res.status(500).json({ status: "error", msg: error.message });
