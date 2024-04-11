@@ -194,8 +194,8 @@ export const useGetProfilePicQuery = () => {
 export const useUpdateProfileMutation = () => {
   const url = requestURL.profilePic;
   const queryClient = useQueryClient();
-  const reqFunc = async (image, type) => {
-    console.log('I am sending request useUpdateProfileMutation', image, type);
+  const reqFunc = async ({image, type}) => {
+    console.log('I am sending request useUpdateProfileMutation', type);
 
     const res = await request(url, {image, type}, {method: 'patch'});
 

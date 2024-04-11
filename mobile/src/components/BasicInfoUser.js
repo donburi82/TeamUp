@@ -9,7 +9,6 @@ export default function BasicInfoUser({
   nationality,
   profilePic,
 }) {
-  console.log('profilePic is ', profilePic);
   return (
     <View style={styles.container}>
       {profilePic !== null ? (
