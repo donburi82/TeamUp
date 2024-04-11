@@ -26,7 +26,7 @@ router
       const file = req.file;
 
       console.log("file:", file, file.mimetype, file.size, file.originalname);
-      const key = await upload(file);
+      const key = await upload(file, "chat");
       return res.status(200).send({ status: "success", key });
     } catch (error) {
       return res.status(400).send({ status: "error", msg: error.message });
