@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 export default function BasicInfoUser({
   name,
   gender,
@@ -9,20 +9,41 @@ export default function BasicInfoUser({
   nationality,
   profilePic,
 }) {
+  console.log('profilePic is ', profilePic);
   return (
     <View style={styles.container}>
-      <Image
-        source={{uri: profilePic}}
-        alt="avartar"
-        style={{
-          width: 150,
-          height: 150,
-          marginLeft: 20,
-          marginRight: 30,
-          borderRadius: 100,
-          backgroundColor: 'gray',
-        }}
-      />
+      {profilePic !== null ? (
+        <Image
+          source={{uri: profilePic}}
+          alt="avartar"
+          style={{
+            width: 150,
+            height: 150,
+            marginLeft: 20,
+            marginRight: 30,
+            borderRadius: 100,
+            backgroundColor: 'gray',
+          }}
+        />
+      ) : (
+        <FontAwesomeIcon
+          name="user"
+          size={80}
+          style={{
+            width: 150,
+            height: 150,
+            marginLeft: 20,
+            textAlign: 'center',
+            color: 'white',
+
+            lineHeight: 150,
+            marginRight: 30,
+            borderRadius: 100,
+            backgroundColor: 'gray',
+          }}
+        />
+      )}
+
       <View style={styles.rightSide}>
         <View style={styles.rightSideBar}>
           <Text style={styles.nameStyle}>{name}</Text>

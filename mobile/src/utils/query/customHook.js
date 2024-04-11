@@ -208,10 +208,13 @@ export const useUpdateProfileMutation = () => {
   });
 };
 
-export const useGetUserInfoQuery = () => {
+export const useGetUserInfoQuery = userId => {
   const dispatch = useDispatch();
 
-  const url = requestURL.getInfo;
+  let url = requestURL.getInfo;
+  if (userId) {
+    url += `/${userId}`;
+  }
   const reqFunc = async () => {
     const res = await request(url, null, {method: 'get'});
     return res;
