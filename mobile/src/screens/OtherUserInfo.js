@@ -16,10 +16,11 @@ export default function OtherUserInfo({navigation}) {
   const {data} = useGetUserInfoQuery(userId);
   let isFullTime = data?.userInfo?.isFullTime || false;
   let name = data?.userInfo?.name || 'N/A';
-  let major = data?.userInfo?.major || 'N/A';
+  let major = data?.userInfo?.major || ['N/A'];
   let year = data?.userInfo?.year || 'N/A';
   let lookingFor = data?.userInfo?.lookingFor || 'N/A';
   let gender = data?.userInfo?.gender || 'M';
+  let profilePic = data?.userInfo?.profilePic || null;
   console.log('user info is ', data);
 
   React.useLayoutEffect(() => {
@@ -69,11 +70,11 @@ export default function OtherUserInfo({navigation}) {
         gender={gender}
         isFullTime={isFullTime}
         nationality={'Zimbabwei'}
-        profilePic={null}
+        profilePic={profilePic}
       />
 
       <SettingBar text="Major" type="basicInfo" disableEdit={true}>
-        <Text style={styles.textStyle}>{major}</Text>
+        <Text style={styles.textStyle}>{major?.join(',')}</Text>
       </SettingBar>
       <SettingBar text="Year Of Study" type="basicInfo" disableEdit={true}>
         <Text style={styles.textStyle}>{`Year ${year}`}</Text>

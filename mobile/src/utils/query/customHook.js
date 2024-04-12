@@ -5,6 +5,7 @@ import {login, logOut, updateImageUri, updateInfo} from '../reduxStore/reducer';
 import {useQueryClient} from 'react-query';
 import {Buffer} from 'buffer';
 import {showUpdateToast} from '../showToast';
+import {resolve} from 'path';
 export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
@@ -535,5 +536,19 @@ export const useGetGroupsQuery = mode => {
   };
   return useQuery([url, mode], reqFunc, {
     onSuccess: data => {},
+  });
+};
+
+export const useGetFriendsQuery = userId => {
+  const url = requestURL.getFriends;
+  const reqFunc = async () => {
+    const res = await request(url, null, {method: 'get'}, false);
+    // console.log(res, 'friend');
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      // console.log(data);
+    },
   });
 };

@@ -12,6 +12,7 @@ import {
   Button,
   ButtonText,
   Select,
+  set,
 } from '@gluestack-ui/themed';
 import React, {useRef, useState, useEffect} from 'react';
 
@@ -19,8 +20,8 @@ import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-import {CourseData, category, projectPeriod} from '../utils/data';
-
+import {CourseData, category, projectPeriod, QuotaData} from '../utils/data';
+import {useGetFriendsQuery} from '../utils/query/customHook';
 import {
   SelectList,
   MultipleSelectList,
@@ -32,7 +33,17 @@ export default function BottomWindow({reference, activeButton}) {
   const [courseCode, setCourseCode] = useState('');
   const [category, setCategory] = useState('');
   const [period, setPeriod] = useState('');
+  const [groupName, setGroupName] = useState('');
+  const [quota, setQuota] = useState(null);
+  let friendList = [];
 
+  try {
+    const {data} = useGetFriendsQuery();
+    friendList = data?.friends ? data?.friends : [];
+    console.log('get friends success', friendList);
+  } catch (e) {
+    console.log('get friends failed', e);
+  }
   const handleDone = () => {
     reference?.current?.close();
   };
@@ -72,6 +83,22 @@ export default function BottomWindow({reference, activeButton}) {
       </View>
       <ScrollView style={styles.container}>
         <View>
+          <Text style={styles.textStyle}>Group Name</Text>
+          <TextInput
+            style={{
+              ...styles.boxStyle,
+              paddingLeft: 20,
+              // borderRadius: 0,
+              // textAlignVertical: 'top',
+            }}
+            // multiline
+            numberOfLines={1} // You can adjust the number of lines
+            onChangeText={setGroupName}
+            value={groupName}
+            placeholder=" "
+          />
+        </View>
+        <View>
           <Text style={styles.textStyle}>Course Code</Text>
           <SelectList
             setSelected={setCourseCode}
@@ -97,49 +124,23 @@ export default function BottomWindow({reference, activeButton}) {
         </View>
 
         <View style={{marginBottom: 40}}>
-          <Text style={styles.textStyle}>Project Period</Text>
+          <Text style={styles.textStyle}>Quota</Text>
           <SelectList
-            setSelected={setPeriod}
+            setSelected={setQuota}
             placeholder={' '}
             boxStyles={styles.boxStyle}
             search={false}
-            data={period}
+            data={QuotaData}
             dropdownStyles={styles.dropDownStyle}
             save="value"
           />
         </View>
         {/* <Text style={styles.textStyle}>Select Users</Text> */}
-        {[
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-        ].map((item, index) => (
+        {friendList?.map((item, index) => (
           <SelectUserBar
             key={index}
             name={item.name}
-            avartar={item.avartar}
+            avartar={item.profilePic}
             callback={item.callback}
           />
         ))}

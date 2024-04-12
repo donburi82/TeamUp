@@ -40,6 +40,7 @@ const requestURL = {
   getUserId: 'userBasicInfo/getUserId',
   getInfo: 'userBasicInfo/getInfo',
   updateRegToken: 'userBasicInfo/registerationToken',
+  getFriends: 'userBasicInfo/friends',
   preference: 'preference',
   courseproject: 'preference/courseproject',
   coursestudy: 'preference/coursestudy',
@@ -47,6 +48,7 @@ const requestURL = {
   chatroomInfo: 'chat/chatRoom',
   getMessages: 'chat/message',
   getGroups: 'groups',
+  cloudImageUri: 'https://d15r4v2fzy8iu.cloudfront.net/user/',
 };
 
 async function request(url, datum, options, isGetRequest) {
