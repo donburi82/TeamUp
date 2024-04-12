@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { User } = require("../../models/user");
+const { ChatRoom } = require("../../models/chat.js");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -63,12 +64,23 @@ router.route("/getInfo").get(async (req, res) => {
 router.route("/getInfo/:userId").get(async (req, res) => {
   const userId = req.params.userId;
   console.log(userId);
+
   try {
     const userInfo = await User.findOne({ _id: userId });
+    let chatRoom;
     if (!userInfo) {
       return res
         .status(400)
         .json({ status: "fail", msg: "user doesn't exist" });
+    }
+    if (userInfo.friends.includes(req.user.userId)) {
+      chatRoom = await ChatRoom.findOne({
+        members: { $all: [req.user.userId, userId] },
+        isGroup: false,
+      });
+      chatRoom = chatRoom?._id;
+    } else {
+      chatRoom = null;
     }
     res.status(200).json({
       status: "success",
@@ -82,6 +94,7 @@ router.route("/getInfo/:userId").get(async (req, res) => {
         nationality: userInfo?.nationality,
         major: userInfo?.major,
         year: userInfo?.year,
+        chatRoom: chatRoom,
       },
     });
   } catch (error) {
