@@ -331,9 +331,10 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
       },
       tokens: registrationTokens,
     };
-
+    if (registrationTokens.length < 0) {
+      return obj;
+    }
     const response = await admin.messaging().sendMulticast(pushMessage);
-    console.log("push response", response);
 
     return obj;
   } catch (error) {
