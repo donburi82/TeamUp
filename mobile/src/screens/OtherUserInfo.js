@@ -21,7 +21,8 @@ export default function OtherUserInfo({navigation}) {
   let lookingFor = data?.userInfo?.lookingFor || 'N/A';
   let gender = data?.userInfo?.gender || 'M';
   let profilePic = data?.userInfo?.profilePic || null;
-  console.log('user info is ', data);
+  let chatRoomId = data?.userInfo?.chatRoomId || null;
+  console.log('prifilePic ', profilePic);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -57,10 +58,11 @@ export default function OtherUserInfo({navigation}) {
       // 如果是从用户列表等其他页面进入的，导航到聊天室页面
       // 假设聊天室ID是chatRoomId
       // navigation.goBack();
-      navigation.navigate(ROUTES.CHATHOME, {
-        screen: ROUTES.CHATROOM,
-        params: {chatRoomId: null},
-      });
+      console.log('message chatroom id is', chatRoomId);
+      // navigation.navigate(ROUTES.CHATHOME, {
+      //   screen: ROUTES.CHATROOM,
+      //   params: {chatRoomId: null},
+      // });
     }
   };
   return (

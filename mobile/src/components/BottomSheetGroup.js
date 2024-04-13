@@ -40,7 +40,6 @@ export default function BottomWindow({reference, activeButton}) {
   try {
     const {data} = useGetFriendsQuery();
     friendList = data?.friends ? data?.friends : [];
-    console.log('get friends success', friendList);
   } catch (e) {
     console.log('get friends failed', e);
   }

@@ -216,13 +216,14 @@ export const useGetUserInfoQuery = userId => {
   if (userId) {
     url += `/${userId}`;
   }
+
   const reqFunc = async () => {
     const res = await request(url, null, {method: 'get'});
     return res;
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      if (data?.userInfo) {
+      if (data?.userInfo && !userId) {
         dispatch(updateInfo(data?.userInfo));
       }
     },

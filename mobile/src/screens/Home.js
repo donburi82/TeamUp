@@ -67,8 +67,6 @@ const updateToken = async regToken => {
       }),
     });
 
-    console.log('this is response', response, '\n');
-
     if (response.ok) {
       console.log('Token updated successfully');
     } else {
@@ -85,6 +83,7 @@ export default function Home({navigation}) {
   const category = ['Course Project', 'Course Study', 'ExtraCurricular'];
   const [activeButton, setActiveButton] = useState(0);
   const userId = useSelector(state => state?.userInfo?.userId);
+  console.log('activeButton is ', activeButton);
   const getButtonStyle = buttonId => {
     return buttonId === activeButton
       ? 'rgba(63,43,190,0.80)'
@@ -102,7 +101,7 @@ export default function Home({navigation}) {
   };
   const sendRequest = async () => {
     let dataArray = [];
-    console.log('userid is', userId);
+
     if (activeButton === 0) {
       const {data} = await request(
         'users/courseproject',
@@ -176,7 +175,7 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     sendRequest();
-  }, [activeButton]);
+  }, [activeButton, userId]);
 
   return (
     <>

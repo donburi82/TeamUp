@@ -17,6 +17,7 @@ export default function UserBarComponent({usersList, navigation}) {
       onPress={() => {
         // console.log(navigation);
         // navigation.push(ROUTES.OTHERUSERINFO);
+        console.log('click into userId', usersList?._id);
         navigation.navigate(ROUTES.ChatStackNavigator, {
           screen: ROUTES.OTHERUSERINFO,
           initial: false,
