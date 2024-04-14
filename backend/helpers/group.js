@@ -86,9 +86,9 @@ async function createGroup(leaderId, name, category, project, quota, members) {
             { $addToSet: { groups: savedGroup._id } }
         );
 
-        // Create a chatroom
+        // Create a chatroom (updates members chatRoomIds and group chatRoomId)
         const room = await createChatRoom(membersToAdd, savedGroup._id);
-                
+
         return room;
     } catch (error) {
         throw error;
@@ -223,12 +223,18 @@ async function addMembers(userId, groupId, members) {
             throw new Error("Exceeds quota");
         }
 
-        // add members to the group
-        members.forEach(member => {
+        // add members to the group and the chatroom
+        await Promise.all(members.map(async (member) => {
             if (!group.members.includes(member)) {
                 group.members.push(member);
+                await updateChatRoom(member, group.chatRoomID, true);
             }
-        });
+        }));
+        // members.forEach(member => {
+        //     if (!group.members.includes(member)) {
+        //         group.members.push(member);
+        //     }
+        // });
         await group.save();
 
         // update membership information for every member
@@ -265,7 +271,10 @@ async function removeMembers(userId, groupId, members) {
             throw new Error("Exceeds quota");
         }
 
-        // remove members from the group
+        // remove members from the group and the chatroom
+        await Promise.all(members.map(async (member) => {
+            await updateChatRoom(member, group.chatRoomID, false);
+        }));
         group.members = group.members.filter(member => !members.includes(member.toString()));
         await group.save();
 

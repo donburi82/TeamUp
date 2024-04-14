@@ -9,40 +9,31 @@ const {
 
 router.get("/courseproject", async (req, res) => {
   try {
-    const { userId } = req.query;
-    console.log("console.log(userId);", userId, req.query);
+    const userId = req.user.userId;
     const profiles = await getCourseProjectProfiles(userId);
-    console.log(profiles);
     return res.status(200).json({ success: true, data: profiles });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
 });
 
 router.get("/coursestudy", async (req, res) => {
   try {
-    const { userId } = req.query;
-    console.log("console.log(userId);", userId, req.query);
+    const userId = req.user.userId;
     const profiles = await getCourseStudyProfiles(userId);
-    console.log(profiles);
     return res.status(200).json({ success: true, data: profiles });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
 });
 
 router.get("/extracurricular", async (req, res) => {
   try {
-    const { userId } = req.query;
-    console.log("console.log(userId);", userId, req.query);
+    const userId = req.user.userId;
     const profiles = await getExtracurricularProfiles(userId);
-    console.log(profiles);
     return res.status(200).json({ success: true, data: profiles });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ success: false }); // River note here: former status code returned is 401 and this will cause frontend to log out which is not right.
+    return res.status(400).json({ success: false, error: error });
   }
 });
 

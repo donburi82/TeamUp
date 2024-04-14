@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const { User } = require("../../models/user");
 const {
     getGroupInfo,
     getMyGroups, getAvailableGroups, createGroup, updateGroup, deleteGroup,
@@ -15,7 +14,6 @@ router.get("/info", async (req, res) => {
         const group = await getGroupInfo(groupId);
         return res.status(200).json({ success: true, data: group });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -32,7 +30,6 @@ router.get("/", async (req, res) => {
         }
         return res.status(200).json({ success: true, data: groups });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -44,7 +41,6 @@ router.post("/", async (req, res) => {
         const chatRoom = await createGroup(leaderId, name, category, project, quota, members);
         return res.status(200).json({ success: true, room: chatRoom._id });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -56,7 +52,6 @@ router.patch("/", async (req, res) => {
         await updateGroup(userId, groupId, name, category, project, quota);
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -68,7 +63,6 @@ router.delete("/", async (req, res) => {
         await deleteGroup(userId, groupId);
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -80,7 +74,6 @@ router.post("/finalize", async (req, res) => {
         await finalizeGroup(userId, groupId);
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -92,7 +85,6 @@ router.post("/leave", async (req, res) => {
         await leaveGroup(userId, groupId);
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -104,7 +96,6 @@ router.post("/members", async (req, res) => {
         await addMembers(userId, groupId, members);
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
@@ -116,7 +107,6 @@ router.delete("/members", async (req, res) => {
         await removeMembers(userId, groupId, members);
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ success: false, error: error });
     }
 });
