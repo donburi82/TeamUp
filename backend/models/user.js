@@ -7,7 +7,7 @@ const wordCountValidator = [
   {
     validator: function (s) {
       const words = s.split(/\s+/).filter(Boolean);
-      console.log(words.length);
+      // console.log(words.length);
       return words.length <= 20;
     },
     message: "The field cannot contain more than 20 words.",

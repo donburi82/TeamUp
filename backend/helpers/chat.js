@@ -6,6 +6,8 @@ const { v4: uuidv4 } = require("uuid");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const admin = require("firebase-admin");
 const { getMessaging } = require("firebase-admin/messaging");
+const { Group } = require("../models/group");
+const ObjectId = require('mongodb').ObjectId;
 
 const serviceAccount = require("../serviceAccount.json");
 admin.initializeApp({
@@ -62,6 +64,11 @@ const createChatRoom = async (members, groupId = null) => {
         isGroup: true,
         groupId,
       });
+
+      // update group's chatRoomId
+      const group = await Group.findOne({ _id: new ObjectId(groupId) });
+      group.chatRoomID = room;
+      await group.save();
     } else {
       room = await ChatRoom.create({
         members: memberObjectIds,
