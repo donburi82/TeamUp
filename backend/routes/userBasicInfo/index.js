@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const { User } = require("../../models/user");
+const { ChatRoom } = require("../../models/chat.js");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { isStrongPassword } = require("../../helpers/userBasicInfo.js");
 const bcrypt = require("bcryptjs");
+
+const { upload } = require("../../helpers/chat.js");
 
 let verificationCodes = new Map();
 
@@ -42,6 +45,7 @@ router.route("/getInfo").get(async (req, res) => {
     res.status(200).json({
       status: "success",
       userInfo: {
+        profilePic: `${process.env.cloudfrontUrl}/user/${userInfo.profilePic}`,
         userId: userInfo._id,
         email: userInfo.email,
         name: userInfo?.name,
@@ -60,16 +64,28 @@ router.route("/getInfo").get(async (req, res) => {
 router.route("/getInfo/:userId").get(async (req, res) => {
   const userId = req.params.userId;
   console.log(userId);
+
   try {
     const userInfo = await User.findOne({ _id: userId });
+    let chatRoom;
     if (!userInfo) {
       return res
         .status(400)
         .json({ status: "fail", msg: "user doesn't exist" });
     }
+    if (userInfo.friends.includes(req.user.userId)) {
+      chatRoom = await ChatRoom.findOne({
+        members: { $all: [req.user.userId, userId] },
+        isGroup: false,
+      });
+      chatRoom = chatRoom?._id;
+    } else {
+      chatRoom = null;
+    }
     res.status(200).json({
       status: "success",
       userInfo: {
+        profilePic: `${process.env.cloudfrontUrl}/user/${userInfo.profilePic}`,
         userId: userInfo._id,
         email: userInfo.email,
         name: userInfo?.name,
@@ -78,6 +94,7 @@ router.route("/getInfo/:userId").get(async (req, res) => {
         nationality: userInfo?.nationality,
         major: userInfo?.major,
         year: userInfo?.year,
+        chatRoom: chatRoom,
       },
     });
   } catch (error) {
@@ -168,23 +185,28 @@ router.route("/updatePassword").patch(async (req, res) => {
 
 router.patch("/profilePic", async (req, res) => {
   const { image, type } = req.body;
-  console.log(type);
+  // console.log(type);
   const userId = req.user.userId;
   const buffer = Buffer.from(image, "base64");
 
-  if (Buffer.byteLength(buffer) > 256000000) {
-    return res
-      .status(400)
-      .json({ status: "fail", msg: "file size exceed limit" });
+  if (!type) {
+    type = "image/jpeg";
   }
+  const extension = type.split("/")[1];
+
+  const file = {
+    originalname: `${userId}.${extension}`,
+    buffer,
+    mimetype: type,
+  };
+
+  const key = await upload(file, "user");
+
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
       {
-        $set: {
-          "profilePic.data": buffer,
-          "profilePic.contentType": type,
-        },
+        profilePic: key,
       }
     );
 
@@ -203,8 +225,7 @@ router.get("/profilePic/:id", async (req, res) => {
     }
     res.status(200).send({
       status: "success",
-      data: user.profilePic.data,
-      contentType: user.profilePic.contentType,
+      data: `${process.env.cloudfrontUrl}/user/${user.profilePic}`,
     });
   } catch (error) {
     return res.status(500).json({ status: "error", msg: error.message });
@@ -221,8 +242,7 @@ router.get("/profilePic", async (req, res) => {
     }
     res.status(200).send({
       status: "success",
-      data: user.profilePic.data,
-      contentType: user.profilePic.contentType,
+      data: `${process.env.cloudfrontUrl}/user/${user.profilePic}`,
     });
   } catch (error) {
     return res.status(500).json({ status: "error", msg: error.message });

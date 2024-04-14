@@ -5,6 +5,7 @@ import {login, logOut, updateImageUri, updateInfo} from '../reduxStore/reducer';
 import {useQueryClient} from 'react-query';
 import {Buffer} from 'buffer';
 import {showUpdateToast} from '../showToast';
+import {resolve} from 'path';
 export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
@@ -194,8 +195,8 @@ export const useGetProfilePicQuery = () => {
 export const useUpdateProfileMutation = () => {
   const url = requestURL.profilePic;
   const queryClient = useQueryClient();
-  const reqFunc = async (image, type) => {
-    console.log('I am sending request useUpdateProfileMutation', image, type);
+  const reqFunc = async ({image, type}) => {
+    console.log('I am sending request useUpdateProfileMutation', type);
 
     const res = await request(url, {image, type}, {method: 'patch'});
 
@@ -208,18 +209,21 @@ export const useUpdateProfileMutation = () => {
   });
 };
 
-export const useGetUserInfoQuery = () => {
+export const useGetUserInfoQuery = userId => {
   const dispatch = useDispatch();
 
-  const url = requestURL.getInfo;
+  let url = requestURL.getInfo;
+  if (userId) {
+    url += `/${userId}`;
+  }
+
   const reqFunc = async () => {
     const res = await request(url, null, {method: 'get'});
     return res;
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      // console.log('get back data is ', data);
-      if (data?.userInfo) {
+      if (data?.userInfo && !userId) {
         dispatch(updateInfo(data?.userInfo));
       }
     },
@@ -234,7 +238,6 @@ export const useGetUserIdQuery = () => {
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      // console.log('get back data is ', data);
       if (data?.userId) {
         dispatch(updateInfo(data?.userId));
       }
@@ -527,14 +530,26 @@ export const useExtracurricularQuery = userid => {
 
 export const useGetGroupsQuery = mode => {
   const url = requestURL.getGroups;
-  console.log('mode is ', mode);
+
   const reqFunc = async () => {
     const res = await request(url, {mode}, {method: 'get'}, true);
     return res;
   };
   return useQuery([url, mode], reqFunc, {
+    onSuccess: data => {},
+  });
+};
+
+export const useGetFriendsQuery = userId => {
+  const url = requestURL.getFriends;
+  const reqFunc = async () => {
+    const res = await request(url, null, {method: 'get'}, false);
+    // console.log(res, 'friend');
+    return res;
+  };
+  return useQuery([url], reqFunc, {
     onSuccess: data => {
-      console.log('get back first groups is ', data[0]);
+      // console.log(data);
     },
   });
 };

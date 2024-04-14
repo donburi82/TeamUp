@@ -19,7 +19,7 @@ export default function SelectUserBar({callback, name, avartar}) {
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       <GreenDot callback={callback} />
       <Image
-        source={avartar}
+        source={{uri: 'https://d15r4v2fzy8iu.cloudfront.net/user/' + avartar}}
         style={{height: 40, width: 40, borderRadius: 30, marginHorizontal: 20}}
       />
       <Text style={{fontWeight: '500', fontSize: 20, color: 'black'}}>

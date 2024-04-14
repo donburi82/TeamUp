@@ -3,6 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import Icon from '../utils/demo.png';
 import {ROUTES} from '../navigator/constant';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function GroupBarComponent({navigation, group, mode}) {
   let name = 'COMP3111';
@@ -21,7 +22,21 @@ export default function GroupBarComponent({navigation, group, mode}) {
         //   initial: false,
         // });
       }}>
-      <Image source={Icon} style={styles.image} resizeMode="cover" />
+      {group?.avartar ? (
+        <Image
+          source={{uri: group?.avartar}}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      ) : (
+        <Ionicons
+          name="people"
+          size={50}
+          color="gray"
+          style={styles.imageBroken}
+        />
+      )}
+
       <View style={styles.rightInfo}>
         <View style={styles.topLine}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.bigText}>
@@ -70,7 +85,18 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: 'red',
+
     width: 60,
+    height: 60,
+    borderRadius: 10,
+    marginHorizontal: 10,
+  },
+  imageBroken: {
+    backgroundColor: 'gray',
+    textAlign: 'center',
+    lineHeight: 60,
+    width: 60,
+    color: 'white',
     height: 60,
     borderRadius: 10,
     marginHorizontal: 10,

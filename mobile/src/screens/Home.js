@@ -67,8 +67,6 @@ const updateToken = async regToken => {
       }),
     });
 
-    console.log('this is response', response, '\n');
-
     if (response.ok) {
       console.log('Token updated successfully');
     } else {
@@ -85,6 +83,7 @@ export default function Home({navigation}) {
   const category = ['Course Project', 'Course Study', 'ExtraCurricular'];
   const [activeButton, setActiveButton] = useState(0);
   const userId = useSelector(state => state?.userInfo?.userId);
+  console.log('activeButton is ', activeButton);
   const getButtonStyle = buttonId => {
     return buttonId === activeButton
       ? 'rgba(63,43,190,0.80)'
@@ -131,7 +130,7 @@ export default function Home({navigation}) {
 
     let splitDataArray = splitArray(dataArray);
     console.log(splitDataArray.length);
-
+    setUsersList([]);
     let timer; // Declare timer outside so it can be cleared on cleanup
     const processBatch = () => {
       if (splitDataArray.length) {
@@ -176,7 +175,7 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     sendRequest();
-  }, [activeButton]);
+  }, [activeButton, userId]);
 
   return (
     <>

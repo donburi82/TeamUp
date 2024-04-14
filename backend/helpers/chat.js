@@ -22,11 +22,11 @@ const s3Client = new S3Client({
   },
 });
 
-const upload = async (file) => {
+const upload = async (file, path) => {
   const key = `${uuidv4()}-${Date.now()}-${file.originalname}`;
   const params = {
     Bucket: "awsteamupbucket",
-    Key: `chat/${key}`,
+    Key: `${path}/${key}`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };
@@ -303,10 +303,11 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
     const recipients = chatRoom.members.filter(
       (member) => member._id.toString() !== senderId
     );
-    const registrationTokens = recipients.map(
-      (member) => member.registrationToken
-    );
-    console.log(registrationTokens);
+    console.log("senderId", senderId);
+    const registrationTokens = recipients
+      .map((member) => member.registrationToken)
+      .filter((token) => token !== undefined);
+    console.log("regToken", registrationTokens);
 
     const senderName = newMessage.messageFrom.name;
 
@@ -337,9 +338,10 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
       },
       tokens: registrationTokens,
     };
-
+    if (registrationTokens.length < 0) {
+      return obj;
+    }
     const response = await admin.messaging().sendMulticast(pushMessage);
-    console.log("push response", response);
 
     return obj;
   } catch (error) {

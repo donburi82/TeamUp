@@ -77,7 +77,7 @@ const Extracurricular = GroupPreference.discriminator(
 
 // User Schema
 const UserSchema = new mongoose.Schema({
-  profilePic: { data: Buffer, contentType: String },
+  profilePic: { type: String },
   name: { type: String, trim: true, default: "anonymous" },
   isAdmin: { type: Boolean, default: false },
   gender: { type: String, enum: ["M", "F"] },

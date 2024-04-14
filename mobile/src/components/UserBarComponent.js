@@ -2,11 +2,13 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import Icon from '../utils/Icon.png';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {ROUTES} from '../navigator/constant';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {requestURL} from '../utils/query/requestForReactQuery';
 export default function UserBarComponent({usersList, navigation}) {
   let name = 'Jason';
-  // let major = 'CPEG';
+
   let gender = 'M';
 
   return (
@@ -15,13 +17,25 @@ export default function UserBarComponent({usersList, navigation}) {
       onPress={() => {
         // console.log(navigation);
         // navigation.push(ROUTES.OTHERUSERINFO);
+        console.log('click into userId', usersList?._id);
         navigation.navigate(ROUTES.ChatStackNavigator, {
           screen: ROUTES.OTHERUSERINFO,
           initial: false,
           params: {userId: usersList?._id},
         });
       }}>
-      <Image source={Icon} style={styles.image} resizeMode="cover" />
+      {usersList?.profilePic ? (
+        <Image
+          source={{
+            uri: requestURL.cloudImageUri + usersList?.profilePic,
+          }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      ) : (
+        <FontAwesomeIcon name="user" size={40} style={styles.imageBroken} />
+      )}
+
       <View style={styles.rightInfo}>
         <View style={styles.topLine}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.bigText}>
@@ -44,7 +58,7 @@ export default function UserBarComponent({usersList, navigation}) {
           )}
         </View>
         <Text style={{marginTop: 5, color: 'black'}}>
-          {usersList?.major.length ? usersList?.major : 'CPEG'}
+          {usersList?.major.length ? usersList?.major.join(',') : 'CPEG'}
         </Text>
         <Text
           style={styles.smallText}
@@ -79,7 +93,17 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   image: {
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginHorizontal: 10,
+  },
+  imageBroken: {
+    color: 'white',
+    backgroundColor: 'gray',
+    textAlign: 'center',
+    lineHeight: 60,
     width: 60,
     height: 60,
     borderRadius: 30,

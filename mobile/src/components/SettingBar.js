@@ -36,10 +36,13 @@ export default function SettingBar({
   const [formData, setFormData] = React.useState(null);
   useEffect(() => {
     if (formData) {
-      updateProfile.mutateAsync(formData, mime.getType(imageUri)).then(() => {
-        showUpdateToast();
-        // setSelectedImage(imageUri);
-      });
+      console.log('here the image type is ', mime.getType(imageUri));
+      updateProfile
+        .mutateAsync({image: formData, type: mime.getType(imageUri)})
+        .then(() => {
+          showUpdateToast();
+          // setSelectedImage(imageUri);
+        });
     }
   }, [imageUri, formData]);
   if (type === 'signOut') {
