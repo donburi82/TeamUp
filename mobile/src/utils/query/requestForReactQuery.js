@@ -48,7 +48,10 @@ const requestURL = {
   chatroomInfo: 'chat/chatRoom',
   getMessages: 'chat/message',
   getGroups: 'groups',
+  createChatroom: '/chat/chatRoom',
+  getGroupInfo: '/groups/info',
   cloudImageUri: 'https://d15r4v2fzy8iu.cloudfront.net/user/',
+  socketIo: 'http://10.0.2.2:3000/',
 };
 
 async function request(url, datum, options, isGetRequest) {

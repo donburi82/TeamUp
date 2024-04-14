@@ -10,12 +10,16 @@ import {
   Dimensions,
   RefreshControl,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import {useRoute, useNavigation} from '@react-navigation/core';
 import {useGetMessageInfoQuery} from '../utils/query/customHook';
 import {request} from '../utils/query/requestForReactQuery';
+import {store} from '../utils/reduxStore';
 import Message from '../components/Message';
 import MessageBubble from '../components/MessageBubble/MessageBubble';
 import MessageInput from '../components/MessageInput';
+import io from 'socket.io-client';
+import {requestURL} from '../utils/query/requestForReactQuery';
 const screenHeight = Dimensions.get('window').height;
 // Assume 50px height for header/footer/input field, adjust based on your UI
 const otherComponentsHeight = 50;
@@ -86,9 +90,19 @@ const RenderSectionHeader = ({date}) => (
 );
 export default function ChatRoomScreen() {
   const route = useRoute();
-  const id = route.params?.id;
-  const socket = route.params?.socket;
+  const global = store.getState();
 
+  const {token} = global.userInfo;
+  const id = route.params?.id;
+  let socket = route.params?.socket;
+  if (!socket) {
+    // directly go to the chatroom through message button
+    socket = io(requestURL.socketIo, {
+      extraHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
   const chatMateName = route.params?.title;
   const [fetchTrigger, setFetchTrigger] = useState(true);
   const flatListRef = useRef();

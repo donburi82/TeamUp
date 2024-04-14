@@ -7,12 +7,12 @@ import {useGetChatRoomInfoQuery} from '../utils/query/customHook';
 import ChatRoomItem from '../components/ChatRoomItem';
 import io from 'socket.io-client';
 import {store} from '../utils/reduxStore';
-
+import {requestURL} from '../utils/query/requestForReactQuery';
 export default function TabOneScreen() {
   const global = store.getState();
 
   const {token} = global.userInfo;
-  const socket = io('http://10.0.2.2:3000/', {
+  const socket = io(requestURL.socketIo, {
     extraHeaders: {
       Authorization: `Bearer ${token}`,
     },

@@ -17,4 +17,5 @@ export const ROUTES = {
 
   ChatStackNavigator: 'Chat',
   GroupInfo: 'GroupInfo',
+  GroupInfoInGroups: 'GroupInfoInGroups',
 };

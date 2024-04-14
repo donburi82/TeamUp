@@ -1,6 +1,6 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
-
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 export default function SelectUserBar({callback, name, avartar}) {
   const [isActive, setIsActive] = useState(false); // 初始状态为非激活
 
@@ -18,10 +18,33 @@ export default function SelectUserBar({callback, name, avartar}) {
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       <GreenDot callback={callback} />
-      <Image
-        source={{uri: 'https://d15r4v2fzy8iu.cloudfront.net/user/' + avartar}}
-        style={{height: 40, width: 40, borderRadius: 30, marginHorizontal: 20}}
-      />
+      {avartar ? (
+        <Image
+          source={{uri: 'https://d15r4v2fzy8iu.cloudfront.net/user/' + avartar}}
+          style={{
+            height: 40,
+            width: 40,
+            borderRadius: 30,
+            marginHorizontal: 20,
+          }}
+        />
+      ) : (
+        <FontAwesomeIcon
+          name="user"
+          size={25}
+          style={{
+            height: 40,
+            width: 40,
+            lineHeight: 40,
+            textAlign: 'center',
+            backgroundColor: 'gray',
+            color: 'white',
+            borderRadius: 30,
+            marginHorizontal: 20,
+          }}
+        />
+      )}
+
       <Text style={{fontWeight: '500', fontSize: 20, color: 'black'}}>
         {name}
       </Text>

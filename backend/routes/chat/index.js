@@ -126,6 +126,7 @@ router
         room = await createChatRoom(members, groupId);
       } else {
         room = await createChatRoom(members);
+        console.log("room:", room);
       }
       return res.status(200).send({ status: "success", room });
     } catch (error) {

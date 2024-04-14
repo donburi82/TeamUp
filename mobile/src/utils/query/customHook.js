@@ -553,3 +553,35 @@ export const useGetFriendsQuery = userId => {
     },
   });
 };
+
+export const useCreateChatMutation = () => {
+  const url = requestURL.createChatroom;
+  // console.log('chatroom id is', chatRoomId);
+  const reqFunc = async ({members}) => {
+    console.log('member id is', members);
+    const res = await request(url, {
+      members,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+    },
+  });
+};
+
+export const useGetGroupInfoQuery = groupId => {
+  const url = requestURL.getGroupInfo;
+
+  const reqFunc = async () => {
+    console.log('group id is', groupId);
+    const res = await request(url, {groupId}, {method: 'get'}, true);
+    return res?.data;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('group info is', data);
+    },
+  });
+};
