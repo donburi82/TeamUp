@@ -1,9 +1,10 @@
 import axios from 'axios';
 import {store} from '../reduxStore';
 import {err} from 'react-native-svg/lib/typescript/xml';
-import {showErrorToast} from '../showToast';
+import {showErrorToast, showExpireToast} from '../showToast';
 import {Platform} from 'react-native';
-
+import {logOut} from '../reduxStore/reducer';
+import {create} from 'react-test-renderer';
 // iOS-specific code
 // const BASE_URL =
 //   Platform.OS === 'ios'
@@ -26,6 +27,9 @@ const axiosServices = axios.create({
 });
 
 const requestURL = {
+  userscourseproject: 'users/courseproject',
+  userscoursestudy: 'users/coursestudy',
+  usersextracurricular: 'users/extracurricular',
   sendVerificationEmail: 'auth/verification',
   verifyCode: 'auth/verify',
   register: 'auth/register',
@@ -37,12 +41,20 @@ const requestURL = {
   getUserId: 'userBasicInfo/getUserId',
   getInfo: 'userBasicInfo/getInfo',
   updateRegToken: 'userBasicInfo/registerationToken',
+  getFriends: 'userBasicInfo/friends',
   preference: 'preference',
   courseproject: 'preference/courseproject',
   coursestudy: 'preference/coursestudy',
   extracurricular: 'preference/extracurricular',
   chatroomInfo: 'chat/chatRoom',
   getMessages: 'chat/message',
+  getGroups: 'groups',
+
+  createChatroom: '/chat/chatRoom',
+  getGroupInfo: '/groups/info',
+  createGroup: '/groups',
+  cloudImageUri: 'https://d15r4v2fzy8iu.cloudfront.net/user/',
+  socketIo: 'http://10.0.2.2:3000/',
 };
 
 async function request(url, datum, options, isGetRequest) {
@@ -65,7 +77,7 @@ async function request(url, datum, options, isGetRequest) {
     else {
       axiosOptions.data = JSON.stringify(datum);
     }
-
+    // if (isGetRequest) console.log(axiosOptions);
     const res = await axiosServices(axiosOptions);
     // console.log(res.data, `get from ${url}`);
     if (!res.status.toString().startsWith('2')) {
@@ -74,6 +86,11 @@ async function request(url, datum, options, isGetRequest) {
     }
     return res.data;
   } catch (error) {
+    // console.log(error.response, 'eroor new');
+    if (error?.response?.status === 401) {
+      store.dispatch(logOut());
+      showExpireToast();
+    }
     if (error.response && error.response.data) {
       // 如果有服务器返回的错误消息，就把它作为错误对象的消息
 

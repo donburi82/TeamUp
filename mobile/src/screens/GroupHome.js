@@ -13,6 +13,7 @@ import {
   useGetProfilePicQuery,
   useGetUserInfoQuery,
   useGetUserIdQuery,
+  useGetGroupsQuery,
 } from '../utils/query/customHook';
 import BottomSheetGroup from '../components/BottomSheetGroup';
 import {useDispatch} from 'react-redux';
@@ -30,6 +31,10 @@ import {
 
 export default function GroupHome({navigation}) {
   const category = ['Your Groups', 'Explore'];
+  const myGroup = useGetGroupsQuery('my');
+  const exploreGroup = useGetGroupsQuery('available');
+  // console.log('my group is ', myGroup.data.data[0]);
+  // console.log('available group is ', exploreGroup.data.data[0]);
   const [activeButton, setActiveButton] = useState(0);
   const bottomSheetRef = useRef(null);
   const getButtonStyle = buttonId => {
@@ -92,9 +97,23 @@ export default function GroupHome({navigation}) {
         // style={{alignItems: 'center'}}
 
         contentContainerStyle={{alignItems: 'center'}}>
-        {[1, 2, 3, 4, 4, 4, 4, 4].map((item, index) => (
-          <GroupBarComponent key={index} navigation={navigation} />
-        ))}
+        {activeButton === 0
+          ? myGroup?.data?.data?.map((item, index) => (
+              <GroupBarComponent
+                key={index}
+                navigation={navigation}
+                group={item}
+                mode="my"
+              />
+            ))
+          : exploreGroup?.data?.data?.map((item, index) => (
+              <GroupBarComponent
+                key={index}
+                navigation={navigation}
+                group={item}
+                mode="available"
+              />
+            ))}
       </ScrollView>
       <TouchableOpacity
         style={styles.fixedButton}

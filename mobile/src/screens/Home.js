@@ -18,8 +18,10 @@ import {unwelcome} from '../utils/reduxStore/reducer';
 import {useDispatch} from 'react-redux';
 import InfoModal from '../components/InfoModal';
 import UserBarComponent from '../components/UserBarComponent';
+import {useSelector} from 'react-redux';
 import {ROUTES} from '../navigator/constant';
 import {store} from '../utils/reduxStore';
+
 import {
   request,
   requestURL,
@@ -65,8 +67,6 @@ const updateToken = async regToken => {
       }),
     });
 
-    console.log('this is response', response, '\n');
-
     if (response.ok) {
       console.log('Token updated successfully');
     } else {
@@ -82,6 +82,8 @@ export default function Home({navigation}) {
   const dispatch = useDispatch();
   const category = ['Course Project', 'Course Study', 'ExtraCurricular'];
   const [activeButton, setActiveButton] = useState(0);
+  const userId = useSelector(state => state?.userInfo?.userId);
+  console.log('activeButton is ', activeButton);
   const getButtonStyle = buttonId => {
     return buttonId === activeButton
       ? 'rgba(63,43,190,0.80)'
@@ -90,6 +92,7 @@ export default function Home({navigation}) {
   const _ = useGetUserInfoQuery();
   const [usersList, setUsersList] = useState([]);
   const splitArray = arr => {
+    //handle large data returned
     const splitArray = [];
     for (let i = 0; i < arr?.length; i += 10) {
       splitArray.push(arr.slice(i, i + 10));
@@ -97,10 +100,37 @@ export default function Home({navigation}) {
     return splitArray;
   };
   const sendRequest = async () => {
-    const dataArray = await request('/riverTestUsers', {}, {method: 'get'});
-    let splitDataArray = splitArray(dataArray?.data);
-    console.log(splitDataArray.length);
+    let dataArray = [];
 
+    if (activeButton === 0) {
+      const {data} = await request(
+        'users/courseproject',
+        {userId},
+        {method: 'get'},
+        true,
+      );
+      dataArray = data;
+    } else if (activeButton === 1) {
+      const {data} = await request(
+        'users/coursestudy',
+        {userId},
+        {method: 'get'},
+        true,
+      );
+      dataArray = data;
+    } else {
+      const {data} = await request(
+        'users/extracurricular',
+        {userId},
+        {method: 'get'},
+        true,
+      );
+      dataArray = data;
+    }
+
+    let splitDataArray = splitArray(dataArray);
+    console.log(splitDataArray.length);
+    setUsersList([]);
     let timer; // Declare timer outside so it can be cleared on cleanup
     const processBatch = () => {
       if (splitDataArray.length) {
@@ -145,7 +175,7 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     sendRequest();
-  }, []);
+  }, [activeButton, userId]);
 
   return (
     <>

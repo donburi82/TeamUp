@@ -1,14 +1,13 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const ObjectId = require("mongodb").ObjectId;
 
 // Word Count Validator
 const wordCountValidator = [
   {
     validator: function (s) {
       const words = s.split(/\s+/).filter(Boolean);
-      console.log(words.length);
+      // console.log(words.length);
       return words.length <= 20;
     },
     message: "The field cannot contain more than 20 words.",
@@ -116,12 +115,12 @@ const UserSchema = new mongoose.Schema({
   // for group preference & matching
   groupPreferences: [groupPreferenceSchema],
   // single array for matches - problem with deletion
-  courseProjectMatches: [ObjectId],
-  courseStudyMatches: [ObjectId],
-  extracurricularMatches: [ObjectId],
+  courseProjectMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  courseStudyMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  extracurricularMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   // for groups
-  groups: [ObjectId],
-  groupMatches: [ObjectId],
+  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
+  groupMatches: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
   // for chat
   socketId: String,
   registrationToken: String,
