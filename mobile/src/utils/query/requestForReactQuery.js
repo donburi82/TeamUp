@@ -4,6 +4,7 @@ import {err} from 'react-native-svg/lib/typescript/xml';
 import {showErrorToast, showExpireToast} from '../showToast';
 import {Platform} from 'react-native';
 import {logOut} from '../reduxStore/reducer';
+import {create} from 'react-test-renderer';
 // iOS-specific code
 // const BASE_URL =
 //   Platform.OS === 'ios'
@@ -48,8 +49,10 @@ const requestURL = {
   chatroomInfo: 'chat/chatRoom',
   getMessages: 'chat/message',
   getGroups: 'groups',
+
   createChatroom: '/chat/chatRoom',
   getGroupInfo: '/groups/info',
+  createGroup: '/groups',
   cloudImageUri: 'https://d15r4v2fzy8iu.cloudfront.net/user/',
   socketIo: 'http://10.0.2.2:3000/',
 };

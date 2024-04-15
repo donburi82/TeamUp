@@ -45,6 +45,7 @@ router.post("/", async (req, res) => {
   try {
     const leaderId = req.user.userId;
     const { name, category, project, quota, members } = req.body;
+    console.log(name, category, project, quota, members);
     const chatRoom = await createGroup(
       leaderId,
       name,

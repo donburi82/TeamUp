@@ -94,6 +94,7 @@ export default function ChatRoomScreen() {
 
   const {token} = global.userInfo;
   const id = route.params?.id;
+  console.log('id', id, 'token is', token);
   let socket = route.params?.socket;
   if (!socket) {
     // directly go to the chatroom through message button

@@ -9,9 +9,9 @@ export const MajorData = [
 ];
 
 export const category = [
-  {key: '0', value: 'Course Study'},
-  {key: '1', value: 'Course Project'},
-  {key: '2', value: 'ExtraCurricular'},
+  {key: '0', value: 'CourseStudy'},
+  {key: '1', value: 'CourseProject'},
+  {key: '2', value: 'Extracurricular'},
 ];
 export const projectPeriod = [
   {key: '0', value: '4 months'},
@@ -31,6 +31,7 @@ export const CourseData = [
   {key: '10', value: 'ACCT3011'},
   {key: '11', value: 'ELEC3011'},
   {key: '12', value: 'OCEA3011'},
+  {key: '13', value: 'N/A'},
 ];
 export const QuotaData = [
   {key: '1', value: 1},

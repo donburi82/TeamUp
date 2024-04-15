@@ -34,7 +34,9 @@ export default function GroupInfo({navigation}) {
     <ScrollView>
       <View style={styles.avatarContainer}>
         {data?.members?.map((item, idx) => (
-          <View style={{alignItems: 'center', minWidth: 90, marginTop: 20}}>
+          <View
+            style={{alignItems: 'center', minWidth: 90, marginTop: 20}}
+            key={idx}>
             <Image
               source={require('../utils/demo.png')}
               style={{

@@ -585,3 +585,24 @@ export const useGetGroupInfoQuery = groupId => {
     },
   });
 };
+
+export const useCreateGroupMutation = () => {
+  const url = requestURL.createGroup;
+  // console.log('chatroom id is', chatRoomId);
+  const reqFunc = async ({name, category, project, quota, members}) => {
+    const res = await request(url, {
+      name,
+      category,
+      project,
+      quota,
+      members,
+    });
+    console.log('create group res', res);
+    return res?.room;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+    },
+  });
+};

@@ -1,11 +1,26 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-export default function SelectUserBar({callback, name, avartar}) {
+export default function SelectUserBar({
+  callback,
+  name,
+  avartar,
+  userid,
+  setMemberList,
+}) {
   const [isActive, setIsActive] = useState(false); // 初始状态为非激活
 
   // 处理点击事件，切换小绿点的激活状态
   const handlePress = () => {
+    if (isActive) {
+      setMemberList(prev => {
+        return prev.filter(item => item !== userid);
+      });
+    } else {
+      setMemberList(prev => {
+        return [...prev, userid];
+      });
+    }
     setIsActive(!isActive); // 切换状态
   };
   const GreenDot = ({callback}) => {
