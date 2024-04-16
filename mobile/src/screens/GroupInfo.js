@@ -5,15 +5,28 @@ import SettingBar from '../components/SettingBar';
 import {useRoute} from '@react-navigation/native';
 import {ROUTES} from '../navigator/constant';
 import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
-import {useGetGroupInfoQuery} from '../utils/query/customHook';
+import {
+  useGetGroupInfoQuery,
+  useLeaveGroupMutation,
+} from '../utils/query/customHook';
+import Alert from '../components/Alert';
 export default function GroupInfo({navigation}) {
+  const [alertOpen, setAlertOpen] = React.useState(false);
   const route = useRoute();
+
   const isFromChatRoom = route?.params?.isFromChatRoom;
   const myGroup = route?.params?.myGroup;
   const groupId = route?.params?.groupId;
   console.log('groupId', groupId);
   const {data, isLoading, isError} = useGetGroupInfoQuery(groupId);
-
+  const goChatRoom = () => {
+    console.log('go chat room', data);
+    // navigation.navigate(ROUTES.ChatStackNavigator, {
+    //   screen: ROUTES.CHATROOM,
+    //   params: {id: groupId, title: data?.project, isGroup: true, socket: null},
+    // });
+  };
+  const leaveGroup = useLeaveGroupMutation(navigation);
   const sendMessage = () => {
     console.log('send message', data);
     // 假设有一个函数来判断用户是从哪个页面来的
@@ -32,6 +45,18 @@ export default function GroupInfo({navigation}) {
   };
   return (
     <ScrollView>
+      <Alert
+        open={alertOpen}
+        setOpen={setAlertOpen}
+        confirmText={'Yes, leave'}
+        handleCancel={() => {
+          setAlertOpen(false);
+        }}
+        handleConfirm={() => {
+          console.log('leave group', groupId);
+          leaveGroup.mutateAsync({groupId: groupId});
+        }}
+      />
       <View style={styles.avatarContainer}>
         {data?.members?.map((item, idx) => (
           <View
@@ -65,16 +90,18 @@ export default function GroupInfo({navigation}) {
             mb={20}
             ml={30}
             mr={30}
-            onPress={sendMessage.bind(null)}
+            onPress={goChatRoom.bind(null)}
             text="Chat"
           />
           <DebouncedWaitingButton
             mb={20}
             ml={30}
             mr={30}
-            onPress={null}
             text="Leave Group"
             style={{backgroundColor: 'red', color: 'white'}}
+            onPress={() => {
+              setAlertOpen(true);
+            }}
           />
         </>
       ) : (

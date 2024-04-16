@@ -51,6 +51,7 @@ const requestURL = {
   getGroups: 'groups',
 
   createChatroom: '/chat/chatRoom',
+
   getGroupInfo: '/groups/info',
   createGroup: '/groups',
   cloudImageUri: 'https://d15r4v2fzy8iu.cloudfront.net/user/',

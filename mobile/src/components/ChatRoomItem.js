@@ -30,7 +30,7 @@ export default function ChatRoomItem({chatRoom, socket}) {
   const onPress = () => {
     navigation.navigate(ROUTES.CHATROOM, {
       id: chatRoom.chatRoomId,
-      title: chatRoom.chatmateName || 'Group Chat',
+      title: chatRoom?.groupTitle || chatRoom?.chatmateName || 'Group Chat',
       isGroup: chatRoom.isGroup,
       socket,
     });
@@ -49,7 +49,7 @@ export default function ChatRoomItem({chatRoom, socket}) {
       <View style={styles.rightContainer}>
         <View style={styles.row}>
           <Text style={styles.name}>
-            {chatRoom?.chatmateName || user?.name}
+            {chatRoom?.groupTitle || chatRoom?.chatmateName || user?.name}
           </Text>
           <Text style={styles.text}>{time}</Text>
         </View>

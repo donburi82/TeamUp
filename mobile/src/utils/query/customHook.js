@@ -536,7 +536,9 @@ export const useGetGroupsQuery = mode => {
     return res;
   };
   return useQuery([url, mode], reqFunc, {
-    onSuccess: data => {},
+    onSuccess: data => {
+      console.log('mode is ', mode);
+    },
   });
 };
 
@@ -603,6 +605,31 @@ export const useCreateGroupMutation = () => {
   return useMutation(reqFunc, {
     onSuccess: () => {
       // showUpdateToast();
+    },
+  });
+};
+export const useLeaveGroupMutation = navigation => {
+  const url = requestURL.createGroup;
+  // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
+  const reqFunc = async ({groupId}) => {
+    const res = await request(
+      url,
+      {
+        groupId,
+      },
+      {method: 'delete'},
+      true,
+    );
+
+    return res?.room;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+      queryClient.invalidateQueries([requestURL.getGroups, 'my']);
+      // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
+      navigation.goBack();
     },
   });
 };

@@ -7,7 +7,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const admin = require("firebase-admin");
 const { getMessaging } = require("firebase-admin/messaging");
 const { Group } = require("../models/group");
-const ObjectId = require('mongodb').ObjectId;
+const ObjectId = require("mongodb").ObjectId;
 
 const serviceAccount = require("../serviceAccount.json");
 admin.initializeApp({

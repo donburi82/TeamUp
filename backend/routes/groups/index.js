@@ -21,6 +21,7 @@ router.get("/info", async (req, res) => {
     const group = await getGroupInfo(groupId);
     return res.status(200).json({ success: true, data: group });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ success: false, error: error });
   }
 });
@@ -75,9 +76,11 @@ router.delete("/", async (req, res) => {
   try {
     const userId = req.user.userId;
     const { groupId } = req.query;
+    console.log("delete group", groupId);
     await deleteGroup(userId, groupId);
     return res.status(200).json({ success: true });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ success: false, error: error });
   }
 });

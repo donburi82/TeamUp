@@ -38,13 +38,18 @@ export default function ChatStackNavigator({navigation}) {
         name={ROUTES.CHATROOM}
         component={ChatRoom}
         options={({route}) => ({
-          headerTitle: () => <ChatRoomHeader id={route.params?.title} />,
+          headerTitle: () => <ChatRoomHeader title={route.params?.title} />,
 
           headerRight: () =>
             route.params?.isGroup ? (
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate(ROUTES.GroupInfo);
+                  navigation.navigate(ROUTES.GroupInfo, {
+                    myGroup: true,
+                    groupId: route.params?.id,
+                    title: route.params?.title,
+                    isFromChatRoom: true,
+                  });
                 }}>
                 <EntypoIcon
                   name="dots-three-horizontal"
@@ -59,7 +64,7 @@ export default function ChatStackNavigator({navigation}) {
         name={ROUTES.GroupInfo}
         component={GroupInfo}
         options={({route}) => ({
-          headerTitle: () => <Text>Group Title</Text>,
+          headerTitle: () => ChatRoomHeader({passedTitle: route.params?.title}),
         })}
         // set it to be the default screen
       />
@@ -68,13 +73,13 @@ export default function ChatStackNavigator({navigation}) {
   );
 }
 
-function ChatRoomHeader() {
+function ChatRoomHeader({passedTitle}) {
   const route = useRoute();
   const title = route?.params?.title;
   return (
     <View>
       <Text style={{fontSize: 24, fontWeight: 800, color: 'black'}}>
-        {title}
+        {passedTitle || title}
       </Text>
     </View>
   );
