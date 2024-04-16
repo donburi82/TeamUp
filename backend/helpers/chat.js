@@ -7,7 +7,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const admin = require("firebase-admin");
 const { getMessaging } = require("firebase-admin/messaging");
 const { Group } = require("../models/group");
-const ObjectId = require('mongodb').ObjectId;
+const ObjectId = require("mongodb").ObjectId;
 
 const serviceAccount = require("../serviceAccount.json");
 admin.initializeApp({
@@ -451,7 +451,8 @@ const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
 const getChatRoomsForUser = async (userId) => {
   try {
     // Find user with chat rooms
-    let groupTitle;
+    let groupTitle = null;
+    let groupId = null;
     const user = await User.findById(userId).populate({
       path: "chatRooms",
       populate: {
@@ -489,11 +490,14 @@ const getChatRoomsForUser = async (userId) => {
           chatmateName = otherMember.name;
           senderProfilePic = otherMember.profilePic || null;
         } else {
-          groupTitle = (await Group.findById(chatRoom.groupId)).project;
+          const group = await Group.findById(chatRoom.groupId);
+          groupTitle = group.project;
+          groupId = group._id;
         }
 
         return {
           groupTitle,
+          groupId,
           chatRoomId: chatRoom._id,
           lastTS: chatRoom.lastTS,
           isGroup: chatRoom.isGroup,
