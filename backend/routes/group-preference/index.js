@@ -10,82 +10,57 @@ const {
 } = require("../../helpers/preference");
 
 router.get("/", async (req, res) => {
-  console.log("called get preference");
   try {
-    const { userId, groupType } = req.query;
+    const userId = req.user.userId;
+    const { groupType } = req.query;
     const preferences = await getGroupPreferences(userId, groupType);
-    console.log(preferences);
     return res.status(200).json({ success: true, data: preferences });
   } catch (error) {
-    console.log(error);
-    return res.status(401).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
 });
 
 router.post("/courseproject", async (req, res) => {
   try {
-    console.log(req.body);
-    await createCourseProjectPreference(
-      req.body.userId,
-      req.body.courseCode,
-      req.body.semester,
-      req.body.projectInterest,
-      req.body.skillset,
-      req.body.targetGrade,
-      req.body.experience
-    );
+    const userId = req.user.userId;
+    const { courseCode, semester, projectInterest, skillset, targetGrade, experience } = req.body;
+    await createCourseProjectPreference(userId, courseCode, semester, projectInterest, skillset, targetGrade, experience);
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
-    return res.status(401).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
 });
 
 router.post("/coursestudy", async (req, res) => {
   try {
-    console.log(req.body);
-    await createCourseStudyPreference(
-      req.body.userId,
-      req.body.courseCode,
-      req.body.semester,
-      req.body.targetGrade,
-      req.body.preferredLanguage
-    );
+    const userId = req.user.userId;
+    const { courseCode, semester, targetGrade, preferredLanguage } = req.body;
+    await createCourseStudyPreference(userId, courseCode, semester, targetGrade, preferredLanguage);
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
-    return res.status(401).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
 });
 
 router.post("/extracurricular", async (req, res) => {
   try {
-    console.log(req.body);
-    await createExtracurricularPreference(
-      req.body.userId,
-      req.body.projectInterest,
-      req.body.skillset,
-      req.body.experience,
-      req.body.preferredLanguage
-    );
+    const userId = req.user.userId;
+    const { projectInterest, skillset, experience, preferredLanguage } = req.body;
+    await createExtracurricularPreference(userId, projectInterest, skillset, experience, preferredLanguage);
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
-    return res.status(401).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
 });
 
 router.delete("/", async (req, res) => {
   try {
-    console.log("call delete");
-    const { userId, preferenceId } = req.query;
-    console.log(userId, preferenceId);
-    const result = await deleteGroupPreference(userId, preferenceId);
-    // console.log(result);
+    const userId = req.user.userId;
+    const { preferenceId } = req.query;
+    await deleteGroupPreference(userId, preferenceId);
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
-    return res.status(401).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
 });
 

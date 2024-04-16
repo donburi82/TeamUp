@@ -42,11 +42,11 @@ app.use(express.json());
 app.use(cors());
 app.use("/auth", authRoute);
 app.use("/userBasicInfo", auth, userBasicInfoRoute);
-app.use("/preference", groupPreference);
+app.use("/preference", auth, groupPreference);
 app.use("/admin", auth, adminAuth, adminRoute);
 app.use("/chat", auth, chatAuth);
-app.use("/users", usersRoute);
-app.use("/groups", groupsRoute);
+app.use("/users", auth, usersRoute);
+app.use("/groups", auth, groupsRoute);
 
 io.use((socket, next) => {
   if (socket.handshake.headers.authorization) {

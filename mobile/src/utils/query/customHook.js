@@ -5,6 +5,7 @@ import {login, logOut, updateImageUri, updateInfo} from '../reduxStore/reducer';
 import {useQueryClient} from 'react-query';
 import {Buffer} from 'buffer';
 import {showUpdateToast} from '../showToast';
+import {resolve} from 'path';
 export const useSendVerificationEmailMutation = () => {
   const url = requestURL.sendVerificationEmail;
   const reqFunc = async email => {
@@ -194,9 +195,11 @@ export const useGetProfilePicQuery = () => {
 export const useUpdateProfileMutation = () => {
   const url = requestURL.profilePic;
   const queryClient = useQueryClient();
-  const reqFunc = async (image, type) => {
-    console.log('I am sending request useUpdateProfileMutation', image, type);
+  const reqFunc = async ({image, type}) => {
+    console.log('I am sending request useUpdateProfileMutation', type);
+
     const res = await request(url, {image, type}, {method: 'patch'});
+
     return res;
   };
   return useMutation(reqFunc, {
@@ -206,18 +209,21 @@ export const useUpdateProfileMutation = () => {
   });
 };
 
-export const useGetUserInfoQuery = () => {
+export const useGetUserInfoQuery = userId => {
   const dispatch = useDispatch();
 
-  const url = requestURL.getInfo;
+  let url = requestURL.getInfo;
+  if (userId) {
+    url += `/${userId}`;
+  }
+
   const reqFunc = async () => {
     const res = await request(url, null, {method: 'get'});
     return res;
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      // console.log('get back data is ', data);
-      if (data?.userInfo) {
+      if (data?.userInfo && !userId) {
         dispatch(updateInfo(data?.userInfo));
       }
     },
@@ -232,7 +238,6 @@ export const useGetUserIdQuery = () => {
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      // console.log('get back data is ', data);
       if (data?.userId) {
         dispatch(updateInfo(data?.userId));
       }
@@ -481,4 +486,123 @@ export const useGetMessageInfoQuery = (
   };
 
   return useQuery(['messageInfo'], reqFunc, options);
+};
+
+export const useCourseprojectQuery = userid => {
+  let dataArray = [];
+  const url = requestURL.userscourseproject;
+  const reqFunc = async () => {
+    const res = await request(url, {userid}, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('get back data is ', data);
+    },
+  });
+};
+export const useCourseStudyQuery = userid => {
+  let dataArray = [];
+  const url = requestURL.userscoursestudy;
+  const reqFunc = async () => {
+    const res = await request(url, {userid}, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('get back data is ', data);
+    },
+  });
+};
+export const useExtracurricularQuery = userid => {
+  let dataArray = [];
+  const url = requestURL.usersextracurricular;
+  const reqFunc = async () => {
+    const res = await request(url, {userid}, {method: 'get'});
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('get back data is ', data);
+    },
+  });
+};
+
+export const useGetGroupsQuery = mode => {
+  const url = requestURL.getGroups;
+
+  const reqFunc = async () => {
+    const res = await request(url, {mode}, {method: 'get'}, true);
+    return res;
+  };
+  return useQuery([url, mode], reqFunc, {
+    onSuccess: data => {},
+  });
+};
+
+export const useGetFriendsQuery = userId => {
+  const url = requestURL.getFriends;
+  const reqFunc = async () => {
+    const res = await request(url, null, {method: 'get'}, false);
+    // console.log(res, 'friend');
+    return res;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      // console.log(data);
+    },
+  });
+};
+
+export const useCreateChatMutation = () => {
+  const url = requestURL.createChatroom;
+  // console.log('chatroom id is', chatRoomId);
+  const reqFunc = async ({members}) => {
+    console.log('member id is', members);
+    const res = await request(url, {
+      members,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+    },
+  });
+};
+
+export const useGetGroupInfoQuery = groupId => {
+  const url = requestURL.getGroupInfo;
+
+  const reqFunc = async () => {
+    console.log('group id is', groupId);
+    const res = await request(url, {groupId}, {method: 'get'}, true);
+    return res?.data;
+  };
+  return useQuery([url], reqFunc, {
+    onSuccess: data => {
+      console.log('group info is', data);
+    },
+  });
+};
+
+export const useCreateGroupMutation = () => {
+  const url = requestURL.createGroup;
+  // console.log('chatroom id is', chatRoomId);
+  const reqFunc = async ({name, category, project, quota, members}) => {
+    const res = await request(url, {
+      name,
+      category,
+      project,
+      quota,
+      members,
+    });
+    console.log('create group res', res);
+    return res?.room;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+    },
+  });
 };

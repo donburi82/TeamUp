@@ -9,6 +9,7 @@ import {useRoute} from '@react-navigation/native';
 import {Platform} from 'react-native';
 import GroupHome from '../screens/GroupHome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import GroupInfo from '../screens/GroupInfo';
 const GroupStack = createNativeStackNavigator();
 
 export default function GroupStackNavigator() {
@@ -32,6 +33,13 @@ export default function GroupStackNavigator() {
         options={{
           title: 'Groups',
         }}
+      />
+      <GroupStack.Screen
+        name={ROUTES.GroupInfoInGroups}
+        component={GroupInfo}
+        options={({route}) => ({
+          headerTitle: () => <ChatRoomHeader id={route.params?.title} />,
+        })}
       />
     </GroupStack.Navigator>
   );

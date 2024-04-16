@@ -30,7 +30,8 @@ export default function ChatRoomItem({chatRoom, socket}) {
   const onPress = () => {
     navigation.navigate(ROUTES.CHATROOM, {
       id: chatRoom.chatRoomId,
-      title: chatRoom.chatmateName,
+      title: chatRoom.chatmateName || 'Group Chat',
+      isGroup: chatRoom.isGroup,
       socket,
     });
   };

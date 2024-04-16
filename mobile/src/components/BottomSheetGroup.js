@@ -12,6 +12,7 @@ import {
   Button,
   ButtonText,
   Select,
+  set,
 } from '@gluestack-ui/themed';
 import React, {useRef, useState, useEffect} from 'react';
 
@@ -19,22 +20,75 @@ import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-import {CourseData, category, projectPeriod} from '../utils/data';
-
+import {
+  CourseData,
+  category as categoryData,
+  projectPeriod,
+  QuotaData,
+} from '../utils/data';
+import {useGetFriendsQuery} from '../utils/query/customHook';
 import {
   SelectList,
   MultipleSelectList,
 } from 'react-native-dropdown-select-list';
+import {ROUTES} from '../navigator/constant';
+import {useCreateGroupMutation} from '../utils/query/customHook';
 import DebouncedWaitingButton from './DebouncedWaitingButton';
 import SelectUserBar from './SelectUserBar';
+import {useNavigation} from '@react-navigation/native';
 
 export default function BottomWindow({reference, activeButton}) {
   const [courseCode, setCourseCode] = useState('');
   const [category, setCategory] = useState('');
   const [period, setPeriod] = useState('');
+  const [groupName, setGroupName] = useState('');
+  const [quota, setQuota] = useState(null);
+  const [memberList, setMemberList] = useState([]);
+  let friendList = [];
+  const createGroupHook = useCreateGroupMutation();
+  const navigation = useNavigation();
 
-  const handleDone = () => {
+  try {
+    const {data} = useGetFriendsQuery();
+    friendList = data?.friends ? data?.friends : [];
+  } catch (e) {
+    console.log('get friends failed', e);
+  }
+  const resetfield = () => {
+    setCourseCode('');
+    setCategory('');
+    setPeriod('');
+    setGroupName('');
+    setQuota('');
+
     reference?.current?.close();
+  };
+  const handleDone = async () => {
+    console.log(courseCode, category, period, groupName, quota, memberList);
+    try {
+      const room = await createGroupHook.mutateAsync({
+        name: groupName,
+        category,
+        project: courseCode,
+        quota,
+        members: memberList,
+      });
+      // console.log('group data is', room);
+      resetfield();
+      if (room) {
+        // console.log('create group success', room);
+        setTimeout(() => {
+          navigation.navigate(ROUTES.ChatStackNavigator, {
+            screen: ROUTES.CHATROOM,
+            initial: false,
+
+            params: {id: room, title: groupName, isGroup: true},
+          });
+        }, 100);
+      }
+    } catch (e) {
+      console.log('create group failed', e);
+    }
   };
 
   // variables
@@ -56,6 +110,7 @@ export default function BottomWindow({reference, activeButton}) {
           bg={null}
           style={{...styles.button, width: 90}}
           onPress={() => {
+            resetfield();
             reference?.current?.close();
           }}>
           <ButtonText color="black">Cancel</ButtonText>
@@ -64,18 +119,35 @@ export default function BottomWindow({reference, activeButton}) {
           style={styles.button}
           fontSize="$md"
           bg="#4fbe28"
-          disabled={false}
-          opacity={false ? 0.4 : 1}
+          disabled={!groupName || !courseCode || !category || !quota}
+          opacity={!groupName || !courseCode || !category || !quota ? 0.4 : 1}
           onPress={handleDone}
           text="Done"
         />
       </View>
       <ScrollView style={styles.container}>
         <View>
+          <Text style={styles.textStyle}>Group Name</Text>
+          <TextInput
+            style={{
+              ...styles.boxStyle,
+              paddingLeft: 20,
+              // borderRadius: 0,
+              // textAlignVertical: 'top',
+            }}
+            // multiline
+            numberOfLines={1} // You can adjust the number of lines
+            onChangeText={setGroupName}
+            value={groupName}
+            placeholder=" "
+          />
+        </View>
+        <View>
           <Text style={styles.textStyle}>Course Code</Text>
           <SelectList
+            key={courseCode}
             setSelected={setCourseCode}
-            placeholder={' '}
+            placeholder={courseCode}
             boxStyles={styles.boxStyle}
             search={false}
             data={CourseData}
@@ -86,61 +158,39 @@ export default function BottomWindow({reference, activeButton}) {
         <View>
           <Text style={styles.textStyle}>Category</Text>
           <SelectList
+            key={category}
             setSelected={setCategory}
-            placeholder={' '}
+            placeholder={category}
             boxStyles={styles.boxStyle}
             search={false}
-            data={category}
+            data={categoryData}
             dropdownStyles={styles.dropDownStyle}
             save="value"
           />
         </View>
 
         <View style={{marginBottom: 40}}>
-          <Text style={styles.textStyle}>Project Period</Text>
+          <Text style={styles.textStyle}>Quota</Text>
           <SelectList
-            setSelected={setPeriod}
-            placeholder={' '}
+            key={quota}
+            setSelected={setQuota}
+            placeholder={quota}
             boxStyles={styles.boxStyle}
             search={false}
-            data={period}
+            data={QuotaData}
             dropdownStyles={styles.dropDownStyle}
             save="value"
           />
         </View>
         {/* <Text style={styles.textStyle}>Select Users</Text> */}
-        {[
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-          {
-            name: 'River',
-            avartar: require('../utils/demo.png'),
-            callback: null,
-          },
-        ].map((item, index) => (
+        {friendList?.map((item, index) => (
           <SelectUserBar
             key={index}
+            userid={item._id}
             name={item.name}
-            avartar={item.avartar}
+            avartar={item.profilePic}
             callback={item.callback}
+            setMemberList={setMemberList}
           />
         ))}
       </ScrollView>
