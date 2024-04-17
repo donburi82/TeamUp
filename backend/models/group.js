@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const GroupSchema = new mongoose.Schema({
-    leaderID: { type: mongoose.Schema.Types.ObjectId, required: true },
+    leaderID: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     name: { type: String, required: true },
     category: {
         type: String,
@@ -12,9 +12,9 @@ const GroupSchema = new mongoose.Schema({
     project: { type: String, required: true },
     // projectPeriod
     quota: { type: Number, required: true },
-    members: [mongoose.Schema.Types.ObjectId],
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     finalized: { type: Boolean, default: false },
-    chatRoomID: { type: mongoose.Schema.Types.ObjectId },
+    chatRoomID: { type: mongoose.Schema.Types.ObjectId, ref: "ChatRoom" },
 });
 
 const Group = mongoose.model("Group", GroupSchema);
