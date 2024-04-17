@@ -14,7 +14,7 @@ const {
 
 async function getGroupInfo(groupId) {
     try {
-        const group = await Group.findOne({ _id: new ObjectId(groupId) });
+        const group = await Group.findOne({ _id: new ObjectId(groupId) }).populate('members');
         if (!group) {
             throw new Error("Group not found");
         }

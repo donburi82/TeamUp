@@ -451,7 +451,8 @@ const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
 const getChatRoomsForUser = async (userId) => {
   try {
     // Find user with chat rooms
-    let groupTitle;
+    let groupTitle = null;
+    let groupId = null;
     const user = await User.findById(userId).populate({
       path: "chatRooms",
       populate: {
@@ -489,11 +490,14 @@ const getChatRoomsForUser = async (userId) => {
           chatmateName = otherMember.name;
           senderProfilePic = otherMember.profilePic || null;
         } else {
-          groupTitle = (await Group.findById(chatRoom.groupId)).project;
+          const group = await Group.findById(chatRoom.groupId);
+          groupTitle = group.project;
+          groupId = group._id;
         }
 
         return {
           groupTitle,
+          groupId,
           chatRoomId: chatRoom._id,
           lastTS: chatRoom.lastTS,
           isGroup: chatRoom.isGroup,
