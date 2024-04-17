@@ -9,6 +9,7 @@ import {useRoute} from '@react-navigation/native';
 import {Platform} from 'react-native';
 import GroupInfo from '../screens/GroupInfo';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import {HeaderBackButton} from '@react-navigation/elements';
 const ChatStack = createNativeStackNavigator();
 
 export default function ChatStackNavigator({navigation}) {
@@ -39,35 +40,46 @@ export default function ChatStackNavigator({navigation}) {
         component={ChatRoom}
         options={({route}) => ({
           headerTitle: () => <ChatRoomHeader title={route.params?.title} />,
-
-          headerRight: () =>
-            route.params?.isGroup ? (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate(ROUTES.GroupInfo, {
-                    myGroup: true,
-                    groupId: route.params?.id,
-                    title: route.params?.title,
-                    isFromChatRoom: true,
-                  });
-                }}>
-                <EntypoIcon
-                  name="dots-three-horizontal"
-                  size={30}
-                  color="black"
-                />
-              </TouchableOpacity>
-            ) : null,
+          // 砍掉这个功能好了，有点麻烦
+          // headerRight: () =>
+          //   route.params?.isGroup ? (
+          //     <TouchableOpacity
+          //       onPress={() => {
+          //         // title: group?.project,
+          //         // groupId: group?._id,
+          //         // myGroup: mode === 'my',
+          //         // chatRoomID: group?.chatRoomID,
+          //         console.log(
+          //           'chatroom navigation to groupInfo',
+          //           route.params?.groupId,
+          //         );
+          //         navigation.navigate(ROUTES.GroupInfo, {
+          //           // 从chatRoomItem 过来的话这几个route的参数都可以拿到，如果是
+          //           myGroup: true,
+          //           groupId: route.params?.groupId, // this is chatroom id i need group
+          //           title: route.params?.title,
+          //           isFromChatRoom: true,
+          //         });
+          //       }}>
+          //       <EntypoIcon
+          //         name="dots-three-horizontal"
+          //         size={30}
+          //         color="black"
+          //       />
+          //     </TouchableOpacity>
+          //   ) : null,
         })}
       />
-      <ChatStack.Screen
+      {/* <ChatStack.Screen
         name={ROUTES.GroupInfo}
         component={GroupInfo}
         options={({route}) => ({
           headerTitle: () => ChatRoomHeader({passedTitle: route.params?.title}),
+          
+         
         })}
-        // set it to be the default screen
-      />
+      
+      /> */}
       <ChatStack.Screen name={ROUTES.OTHERUSERINFO} component={OtherUserInfo} />
     </ChatStack.Navigator>
   );

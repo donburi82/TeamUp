@@ -5,11 +5,15 @@ import SettingBar from '../components/SettingBar';
 import {useRoute} from '@react-navigation/native';
 import {ROUTES} from '../navigator/constant';
 import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
+import {TouchableOpacity} from 'react-native';
 import {
   useGetGroupInfoQuery,
   useLeaveGroupMutation,
 } from '../utils/query/customHook';
 import Alert from '../components/Alert';
+import {requestURL} from '../utils/query/requestForReactQuery';
+import {HeaderBackButton} from '@react-navigation/elements';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 export default function GroupInfo({navigation}) {
   const [alertOpen, setAlertOpen] = React.useState(false);
   const route = useRoute();
@@ -17,16 +21,32 @@ export default function GroupInfo({navigation}) {
   const isFromChatRoom = route?.params?.isFromChatRoom;
   const myGroup = route?.params?.myGroup;
   const groupId = route?.params?.groupId;
-  console.log('groupId', groupId);
+  // const chatRoomID = route?.params?.chatRoomID;
+  console.log(
+    'groupId in groupInfo is',
+    groupId,
+    myGroup,
+    chatRoomID,
+    route?.params,
+  );
   const {data, isLoading, isError} = useGetGroupInfoQuery(groupId);
+  const chatRoomID = data?.chatRoomID;
   const goChatRoom = () => {
     console.log('go chat room', data);
-    // navigation.navigate(ROUTES.ChatStackNavigator, {
-    //   screen: ROUTES.CHATROOM,
-    //   params: {id: groupId, title: data?.project, isGroup: true, socket: null},
-    // });
+    navigation.navigate(ROUTES.ChatStackNavigator, {
+      screen: ROUTES.CHATROOM,
+      initial: false,
+      params: {
+        id: chatRoomID,
+        title: data?.project,
+        isGroup: true,
+        groupId: groupId,
+        socket: null,
+      },
+    });
   };
   const leaveGroup = useLeaveGroupMutation(navigation);
+
   const sendMessage = () => {
     console.log('send message', data);
     // 假设有一个函数来判断用户是从哪个页面来的
@@ -63,16 +83,35 @@ export default function GroupInfo({navigation}) {
             style={{alignItems: 'center', minWidth: 90, marginTop: 20}}
             key={idx}>
             <Image
-              source={require('../utils/demo.png')}
+              source={{uri: requestURL.cloudImageUri + item?.profilePic}}
               style={{
                 height: 40,
                 width: 40,
                 borderRadius: 30,
               }}
             />
-            <Text>{item.slice(0, 8)}</Text>
+            <Text>{item?.name}</Text>
           </View>
         ))}
+        {myGroup ? (
+          <TouchableOpacity
+            onPress={() => {}}
+            style={{
+              minWidth: 90,
+              marginTop: 20,
+              borderRadius: 30,
+            }}>
+            <AntIcon
+              name="pluscircle"
+              size={40}
+              color="rgba(63,43,190,0.50)"
+              style={{
+                textAlign: 'center',
+                lineHeight: 40,
+              }}
+            />
+          </TouchableOpacity>
+        ) : null}
       </View>
       <SettingBar text="Category" type="basicInfo" disableEdit={true}>
         <Text style={styles.textStyle}>{data?.category}</Text>

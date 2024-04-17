@@ -15,11 +15,12 @@ export default function GroupBarComponent({navigation, group, mode}) {
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
-        // console.log(navigation);
+        console.log('navigation to', group?.chatRoomID);
         navigation.push(ROUTES.GroupInfoInGroups, {
           title: group?.project,
           groupId: group?._id,
           myGroup: mode === 'my',
+          chatRoomID: group?.chatRoomID,
         });
       }}>
       {group?.avartar ? (
