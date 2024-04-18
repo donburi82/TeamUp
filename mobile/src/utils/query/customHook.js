@@ -591,6 +591,7 @@ export const useGetGroupInfoQuery = groupId => {
 export const useCreateGroupMutation = () => {
   const url = requestURL.createGroup;
   // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
   const reqFunc = async ({name, category, project, quota, members}) => {
     const res = await request(url, {
       name,
@@ -605,6 +606,7 @@ export const useCreateGroupMutation = () => {
   return useMutation(reqFunc, {
     onSuccess: () => {
       // showUpdateToast();
+      queryClient.invalidateQueries([requestURL.getGroups, 'my']);
     },
   });
 };
@@ -633,11 +635,11 @@ export const useLeaveGroupMutation = navigation => {
     },
   });
 };
-export const useAddMemberMutation = () => {
+export const useAddMemberMutation = groupId => {
   const url = requestURL.addMembers;
   // console.log('chatroom id is', chatRoomId);
   const queryClient = useQueryClient();
-  const reqFunc = async ({groupId, members}) => {
+  const reqFunc = async ({members}) => {
     console.log('add member called', groupId, members);
     const res = await request(url, {
       groupId,

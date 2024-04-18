@@ -111,12 +111,7 @@ router.post("/members", async (req, res) => {
   try {
     const userId = req.user.userId;
     const { groupId, members } = req.body;
-    ConfigurationServicePlaceholders.log(
-      "addMembers",
-      userId,
-      groupId,
-      members
-    );
+    console.log("addMembers", userId, groupId, members);
     await addMembers(userId, groupId, members);
     return res.status(200).json({ success: true });
   } catch (error) {

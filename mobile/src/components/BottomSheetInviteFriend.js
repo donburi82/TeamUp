@@ -42,7 +42,7 @@ export default function BottomSheetInviteFriend({
   let friendList = [];
   // const createGroupHook = useCreateGroupMutation();
   const navigation = useNavigation();
-  const addMemberHook = useAddMemberMutation();
+  const addMemberHook = useAddMemberMutation(groupId);
   try {
     const {data} = useGetFriendsQuery();
     friendList = data?.friends ? data?.friends : [];
@@ -55,7 +55,6 @@ export default function BottomSheetInviteFriend({
   const handleDone = async () => {
     try {
       addMemberHook.mutateAsync({
-        groupId,
         members: memberList,
       });
       // const room = await createGroupHook.mutateAsync({
