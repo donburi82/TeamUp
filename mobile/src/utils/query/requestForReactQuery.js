@@ -49,7 +49,7 @@ const requestURL = {
   chatroomInfo: 'chat/chatRoom',
   getMessages: 'chat/message',
   getGroups: 'groups',
-
+  addMembers: 'groups/members',
   createChatroom: '/chat/chatRoom',
 
   getGroupInfo: '/groups/info',

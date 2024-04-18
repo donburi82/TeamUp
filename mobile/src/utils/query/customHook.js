@@ -581,9 +581,9 @@ export const useGetGroupInfoQuery = groupId => {
     const res = await request(url, {groupId}, {method: 'get'}, true);
     return res?.data;
   };
-  return useQuery([url], reqFunc, {
+  return useQuery([url, groupId], reqFunc, {
     onSuccess: data => {
-      console.log('group info is', data);
+      // console.log('group info is', data);
     },
   });
 };
@@ -630,6 +630,27 @@ export const useLeaveGroupMutation = navigation => {
       queryClient.invalidateQueries([requestURL.getGroups, 'my']);
       // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
       navigation.goBack();
+    },
+  });
+};
+export const useAddMemberMutation = () => {
+  const url = requestURL.addMembers;
+  // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
+  const reqFunc = async ({groupId, members}) => {
+    console.log('add member called', groupId, members);
+    const res = await request(url, {
+      groupId,
+      members,
+    });
+    console.log('add member called successfully', res);
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      showUpdateToast();
+      queryClient.invalidateQueries([requestURL.getGroupInfo, groupId]);
+      // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
     },
   });
 };
