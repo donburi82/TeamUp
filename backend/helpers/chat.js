@@ -491,8 +491,10 @@ const getChatRoomsForUser = async (userId) => {
           senderProfilePic = otherMember.profilePic || null;
         } else {
           const group = await Group.findById(chatRoom.groupId);
-          groupTitle = group.project;
-          groupId = group._id;
+          if (group) {
+            groupTitle = group.project;
+            groupId = group._id;
+          }
         }
 
         return {
