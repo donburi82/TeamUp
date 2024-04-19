@@ -73,14 +73,18 @@ export default function MessageBubble({message}) {
         />
       )}
       {messageType === 'audio' && (
-        <Video
-          source={{
-            uri: `https://d15r4v2fzy8iu.cloudfront.net/chat/${messageData}`,
-          }}
-          audioOnly={true}
-          controls={true}
-          style={{width: '100%', height: 50}}
-        />
+        <Text
+          style={
+            styles.messageText
+          }>{`[Oops! Audio is not support any more in this version of app]`}</Text>
+        // <Video
+        //   source={{
+        //     uri: `https://d15r4v2fzy8iu.cloudfront.net/chat/${messageData}`,
+        //   }}
+        //   audioOnly={true}
+        //   controls={true}
+        //   style={{width: '100%', height: 50}}
+        // />
         // <Text style={styles.messageText}>Audio Message</Text>
       )}
     </View>

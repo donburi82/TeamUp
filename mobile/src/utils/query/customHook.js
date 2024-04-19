@@ -445,6 +445,7 @@ export const useGetChatRoomInfoQuery = () => {
     onSuccess: data => {
       // console.log('Extracurricular', data);
     },
+    refetchInterval: 5000,
   });
 };
 
