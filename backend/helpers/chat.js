@@ -282,7 +282,8 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
       select: "name _id profilePic",
     });
 
-    chatRoom.messages.push(newMessage);
+    chatRoom.messages = [...chatRoom.messages, newMessage];
+    chatRoom.markModified("messages");
     chatRoom.lastTS = newMessage.sentDate;
     await chatRoom.save();
 
@@ -472,6 +473,7 @@ const getChatRoomsForUser = async (userId) => {
     // Extract relevant information from chat rooms
     const chatRooms = await Promise.all(
       user.chatRooms.map(async (chatRoom) => {
+        console.log("hehe", chatRoom);
         const lastMessage =
           chatRoom.messages.length > 0
             ? await Message.findById(
