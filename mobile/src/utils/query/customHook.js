@@ -181,12 +181,11 @@ export const useGetProfilePicQuery = () => {
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      if (data?.data?.data) {
-        const byteArray = new Uint8Array(data.data.data);
-        const base64String = Buffer.from(byteArray).toString('base64');
-        const imageData = `data:${data.contentType};base64,${base64String}`;
+      if (data?.data) {
+        const imageUri = data?.data;
+        // const
 
-        dispatch(updateImageUri({imageUri: imageData}));
+        dispatch(updateImageUri({imageUri}));
       }
     },
   });
@@ -439,6 +438,7 @@ export const useGetChatRoomInfoQuery = () => {
   const url = requestURL.chatroomInfo;
   const reqFunc = async () => {
     const res = await request(url, {}, {method: 'get'}, true);
+
     return res?.chatRooms;
   };
   return useQuery(['chatroomInfo'], reqFunc, {
@@ -652,6 +652,24 @@ export const useAddMemberMutation = groupId => {
     onSuccess: () => {
       showUpdateToast();
       queryClient.invalidateQueries([requestURL.getGroupInfo, groupId]);
+      // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
+    },
+  });
+};
+export const useCheckMemberMutation = () => {
+  const url = requestURL.checkExist;
+  // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
+  const reqFunc = async ({leaderId}) => {
+    const res = await request(url, {
+      leaderId,
+    });
+    console.log('check member called successfully', res);
+    return res?.chatRoom;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // queryClient.invalidateQueries([requestURL.getGroupInfo, groupId]);
       // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
     },
   });

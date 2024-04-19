@@ -9,6 +9,7 @@ import {TouchableOpacity} from 'react-native';
 import {
   useGetGroupInfoQuery,
   useLeaveGroupMutation,
+  useCheckMemberMutation,
 } from '../utils/query/customHook';
 import Alert from '../components/Alert';
 import {requestURL} from '../utils/query/requestForReactQuery';
@@ -22,14 +23,9 @@ export default function GroupInfo({navigation}) {
   const myGroup = route?.params?.myGroup;
   const groupId = route?.params?.groupId;
   const bottomSheetRef = useRef(null);
+  const checkMemberHook = useCheckMemberMutation();
   // const chatRoomID = route?.params?.chatRoomID;
-  console.log(
-    'groupId in groupInfo is',
-    groupId,
-    myGroup,
-    chatRoomID,
-    route?.params,
-  );
+
   const {data, isLoading, isError} = useGetGroupInfoQuery(groupId);
   const chatRoomID = data?.chatRoomID;
   const goChatRoom = () => {
@@ -48,21 +44,27 @@ export default function GroupInfo({navigation}) {
   };
   const leaveGroup = useLeaveGroupMutation(navigation);
 
-  const sendMessage = () => {
-    console.log('send message', data);
-    // 假设有一个函数来判断用户是从哪个页面来的
-    // if (isFromChatRoom) {
-    //   // 如果是从聊天室页面进入的，返回聊天室
-    //   navigation.goBack();
-    // } else {
-    //   // 如果是从用户列表等其他页面进入的，导航到聊天室页面
-    //   // 假设聊天室ID是chatRoomId
-    //   // navigation.goBack();
-    //   navigation.navigate(ROUTES.CHATHOME, {
-    //     screen: ROUTES.CHATROOM,
-    //     params: {chatRoomId: null},
-    //   });
-    // }
+  const sendMessage = async () => {
+    console.log('send message', data?.leaderID);
+    try {
+      const chatRoom = await checkMemberHook.mutateAsync({
+        leaderID: data?.leaderID,
+      });
+      console.log('chatRoom get back', chatRoom);
+      if (chatRoom?._id) {
+        navigation.navigate(ROUTES.ChatStackNavigator, {
+          screen: ROUTES.CHATROOM,
+          initial: false,
+          params: {
+            id: chatRoom?._id,
+            isGroup: false,
+            socket: null,
+          },
+        });
+      }
+    } catch (e) {
+      console.log(e, 'message leader fail');
+    }
   };
   return (
     <>

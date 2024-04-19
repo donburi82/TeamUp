@@ -47,6 +47,7 @@ const requestURL = {
   coursestudy: 'preference/coursestudy',
   extracurricular: 'preference/extracurricular',
   chatroomInfo: 'chat/chatRoom',
+  checkExist: 'chat/exist',
   getMessages: 'chat/message',
   getGroups: 'groups',
   addMembers: 'groups/members',
