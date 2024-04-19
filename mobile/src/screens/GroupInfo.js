@@ -48,7 +48,7 @@ export default function GroupInfo({navigation}) {
     console.log('send message', data?.leaderID);
     try {
       const chatRoom = await checkMemberHook.mutateAsync({
-        leaderID: data?.leaderID,
+        leaderId: data?.leaderID,
       });
       console.log('chatRoom get back', chatRoom);
       if (chatRoom?._id) {

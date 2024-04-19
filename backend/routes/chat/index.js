@@ -36,7 +36,8 @@ router
 router.route("/exist").post(async (req, res) => {
   const userId = req.user.userId;
   const { leaderId } = req.body;
-  console.log("chat room exist being called");
+
+  console.log("chat room exist being called", leaderId);
   try {
     const chatRoom = await checkChatRoom(userId, leaderId);
 

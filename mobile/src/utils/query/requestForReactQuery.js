@@ -11,12 +11,12 @@ import {create} from 'react-test-renderer';
 //     ? 'http://192.168.10.102:3000/'
 //     : 'http://10.0.2.2:3000/';
 
-const BASE_URL =
-  Platform.OS === 'ios' ? 'http://localhost:3000/' : 'http://10.0.2.2:3000/';
 // const BASE_URL =
-//   Platform.OS === 'ios'
-//     ? 'http://localhost:3000/'
-//     : 'http://38.54.36.244:3000/';
+//   Platform.OS === 'ios' ? 'http://localhost:3000/' : 'http://10.0.2.2:3000/';
+const BASE_URL =
+  Platform.OS === 'ios'
+    ? 'http://ec2-3-0-54-125.ap-southeast-1.compute.amazonaws.com:3000/'
+    : 'http://ec2-3-0-54-125.ap-southeast-1.compute.amazonaws.com:3000/';
 
 // Android-specific code
 
@@ -56,7 +56,8 @@ const requestURL = {
   getGroupInfo: '/groups/info',
   createGroup: '/groups',
   cloudImageUri: 'https://d15r4v2fzy8iu.cloudfront.net/user/',
-  socketIo: 'http://10.0.2.2:3000/',
+  socketIo: 'http://ec2-3-0-54-125.ap-southeast-1.compute.amazonaws.com:3000/',
+  // socketIo: 'http://10.0.2.2:3000/',
 };
 
 async function request(url, datum, options, isGetRequest) {
