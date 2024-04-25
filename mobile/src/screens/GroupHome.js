@@ -30,7 +30,7 @@ import {
 // function for requesting notification permission andriod
 
 export default function GroupHome({navigation}) {
-  const category = ['Your Groups', 'Explore'];
+  const category = ['Your Groups ', 'Explore '];
   const myGroup = useGetGroupsQuery('my');
   const exploreGroup = useGetGroupsQuery('available');
   // console.log('my group is ', myGroup.data.data[0]);
@@ -88,7 +88,7 @@ export default function GroupHome({navigation}) {
               onPress={() => {
                 setActiveButton(index);
               }}>
-              <ButtonText style={styles.buttonText}>{item}</ButtonText>
+              <ButtonText style={styles.buttonText}>{item} </ButtonText>
             </Button>
           );
         })}

@@ -16,7 +16,7 @@ export default function Preference() {
   const [renderList, setRenderList] = useState([]);
   const bottomSheetRef = useRef(null);
   const userId = useSelector(state => state?.userInfo?.userId);
-  const category = ['Course Project', 'Course Study', 'ExtraCurricular'];
+  const category = ['Course Project ', 'Course Study ', 'ExtraCurricular '];
   const {data: courseProject} = useGetCourseProjectQuery(userId);
   const {data: extracurricular} = useGetExtracurricularQuery(userId);
   const {data: courseStudy} = useGetCourseStudyQuery(userId);
@@ -50,7 +50,7 @@ export default function Preference() {
               onPress={() => {
                 setActiveButton(index);
               }}>
-              <ButtonText style={styles.buttonText}>{item}</ButtonText>
+              <ButtonText style={styles.buttonText}>{item} </ButtonText>
             </Button>
           );
         })}

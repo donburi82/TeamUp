@@ -80,7 +80,7 @@ const updateToken = async regToken => {
 export default function Home({navigation}) {
   const {data, isLoading, error} = useGetProfilePicQuery();
   const dispatch = useDispatch();
-  const category = ['Course Project', 'Course Study', 'ExtraCurricular'];
+  const category = ['Course Project ', 'Course Study ', 'ExtraCurricular'];
   const [activeButton, setActiveButton] = useState(0);
   const userId = useSelector(state => state?.userInfo?.userId);
   console.log('activeButton is ', activeButton);
@@ -189,7 +189,7 @@ export default function Home({navigation}) {
               onPress={() => {
                 setActiveButton(index);
               }}>
-              <ButtonText style={styles.buttonText}>{item}</ButtonText>
+              <ButtonText style={styles.buttonText}>{item} </ButtonText>
             </Button>
           );
         })}

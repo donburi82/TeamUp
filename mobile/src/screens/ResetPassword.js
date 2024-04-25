@@ -62,7 +62,7 @@ export default function ResetPassword() {
         disabled={!oldPassword || !oldPassword}
         opacity={!oldPassword || !oldPassword ? 0.4 : 1}
         onPress={handleUpdate}
-        text="Confirm"
+        text="Confirm "
       />
     </View>
   );

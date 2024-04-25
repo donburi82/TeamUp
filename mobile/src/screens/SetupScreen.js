@@ -154,9 +154,10 @@ export default function SetupScreen({navigation}) {
               width="85%"
               style={{padding: 10, alignItems: 'center'}}>
               <Icons />
-              <Heading bold={true} size="2xl">
+              {/* <Heading bold={true} size="2xl">
                 Team Up now!
-              </Heading>
+              </Heading> */}
+              <Text style={{color: 'black', fontSize: 30}}> Team Up now!</Text>
 
               <VStack style={{width: '95%'}} mt={20} space={50}>
                 <Text>Verify your University Email</Text>

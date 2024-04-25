@@ -303,7 +303,8 @@ export default function BottomWindow({reference, activeButton}) {
           onPress={() => {
             reference?.current?.close();
           }}>
-          <ButtonText color="black">Cancel</ButtonText>
+          {/* <ButtonText color="black">Cancel </ButtonText> */}
+          <Text style={{color: 'black'}}>Cancel</Text>
         </Button>
         <DebouncedWaitingButton
           style={styles.button}
@@ -322,7 +323,7 @@ export default function BottomWindow({reference, activeButton}) {
               : 1
           }
           onPress={handleDone}
-          text="Done"
+          text="Done "
         />
       </View>
       {activeButton === 0 ? (

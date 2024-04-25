@@ -64,7 +64,7 @@ export default function ChangeMajor({navigation}) {
           disabled={!major}
           opacity={!major ? 0.4 : 1}
           onPress={updateMajor}
-          text="Done"
+          text="Done "
         />
       ),
     });

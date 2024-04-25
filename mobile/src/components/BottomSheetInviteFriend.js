@@ -93,7 +93,7 @@ export default function BottomSheetInviteFriend({
             resetfield();
             reference?.current?.close();
           }}>
-          <ButtonText color="black">Cancel</ButtonText>
+          <ButtonText color="black">Cancel </ButtonText>
         </Button>
         <DebouncedWaitingButton
           style={styles.button}
@@ -102,7 +102,7 @@ export default function BottomSheetInviteFriend({
           disabled={memberList.length === 0}
           opacity={memberList.length === 0 ? 0.4 : 1}
           onPress={handleDone}
-          text="Done"
+          text="Done "
         />
       </View>
       <ScrollView style={styles.container}>

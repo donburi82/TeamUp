@@ -113,7 +113,8 @@ export default function BottomWindow({reference, activeButton}) {
             resetfield();
             reference?.current?.close();
           }}>
-          <ButtonText color="black">Cancel</ButtonText>
+          {/* <ButtonText color="black">Cancel</ButtonText> */}
+          <Text style={{color: 'black', fontSize: 15}}>Cancel </Text>
         </Button>
         <DebouncedWaitingButton
           style={styles.button}
