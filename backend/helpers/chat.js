@@ -473,7 +473,6 @@ const getChatRoomsForUser = async (userId) => {
     // Extract relevant information from chat rooms
     const chatRooms = await Promise.all(
       user.chatRooms.map(async (chatRoom) => {
-        console.log("hehe", chatRoom);
         const lastMessage =
           chatRoom.messages.length > 0
             ? await Message.findById(

@@ -235,13 +235,13 @@ export default function BottomWindow({reference, activeButton}) {
   const handleDone = () => {
     if (activeButton === 0) {
       addCP
-        .mutateAsync(
+        .mutateAsync({
           courseCode,
           projectInterest,
           skillset,
           targetGrade,
           experience,
-        )
+        })
         .then(() => {
           setCourseCode('');
           setProjectInterest('');
@@ -251,17 +251,19 @@ export default function BottomWindow({reference, activeButton}) {
           setSkillset([]);
         });
     } else if (activeButton === 1) {
-      addCS.mutateAsync(courseCode, targetGrade, preferredLanguage).then(() => {
-        setCourseCode('');
-        setProjectInterest('');
-        setExperience('');
-        setTargetGrade('');
-        setPreferredLanguage('');
-        setSkillset([]);
-      });
+      addCS
+        .mutateAsync({courseCode, targetGrade, preferredLanguage})
+        .then(() => {
+          setCourseCode('');
+          setProjectInterest('');
+          setExperience('');
+          setTargetGrade('');
+          setPreferredLanguage('');
+          setSkillset([]);
+        });
     } else if (activeButton === 2) {
       addE
-        .mutateAsync(projectInterest, skillset, experience, preferredLanguage)
+        .mutateAsync({projectInterest, skillset, experience, preferredLanguage})
         .then(() => {
           setCourseCode('');
           setProjectInterest('');

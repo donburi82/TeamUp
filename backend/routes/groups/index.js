@@ -46,7 +46,7 @@ router.post("/", async (req, res) => {
   try {
     const leaderId = req.user.userId;
     const { name, category, project, quota, members } = req.body;
-    console.log(name, category, project, quota, members);
+    // console.log(name, category, project, quota, members);
     const chatRoom = await createGroup(
       leaderId,
       name,
@@ -111,7 +111,7 @@ router.post("/members", async (req, res) => {
   try {
     const userId = req.user.userId;
     const { groupId, members } = req.body;
-    console.log("addMembers", userId, groupId, members);
+
     await addMembers(userId, groupId, members);
     return res.status(200).json({ success: true });
   } catch (error) {

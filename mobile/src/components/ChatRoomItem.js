@@ -31,7 +31,7 @@ export default function ChatRoomItem({chatRoom, socket}) {
     console.log('chatroom item navigate to chatroom', chatRoom?.groupId);
     navigation.navigate(ROUTES.CHATROOM, {
       id: chatRoom.chatRoomId,
-      title: chatRoom?.groupTitle || chatRoom?.chatmateName || 'Group Chat',
+      title: chatRoom?.groupTitle || chatRoom?.chatmateName || 'Group Chat ',
       groupId: chatRoom?.groupId,
       isGroup: chatRoom.isGroup,
       socket,

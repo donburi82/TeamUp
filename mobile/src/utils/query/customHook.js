@@ -363,11 +363,12 @@ export const useAddCourseStudyMutation = () => {
   const url = requestURL.coursestudy;
   const queryClient = useQueryClient();
   const userId = useSelector(state => state?.userInfo?.userId);
-  const reqFunc = async (courseCode, targetGrade, preferredLanguage) => {
+  const reqFunc = async ({courseCode, targetGrade, preferredLanguage}) => {
     const res = await request(url, {
       userId,
       courseCode,
       targetGrade,
+      semester: '2024-25 Winter',
       preferredLanguage,
     });
     return res;
@@ -383,18 +384,19 @@ export const useAddCourseProjectMutation = () => {
   const url = requestURL.courseproject;
   const queryClient = useQueryClient();
   const userId = useSelector(state => state?.userInfo?.userId);
-  const reqFunc = async (
+  const reqFunc = async ({
     courseCode,
     projectInterest,
     skillset,
     targetGrade,
     experience,
-  ) => {
+  }) => {
     const res = await request(url, {
       userId,
       courseCode,
       projectInterest,
       skillset,
+      semester: '2024-25 Winter',
       targetGrade,
       experience,
     });
@@ -411,12 +413,12 @@ export const useAddExtracurricularMutation = () => {
   const url = requestURL.extracurricular;
   const queryClient = useQueryClient();
   const userId = useSelector(state => state?.userInfo?.userId);
-  const reqFunc = async (
+  const reqFunc = async ({
     projectInterest,
     skillset,
     experience,
     preferredLanguage,
-  ) => {
+  }) => {
     const res = await request(url, {
       userId,
       projectInterest,

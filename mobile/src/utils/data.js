@@ -664,10 +664,10 @@ export const GradeData = [
 export const languageData = [
   {key: '0', value: 'English'},
   {key: '1', value: 'Mandarin'},
-  {key: '3', value: 'Cantonese'},
-  {key: '5', value: 'Korean'},
-  {key: '6', value: 'Hindi'},
-  {key: '4', value: 'Other'},
+  {key: '2', value: 'Cantonese'},
+  {key: '3', value: 'Korean'},
+  {key: '4', value: 'Hindi'},
+  {key: '5', value: 'Other'},
 ];
 export const skillData = [
   {key: '0', value: 'React'},

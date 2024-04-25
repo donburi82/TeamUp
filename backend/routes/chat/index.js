@@ -63,7 +63,7 @@ router
   .get(async (req, res) => {
     const lastMessageId = req.query.lastMessageId;
     const limit = req.query.limit;
-    console.log(limit, lastMessageId);
+
     try {
       const { chatRoomId } = req.params;
       const messages = await getMessagesFromChatRoom(
@@ -128,7 +128,6 @@ router
         room = await createChatRoom(members, groupId);
       } else {
         room = await createChatRoom(members);
-        console.log("room:", room);
       }
       return res.status(200).send({ status: "success", room });
     } catch (error) {
@@ -139,7 +138,7 @@ router
     try {
       const { userId } = req.user;
       const chatRooms = await getChatRoomsForUser(userId);
-      console.log("chatrooms:", chatRooms);
+
       return res.status(200).send({ status: "success", chatRooms });
     } catch (error) {
       console.log("error:", error);
