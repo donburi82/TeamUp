@@ -21,8 +21,8 @@ router.get("/info", async (req, res) => {
     const group = await getGroupInfo(groupId);
     return res.status(200).json({ success: true, data: group });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -38,7 +38,8 @@ router.get("/", async (req, res) => {
     }
     return res.status(200).json({ success: true, data: groups });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -57,7 +58,8 @@ router.post("/", async (req, res) => {
     );
     return res.status(200).json({ success: true, room: chatRoom._id });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -68,7 +70,8 @@ router.patch("/", async (req, res) => {
     await updateGroup(userId, groupId, name, category, project, quota);
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -80,8 +83,8 @@ router.delete("/", async (req, res) => {
     await deleteGroup(userId, groupId);
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -92,7 +95,8 @@ router.post("/finalize", async (req, res) => {
     await finalizeGroup(userId, groupId);
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -103,7 +107,8 @@ router.post("/leave", async (req, res) => {
     await leaveGroup(userId, groupId);
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -115,8 +120,8 @@ router.post("/members", async (req, res) => {
     await addMembers(userId, groupId, members);
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -127,7 +132,8 @@ router.delete("/members", async (req, res) => {
     await removeMembers(userId, groupId, members);
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
