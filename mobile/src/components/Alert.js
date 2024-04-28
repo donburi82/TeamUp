@@ -9,6 +9,7 @@ export default function Alert({
   setOpen,
   handleCancel,
   handleConfirm,
+  confirmText,
 }) {
   return (
     <AwesomeAlert
@@ -21,7 +22,7 @@ export default function Alert({
       showCancelButton={true}
       showConfirmButton={true}
       cancelText="No, cancel"
-      confirmText="Yes, log out"
+      confirmText={confirmText || 'Yes, log out'}
       confirmButtonColor="#DD6B55"
       onCancelPressed={handleCancel}
       onConfirmPressed={handleConfirm}

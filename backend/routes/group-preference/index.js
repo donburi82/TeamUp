@@ -22,9 +22,35 @@ router.get("/", async (req, res) => {
 
 router.post("/courseproject", async (req, res) => {
   try {
+    console.log("add preference course project triggered");
     const userId = req.user.userId;
-    const { courseCode, semester, projectInterest, skillset, targetGrade, experience } = req.body;
-    await createCourseProjectPreference(userId, courseCode, semester, projectInterest, skillset, targetGrade, experience);
+    const {
+      courseCode,
+      semester,
+      projectInterest,
+      skillset,
+      targetGrade,
+      experience,
+    } = req.body;
+    console.log(
+      "courseproject",
+      userId,
+      courseCode,
+      semester,
+      projectInterest,
+      skillset,
+      targetGrade,
+      experience
+    );
+    await createCourseProjectPreference(
+      userId,
+      courseCode,
+      semester,
+      projectInterest,
+      skillset,
+      targetGrade,
+      experience
+    );
     return res.status(200).json({ success: true });
   } catch (error) {
     return res.status(400).json({ success: false, error: error });
@@ -35,7 +61,21 @@ router.post("/coursestudy", async (req, res) => {
   try {
     const userId = req.user.userId;
     const { courseCode, semester, targetGrade, preferredLanguage } = req.body;
-    await createCourseStudyPreference(userId, courseCode, semester, targetGrade, preferredLanguage);
+    console.log(
+      "coursestudy",
+      userId,
+      courseCode,
+      semester,
+      targetGrade,
+      preferredLanguage
+    );
+    await createCourseStudyPreference(
+      userId,
+      courseCode,
+      semester,
+      targetGrade,
+      preferredLanguage
+    );
     return res.status(200).json({ success: true });
   } catch (error) {
     return res.status(400).json({ success: false, error: error });
@@ -45,8 +85,15 @@ router.post("/coursestudy", async (req, res) => {
 router.post("/extracurricular", async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { projectInterest, skillset, experience, preferredLanguage } = req.body;
-    await createExtracurricularPreference(userId, projectInterest, skillset, experience, preferredLanguage);
+    const { projectInterest, skillset, experience, preferredLanguage } =
+      req.body;
+    await createExtracurricularPreference(
+      userId,
+      projectInterest,
+      skillset,
+      experience,
+      preferredLanguage
+    );
     return res.status(200).json({ success: true });
   } catch (error) {
     return res.status(400).json({ success: false, error: error });

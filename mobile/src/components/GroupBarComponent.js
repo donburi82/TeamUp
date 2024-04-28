@@ -15,12 +15,13 @@ export default function GroupBarComponent({navigation, group, mode}) {
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
-        // console.log(navigation);
-        // navigation.push(ROUTES.OTHERUSERINFO);
-        // navigation.navigate(ROUTES.ChatStackNavigator, {
-        //   screen: ROUTES.OTHERUSERINFO,
-        //   initial: false,
-        // });
+        console.log('navigation to', group?.chatRoomID);
+        navigation.push(ROUTES.GroupInfoInGroups, {
+          title: group?.project,
+          groupId: group?._id,
+          myGroup: mode === 'my',
+          chatRoomID: group?.chatRoomID,
+        });
       }}>
       {group?.avartar ? (
         <Image

@@ -61,7 +61,7 @@ export default function ChangeYear({navigation}) {
           disabled={!year}
           opacity={!year ? 0.4 : 1}
           onPress={updateYear}
-          text="Done"
+          text="Done "
         />
       ),
     });

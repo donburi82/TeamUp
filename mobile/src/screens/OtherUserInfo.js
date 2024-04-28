@@ -3,8 +3,10 @@ import BasicInfoUser from '../components/BasicInfoUser';
 import React, {useEffect} from 'react';
 import SettingBar from '../components/SettingBar';
 import {useRoute} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 import {ROUTES} from '../navigator/constant';
 import DebouncedWaitingButton from '../components/DebouncedWaitingButton';
+import {useCreateChatMutation} from '../utils/query/customHook';
 import {useGetUserInfoQuery} from '../utils/query/customHook';
 import {HeaderBackButton} from '@react-navigation/elements'; // 这里大坑啊，文档里面说从/@react-navigation/stack里面引入，但是实际上是从/@react-navigation/elements引入
 
@@ -12,8 +14,10 @@ export default function OtherUserInfo({navigation}) {
   const route = useRoute();
   const isFromChatRoom = route?.params?.isFromChatRoom;
   const userId = route?.params?.userId;
-  console.log('userid is ', userId);
+  const myId = useSelector(state => state?.userInfo?.userId);
+
   const {data} = useGetUserInfoQuery(userId);
+  const createChatMutation = useCreateChatMutation();
   let isFullTime = data?.userInfo?.isFullTime || false;
   let name = data?.userInfo?.name || 'N/A';
   let major = data?.userInfo?.major || ['N/A'];
@@ -21,7 +25,7 @@ export default function OtherUserInfo({navigation}) {
   let lookingFor = data?.userInfo?.lookingFor || 'N/A';
   let gender = data?.userInfo?.gender || 'M';
   let profilePic = data?.userInfo?.profilePic || null;
-  let chatRoomId = data?.userInfo?.chatRoomId || null;
+  let chatRoomId = data?.userInfo?.chatRoom || null;
   console.log('prifilePic ', profilePic);
 
   React.useLayoutEffect(() => {
@@ -48,7 +52,7 @@ export default function OtherUserInfo({navigation}) {
       ),
     });
   }, [navigation, isFromChatRoom]);
-  const sendMessage = () => {
+  const sendMessage = async () => {
     // 假设有一个函数来判断用户是从哪个页面来的
 
     if (isFromChatRoom) {
@@ -58,11 +62,24 @@ export default function OtherUserInfo({navigation}) {
       // 如果是从用户列表等其他页面进入的，导航到聊天室页面
       // 假设聊天室ID是chatRoomId
       // navigation.goBack();
-      console.log('message chatroom id is', chatRoomId);
-      // navigation.navigate(ROUTES.CHATHOME, {
-      //   screen: ROUTES.CHATROOM,
-      //   params: {chatRoomId: null},
-      // });
+      console.log('message chatroom id is', chatRoomId, userId, myId);
+      if (!chatRoomId) {
+        createChatMutation.mutateAsync({members: [userId, myId]}).then(
+          res => {
+            console.log('res is', res);
+            navigation.navigate(ROUTES.ChatStackNavigator, {
+              screen: ROUTES.CHATROOM,
+              params: {id: res?.room?._id},
+            });
+          },
+          err => {},
+        );
+      } else {
+        navigation.navigate(ROUTES.ChatStackNavigator, {
+          screen: ROUTES.CHATROOM,
+          params: {id: chatRoomId},
+        });
+      }
     }
   };
   return (

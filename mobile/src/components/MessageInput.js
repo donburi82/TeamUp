@@ -362,14 +362,14 @@ const MessageInput = ({id, socket}) => {
       )}
       <View style={styles.row}>
         <View style={styles.inputContainer}>
-          <Pressable onPressIn={startRecording} onPressOut={stopRecording}>
+          {/* <Pressable onPressIn={startRecording} onPressOut={stopRecording}>
             <MaterialCommunityIcons
               name={recording ? 'microphone' : 'microphone-outline'}
               size={24}
               color={recording ? 'red' : '#595959'}
               style={styles.icon}
             />
-          </Pressable>
+          </Pressable> */}
           <TextInput
             editable
             multiline

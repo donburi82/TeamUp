@@ -7,7 +7,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const admin = require("firebase-admin");
 const { getMessaging } = require("firebase-admin/messaging");
 const { Group } = require("../models/group");
-const ObjectId = require('mongodb').ObjectId;
+const ObjectId = require("mongodb").ObjectId;
 
 const serviceAccount = require("../serviceAccount.json");
 admin.initializeApp({
@@ -282,7 +282,8 @@ const sendMessage = async (message, type, chatRoomId, senderId, fileName) => {
       select: "name _id profilePic",
     });
 
-    chatRoom.messages.push(newMessage);
+    chatRoom.messages = [...chatRoom.messages, newMessage];
+    chatRoom.markModified("messages");
     chatRoom.lastTS = newMessage.sentDate;
     await chatRoom.save();
 
@@ -451,6 +452,8 @@ const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
 const getChatRoomsForUser = async (userId) => {
   try {
     // Find user with chat rooms
+    let groupTitle = null;
+    let groupId = null;
     const user = await User.findById(userId).populate({
       path: "chatRooms",
       populate: {
@@ -485,11 +488,21 @@ const getChatRoomsForUser = async (userId) => {
             (member) => String(member._id) !== userId
           );
 
-          chatmateName = otherMember.name;
-          senderProfilePic = otherMember.profilePic || null;
+          if (otherMember) {
+            chatmateName = otherMember.name;
+            senderProfilePic = otherMember.profilePic || null;
+          }
+        } else {
+          const group = await Group.findById(chatRoom.groupId);
+          if (group) {
+            groupTitle = group.project;
+            groupId = group._id;
+          }
         }
 
         return {
+          groupTitle,
+          groupId,
           chatRoomId: chatRoom._id,
           lastTS: chatRoom.lastTS,
           isGroup: chatRoom.isGroup,

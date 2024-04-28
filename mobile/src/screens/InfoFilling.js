@@ -44,6 +44,10 @@ export default function InfoFilling() {
   const dataMajor = [
     {key: '1', value: 'COMP'},
     {key: '2', value: 'CPEG'},
+    {key: '3', value: 'Math'},
+    {key: '4', value: 'MAEC'},
+    {key: '5', value: 'ECON'},
+    {key: '6', value: 'ECOF'},
   ];
   const dataYear = [
     {key: '1', value: '1'},

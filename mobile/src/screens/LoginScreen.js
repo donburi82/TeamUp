@@ -40,9 +40,10 @@ export default function LoginScreen({navigation}) {
           alignItems: 'center',
         }}>
         <Icons />
-        <Heading bold={true} size="3xl">
+        {/* <Heading bold={true} size="3xl">
           Team Up now!
-        </Heading>
+        </Heading> */}
+        <Text style={{color: 'black', fontSize: 30}}> Team Up now!</Text>
 
         <VStack style={{width: '95%'}} mt={30} space={50}>
           <Box mb={10}>
@@ -99,7 +100,8 @@ export default function LoginScreen({navigation}) {
                 type: 'retrievePassword',
               })
             }>
-            <ButtonText color="black">Forgot password?</ButtonText>
+            {/* <ButtonText color="black">Forgot password?</ButtonText> */}
+            <Text style={{color: 'black'}}>Forgot password?</Text>
           </Button>
         </VStack>
       </Box>

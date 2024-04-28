@@ -5,6 +5,7 @@ import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
 import {ROUTES} from '../../navigator/constant';
+import Video from 'react-native-video';
 
 export default function MessageBubble({message}) {
   const {
@@ -70,6 +71,21 @@ export default function MessageBubble({message}) {
           }}
           resizeMode="contain"
         />
+      )}
+      {messageType === 'audio' && (
+        <Text
+          style={
+            styles.messageText
+          }>{`[Oops! Audio is not support any more in this version of app]`}</Text>
+        // <Video
+        //   source={{
+        //     uri: `https://d15r4v2fzy8iu.cloudfront.net/chat/${messageData}`,
+        //   }}
+        //   audioOnly={true}
+        //   controls={true}
+        //   style={{width: '100%', height: 50}}
+        // />
+        // <Text style={styles.messageText}>Audio Message</Text>
       )}
     </View>
   );

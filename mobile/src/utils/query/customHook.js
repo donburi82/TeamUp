@@ -181,12 +181,11 @@ export const useGetProfilePicQuery = () => {
   };
   return useQuery([url], reqFunc, {
     onSuccess: data => {
-      if (data?.data?.data) {
-        const byteArray = new Uint8Array(data.data.data);
-        const base64String = Buffer.from(byteArray).toString('base64');
-        const imageData = `data:${data.contentType};base64,${base64String}`;
+      if (data?.data) {
+        const imageUri = data?.data;
+        // const
 
-        dispatch(updateImageUri({imageUri: imageData}));
+        dispatch(updateImageUri({imageUri}));
       }
     },
   });
@@ -364,11 +363,12 @@ export const useAddCourseStudyMutation = () => {
   const url = requestURL.coursestudy;
   const queryClient = useQueryClient();
   const userId = useSelector(state => state?.userInfo?.userId);
-  const reqFunc = async (courseCode, targetGrade, preferredLanguage) => {
+  const reqFunc = async ({courseCode, targetGrade, preferredLanguage}) => {
     const res = await request(url, {
       userId,
       courseCode,
       targetGrade,
+      semester: '2024-25 Winter',
       preferredLanguage,
     });
     return res;
@@ -384,18 +384,19 @@ export const useAddCourseProjectMutation = () => {
   const url = requestURL.courseproject;
   const queryClient = useQueryClient();
   const userId = useSelector(state => state?.userInfo?.userId);
-  const reqFunc = async (
+  const reqFunc = async ({
     courseCode,
     projectInterest,
     skillset,
     targetGrade,
     experience,
-  ) => {
+  }) => {
     const res = await request(url, {
       userId,
       courseCode,
       projectInterest,
       skillset,
+      semester: '2024-25 Winter',
       targetGrade,
       experience,
     });
@@ -412,12 +413,12 @@ export const useAddExtracurricularMutation = () => {
   const url = requestURL.extracurricular;
   const queryClient = useQueryClient();
   const userId = useSelector(state => state?.userInfo?.userId);
-  const reqFunc = async (
+  const reqFunc = async ({
     projectInterest,
     skillset,
     experience,
     preferredLanguage,
-  ) => {
+  }) => {
     const res = await request(url, {
       userId,
       projectInterest,
@@ -439,12 +440,14 @@ export const useGetChatRoomInfoQuery = () => {
   const url = requestURL.chatroomInfo;
   const reqFunc = async () => {
     const res = await request(url, {}, {method: 'get'}, true);
+
     return res?.chatRooms;
   };
   return useQuery(['chatroomInfo'], reqFunc, {
     onSuccess: data => {
       // console.log('Extracurricular', data);
     },
+    refetchInterval: 5000,
   });
 };
 
@@ -536,7 +539,9 @@ export const useGetGroupsQuery = mode => {
     return res;
   };
   return useQuery([url, mode], reqFunc, {
-    onSuccess: data => {},
+    onSuccess: data => {
+      console.log('mode is ', mode);
+    },
   });
 };
 
@@ -550,6 +555,125 @@ export const useGetFriendsQuery = userId => {
   return useQuery([url], reqFunc, {
     onSuccess: data => {
       // console.log(data);
+    },
+  });
+};
+
+export const useCreateChatMutation = () => {
+  const url = requestURL.createChatroom;
+  // console.log('chatroom id is', chatRoomId);
+  const reqFunc = async ({members}) => {
+    console.log('member id is', members);
+    const res = await request(url, {
+      members,
+    });
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+    },
+  });
+};
+
+export const useGetGroupInfoQuery = groupId => {
+  const url = requestURL.getGroupInfo;
+
+  const reqFunc = async () => {
+    console.log('group id is', groupId);
+    const res = await request(url, {groupId}, {method: 'get'}, true);
+    return res?.data;
+  };
+  return useQuery([url, groupId], reqFunc, {
+    onSuccess: data => {
+      // console.log('group info is', data);
+    },
+  });
+};
+
+export const useCreateGroupMutation = () => {
+  const url = requestURL.createGroup;
+  // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
+  const reqFunc = async ({name, category, project, quota, members}) => {
+    const res = await request(url, {
+      name,
+      category,
+      project,
+      quota,
+      members,
+    });
+    console.log('create group res', res);
+    return res?.room;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+      queryClient.invalidateQueries([requestURL.getGroups, 'my']);
+    },
+  });
+};
+export const useLeaveGroupMutation = navigation => {
+  const url = requestURL.createGroup;
+  // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
+  const reqFunc = async ({groupId}) => {
+    const res = await request(
+      url,
+      {
+        groupId,
+      },
+      {method: 'delete'},
+      true,
+    );
+
+    return res?.room;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // showUpdateToast();
+      queryClient.invalidateQueries([requestURL.getGroups, 'my']);
+      // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
+      navigation.goBack();
+    },
+  });
+};
+export const useAddMemberMutation = groupId => {
+  const url = requestURL.addMembers;
+  // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
+  const reqFunc = async ({members}) => {
+    console.log('add member called', groupId, members);
+    const res = await request(url, {
+      groupId,
+      members,
+    });
+    console.log('add member called successfully', res);
+    return res;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      showUpdateToast();
+      queryClient.invalidateQueries([requestURL.getGroupInfo, groupId]);
+      // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
+    },
+  });
+};
+export const useCheckMemberMutation = () => {
+  const url = requestURL.checkExist;
+  // console.log('chatroom id is', chatRoomId);
+  const queryClient = useQueryClient();
+  const reqFunc = async ({leaderId}) => {
+    const res = await request(url, {
+      leaderId,
+    });
+    console.log('check member called successfully', res);
+    return res?.chatRoom;
+  };
+  return useMutation(reqFunc, {
+    onSuccess: () => {
+      // queryClient.invalidateQueries([requestURL.getGroupInfo, groupId]);
+      // queryClient.invalidateQueries([requestURL.getGroups, 'available']);
     },
   });
 };

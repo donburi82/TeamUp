@@ -43,7 +43,7 @@ export default function InfoModal() {
               setModalVisible(!modalVisible);
               dispatch(welcome());
             }}>
-            <Text style={styles.textStyle}>OK</Text>
+            <Text style={styles.textStyle}>OK </Text>
           </Pressable>
         </View>
       </View>
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'white',
+    width: '100%',
   },
   modalText: {
     marginBottom: 5,
@@ -103,5 +104,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 20,
     fontWeight: '800',
+    width: '100%',
   },
 });
