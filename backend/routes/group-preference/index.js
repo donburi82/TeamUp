@@ -16,7 +16,8 @@ router.get("/", async (req, res) => {
     const preferences = await getGroupPreferences(userId, groupType);
     return res.status(200).json({ success: true, data: preferences });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -53,7 +54,8 @@ router.post("/courseproject", async (req, res) => {
     );
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -78,7 +80,8 @@ router.post("/coursestudy", async (req, res) => {
     );
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -96,7 +99,8 @@ router.post("/extracurricular", async (req, res) => {
     );
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -107,7 +111,8 @@ router.delete("/", async (req, res) => {
     await deleteGroupPreference(userId, preferenceId);
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 

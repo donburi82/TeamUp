@@ -13,7 +13,8 @@ router.get("/courseproject", async (req, res) => {
     const profiles = await getCourseProjectProfiles(userId);
     return res.status(200).json({ success: true, data: profiles });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -23,7 +24,8 @@ router.get("/coursestudy", async (req, res) => {
     const profiles = await getCourseStudyProfiles(userId);
     return res.status(200).json({ success: true, data: profiles });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
@@ -33,7 +35,8 @@ router.get("/extracurricular", async (req, res) => {
     const profiles = await getExtracurricularProfiles(userId);
     return res.status(200).json({ success: true, data: profiles });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    return res.status(400).send({ status: "error", msg: error.message });
   }
 });
 
