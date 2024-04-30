@@ -29,6 +29,7 @@ export default function TabOneScreen() {
     <View style={styles.page}>
       <FlatList
         data={chatRooms}
+        keyExtractor={item => item.chatRoomId} // 使用chatRoomId作为key
         renderItem={({item}) => (
           <ChatRoomItem chatRoom={item} socket={socket} />
         )}
