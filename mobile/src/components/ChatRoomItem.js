@@ -25,7 +25,7 @@ export default function ChatRoomItem({chatRoom, socket}) {
     }
 
     setLastMessage(chatRoom?.lastMessage);
-  }, []);
+  }, [chatRoom?.lastMessage]);
 
   const onPress = () => {
     console.log('chatroom item navigate to chatroom', chatRoom?.groupId);
