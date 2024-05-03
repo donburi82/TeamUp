@@ -9,7 +9,7 @@ import {requestURL} from '../utils/query/requestForReactQuery';
 export default function UserBarComponent({usersList, navigation}) {
   let name = 'Jason';
 
-  let gender = 'M';
+  let gender = usersList?.gender || 'M';
 
   return (
     <TouchableOpacity

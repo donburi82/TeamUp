@@ -19,7 +19,7 @@ import AuthRouting from './src/navigator/AuthNav.js';
 import HomeRouting from './src/navigator/HomeNav';
 import {useMemo} from 'react';
 import {useSelector} from 'react-redux';
-
+import {LogBox} from 'react-native';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -41,6 +41,7 @@ function App() {
   };
   const userInfo = useSelector(state => state.userInfo);
   const navigation = useNavigation();
+  LogBox.ignoreAllLogs();
   // useEffect(() => {
   //   if (userInfo.isAuthed) {
   //     // Execute navigation reset as a side effect when userInfo changes and is authenticated

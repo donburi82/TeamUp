@@ -22,7 +22,13 @@ import {
   MultipleSelectList,
 } from 'react-native-dropdown-select-list';
 import DebouncedWaitingButton from './DebouncedWaitingButton';
-import {CourseData, GradeData, skillData, languageData} from '../utils/data';
+import {
+  CourseData,
+  GradeData,
+  skillData,
+  languageData,
+  SemesterData,
+} from '../utils/data';
 
 function CourseProject({
   setCourseCode,
@@ -33,6 +39,7 @@ function CourseProject({
   setTargetGrade,
   skillset,
   setSkillset,
+  setTargetSemester,
 }) {
   return (
     <ScrollView style={styles.container}>
@@ -77,7 +84,20 @@ function CourseProject({
         />
       </View>
       <View>
-        <Text style={styles.textStyle}>Target Grade</Text>
+        <Text style={styles.textStyle}>Semester </Text>
+        <SelectList
+          setSelected={setTargetSemester}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          dropdownStyles={styles.dropDownStyle}
+          search={false}
+          data={SemesterData}
+          label="Categories"
+          save="value"
+        />
+      </View>
+      <View>
+        <Text style={styles.textStyle}>Target Grade </Text>
         <SelectList
           setSelected={setTargetGrade}
           placeholder={' '}
@@ -107,7 +127,12 @@ function CourseProject({
     </ScrollView>
   );
 }
-function CourseStudy({setCourseCode, setPreferredLanguage, setTargetGrade}) {
+function CourseStudy({
+  setCourseCode,
+  setPreferredLanguage,
+  setTargetGrade,
+  setTargetSemester,
+}) {
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -137,7 +162,20 @@ function CourseStudy({setCourseCode, setPreferredLanguage, setTargetGrade}) {
         />
       </View>
       <View>
-        <Text style={styles.textStyle}>Target Grade</Text>
+        <Text style={styles.textStyle}>Semester </Text>
+        <SelectList
+          setSelected={setTargetGrade}
+          placeholder={' '}
+          boxStyles={styles.boxStyle}
+          dropdownStyles={styles.dropDownStyle}
+          search={false}
+          data={SemesterData}
+          label="Categories"
+          save="value"
+        />
+      </View>
+      <View>
+        <Text style={styles.textStyle}>Target Grade </Text>
         <SelectList
           setSelected={setTargetGrade}
           placeholder={' '}
@@ -227,6 +265,7 @@ export default function BottomWindow({reference, activeButton}) {
   const [projectInterest, setProjectInterest] = useState('');
   const [experience, setExperience] = useState('');
   const [targetGrade, setTargetGrade] = useState('');
+  const [targetSemester, setTargetSemester] = useState('');
   const [preferredLanguage, setPreferredLanguage] = useState('');
   const [skillset, setSkillset] = useState([]);
   const addCP = useAddCourseProjectMutation();
@@ -283,6 +322,7 @@ export default function BottomWindow({reference, activeButton}) {
     setTargetGrade('');
     setPreferredLanguage('');
     setSkillset([]);
+    setTargetSemester('');
   }, [activeButton]);
   // variables
   const snapPoints = ['93%'];
@@ -338,12 +378,14 @@ export default function BottomWindow({reference, activeButton}) {
           setTargetGrade={setTargetGrade}
           skillset={skillset}
           setSkillset={setSkillset}
+          setTargetSemester={setTargetSemester}
         />
       ) : activeButton === 1 ? (
         <CourseStudy
           setCourseCode={setCourseCode}
           setTargetGrade={setTargetGrade}
           setPreferredLanguage={setPreferredLanguage}
+          setTargetSemester={setTargetSemester}
         />
       ) : (
         <ExtraCurricular

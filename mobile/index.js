@@ -14,6 +14,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import {NavigationContainer} from '@react-navigation/native';
+
 PushNotification.createChannel(
   {
     channelId: 'test-channel',

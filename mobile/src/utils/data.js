@@ -661,6 +661,12 @@ export const GradeData = [
   {key: '4', value: 'B-'},
   {key: '7', value: 'P'},
 ];
+export const SemesterData = [
+  {key: '0', value: 'Summer 2024-25'},
+  {key: '1', value: 'Fall 2024-25'},
+  {key: '2', value: 'Winter 2024-25'},
+  {key: '3', value: 'Spring 2025-26'},
+];
 export const languageData = [
   {key: '0', value: 'English'},
   {key: '1', value: 'Mandarin'},
@@ -677,15 +683,15 @@ export const skillData = [
   {key: '6', value: 'webpack'},
   {key: '4', value: 'css'},
   {key: '7', value: 'html'},
-  {key: '8', value: 'webpack'},
-  {key: '9', value: 'css'},
-  {key: '10', value: 'React'},
-  {key: '11', value: 'React Native'},
-  {key: '13', value: 'Vue'},
-  {key: '15', value: 'javascript'},
-  {key: '16', value: 'webpack'},
-  {key: '14', value: 'css'},
-  {key: '17', value: 'html'},
-  {key: '18', value: 'webpack'},
+  {key: '8', value: 'C++'},
+  {key: '9', value: 'Python'},
+  {key: '10', value: 'Java'},
+  {key: '11', value: 'C#'},
+  {key: '13', value: 'Spring Boot'},
+  {key: '15', value: 'Node.js'},
+  {key: '16', value: 'AWS'},
+  {key: '14', value: 'Django'},
+  {key: '17', value: 'SQL'},
+  {key: '18', value: 'MongoDB'},
   {key: '19', value: 'css'},
 ];
