@@ -33,7 +33,8 @@ async function getAvailableGroups(userId) {
 
         // get all groups that user does not belong to
         const groups = await Group.find({
-            _id: { $nin: user.groups }
+            _id: { $nin: user.groups },
+            finalized: false
         });
         // similarity scores if have time
         const groupIds = groups.map(group => group._id.toString());
