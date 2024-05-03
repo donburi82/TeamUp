@@ -451,9 +451,9 @@ const getMessagesFromChatRoom = async (chatRoomId, lastMessageId, limit) => {
 
 const getChatRoomsForUser = async (userId) => {
   try {
+    console.log(userId);
     // Find user with chat rooms
-    let groupTitle = null;
-    let groupId = null;
+
     const user = await User.findById(userId).populate({
       path: "chatRooms",
       populate: {
@@ -461,13 +461,18 @@ const getChatRoomsForUser = async (userId) => {
         model: "User",
       },
     });
+    console.log("populated user", user);
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    if (!user.chatRooms || user.chatRooms.length === 0) {
+    if (!user.chatRooms) {
       throw new Error("No chat rooms for this user");
+    }
+
+    if (user.chatRooms.length === 0) {
+      return [];
     }
 
     // Extract relevant information from chat rooms
@@ -482,6 +487,8 @@ const getChatRoomsForUser = async (userId) => {
 
         let chatmateName = null;
         let senderProfilePic = null;
+        let groupTitle = null;
+        let groupId = null;
 
         if (!chatRoom.isGroup) {
           const otherMember = chatRoom.members.find(
@@ -494,6 +501,7 @@ const getChatRoomsForUser = async (userId) => {
           }
         } else {
           const group = await Group.findById(chatRoom.groupId);
+          console.log("group", group);
           if (group) {
             groupTitle = group.project;
             groupId = group._id;
